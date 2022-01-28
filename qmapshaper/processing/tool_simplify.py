@@ -1,0 +1,63 @@
+from qgis.core import (QgsProcessingParameterVectorLayer, QgsProcessingParameterNumber,
+                       QgsProcessingFeedback, QgsProcessingParameterVectorDestination)
+
+from .mapshaper_algorithm import MapshaperAlgorithm
+
+
+class SimplifyAlgorithm(MapshaperAlgorithm):
+
+    INPUT_LAYER = "INPUT"
+    SIMPLIFY = "SIMPLIFY"
+    OUTPUT_LAYER = "OUTPUT"
+
+    def initAlgorithm(self, config=None):
+
+        self.addParameter(QgsProcessingParameterVectorLayer(self.INPUT_LAYER, "Input layer"))
+
+        self.addParameter(
+            QgsProcessingParameterNumber(self.SIMPLIFY,
+                                         "Simplify %",
+                                         type=QgsProcessingParameterNumber.Integer,
+                                         defaultValue=50,
+                                         minValue=1,
+                                         maxValue=99))
+
+        self.addParameter(
+            QgsProcessingParameterVectorDestination(self.OUTPUT_LAYER, "Output Layer"))
+
+    def getConsoleArguments(self,
+                            parameters,
+                            context,
+                            feedback: QgsProcessingFeedback,
+                            executing=True):
+
+        input_layer = self.process_input_layer(self.INPUT_LAYER, parameters, context, feedback)
+
+        self.output_layer_location = self.parameterAsOutputLayer(parameters, self.OUTPUT_LAYER,
+                                                                 context)
+
+        simplify_percent = self.parameterAsDouble(parameters, self.SIMPLIFY, context)
+
+        arguments = [
+            input_layer,
+            '-simplify ',
+            'dp',
+            '{}%'.format(simplify_percent),
+            '-o',
+            'format=geojson',
+            self.mapshaper_geojson_output,
+        ]
+
+        return arguments
+
+    def commandName(self):
+        return "mapshaper-xl"
+
+    def name(self):
+        return "simplify"
+
+    def displayName(self):
+        return "Simplify vector"
+
+    def createInstance(self):
+        return SimplifyAlgorithm()

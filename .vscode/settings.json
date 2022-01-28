@@ -1,0 +1,37 @@
+{
+    "terminal.integrated.env.linux": {
+        "PYTHONPATH": "/usr/share/qgis/python/plugins:/usr/share/qgis/python:${workspaceFolder}"
+    },
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.pytest_cache": true,
+        "**/.mypy_cache": true
+    },
+    "python.analysis.extraPaths": [
+        "/usr/share/qgis/python/plugins",
+        "/usr/share/qgis/python"
+    ],
+    "python.linting.pycodestyleEnabled": true,
+    "python.linting.pycodestyleArgs": [
+        "--max-line-length=160",
+        "--ignore=W293,W504"
+    ],
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": [
+        "--max-line-length=160",
+        "--ignore=W293,W504"
+    ],
+    "python.linting.mypyEnabled": true,
+    "python.linting.mypyArgs": [
+        "--follow-imports=silent",
+        "--ignore-missing-imports",
+        "--show-column-numbers",
+        "--no-pretty",
+        "--no-strict-optional"
+    ],
+    "python.formatting.provider": "yapf",
+    "python.formatting.yapfArgs": [
+        "--style",
+        "{based_on_style: google, indent_width: 4, column_limit=99}"
+    ]
+}
