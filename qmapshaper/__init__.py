@@ -8,4 +8,4 @@ from .qmapshaper_plugin import QMapshaperPlugin
 # noinspection PyPep8Naming
 def classFactory(iface):
 
-    return QMapshaperPlugin()
+    return QMapshaperPlugin(iface)
