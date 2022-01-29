@@ -6,7 +6,7 @@ from qgis.PyQt.QtCore import QVariant
 from qgis.core import (QgsProcessingAlgorithm, QgsProcessingUtils, QgsVectorFileWriter,
                        QgsCoordinateTransformContext, QgsVectorLayer, QgsField,
                        QgsVectorLayerJoinInfo, QgsProcessingFeedback, QgsMemoryProviderUtils,
-                       QgsProcessingException)
+                       QgsVectorLayerUtils, QgsProcessingException)
 from processing.algs.gdal.GdalUtils import GdalUtils
 
 from ..utils import QMapshaperUtils
@@ -124,7 +124,8 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
         memory_layer.startEditing()
 
         for feature in layer.getFeatures():
-            memory_layer.addFeature(feature)
+            features = QgsVectorLayerUtils.makeFeatureCompatible(feature, memory_layer)
+            memory_layer.addFeatures(features)
 
         memory_layer.commitChanges()
 
