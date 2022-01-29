@@ -1,3 +1,5 @@
+from typing import List, Union
+
 from qgis.core import (QgsProcessingParameterVectorLayer, QgsProcessingParameterNumber,
                        QgsProcessingFeedback, QgsProcessingParameterVectorDestination)
 
@@ -38,20 +40,14 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
 
         simplify_percent = self.parameterAsDouble(parameters, self.SIMPLIFY, context)
 
-        arguments = [
-            input_layer,
-            '-simplify ',
-            'dp',
-            '{}%'.format(simplify_percent),
-            '-o',
-            'format=geojson',
-            self.mapshaper_geojson_output,
-        ]
+        arguments = self.prepare_arguments(input_file_name=input_layer,
+                                           output_file_name=self.output_layer_location,
+                                           simplify_percent=simplify_percent)
 
         return arguments
 
     def commandName(self):
-        return "mapshaper-xl"
+        return self.get_command()
 
     def name(self):
         return "simplify"
@@ -61,3 +57,26 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
 
     def createInstance(self):
         return SimplifyAlgorithm()
+
+    @staticmethod
+    def get_command() -> str:
+        return "mapshaper-xl"
+
+    @staticmethod
+    def prepare_arguments(input_file_name: str,
+                          output_file_name: str,
+                          simplify_percent: Union[int, float, str] = 50,
+                          method: str = "dp") -> List[str]:
+
+        arguments = [
+            input_file_name,
+            '-simplify',
+            method,
+            '{}%'.format(simplify_percent),
+            'keep-shapes',
+            '-o',
+            'format=geojson',
+            output_file_name,
+        ]
+
+        return arguments

@@ -97,17 +97,19 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
 
         memory_layer.setCrs(self.input_layer_memory.crs())
 
-        self.join_fields_back(memory_layer)
+        self.join_fields_back(memory_layer, self.input_layer_memory)
 
         self.write_output_file(layer=memory_layer,
                                file=self.output_layer_location,
                                layer_name=self.input_layer_memory.name())
 
-    def join_fields_back(self, layer_to_join_to: QgsVectorLayer) -> None:
+    @staticmethod
+    def join_fields_back(layer_to_join_to: QgsVectorLayer,
+                         layer_to_join_from: QgsVectorLayer) -> None:
 
         join = QgsVectorLayerJoinInfo()
         join.setTargetFieldName(JOIN_FIELD_NAME)
-        join.setJoinLayer(self.input_layer_memory)
+        join.setJoinLayer(layer_to_join_from)
         join.setJoinFieldName(JOIN_FIELD_NAME)
         join.setUsingMemoryCache(True)
 
@@ -154,8 +156,24 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
         options.driverName = GdalUtils.getVectorDriverFromFileName(file)
         options.layerName = layer_name
         options.attributes = fields_indexes
+        options.actionOnExistingFile = QgsVectorFileWriter.CreateOrOverwriteFile
 
         QgsVectorFileWriter.writeAsVectorFormatV3(layer=layer,
                                                   fileName=file,
                                                   transformContext=QgsCoordinateTransformContext(),
                                                   options=options)
+
+    @staticmethod
+    def prepare_random_temp_geojson_filename() -> str:
+        return QgsProcessingUtils.generateTempFilename("{}.geojson".format(uuid4()))
+
+    @staticmethod
+    def add_mapshaper_id_field(layer: QgsVectorLayer) -> int:
+
+        layer.startEditing()
+
+        field_index = layer.addExpressionField("$id", QgsField(JOIN_FIELD_NAME, QVariant.Int))
+
+        layer.commitChanges()
+
+        return field_index
