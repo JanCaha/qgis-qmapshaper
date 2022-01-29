@@ -66,6 +66,8 @@ class DialogTool(QDialog):
         self.vlayout.addWidget(self.button_insert)
         self.setLayout(self.vlayout)
 
+        self.update_layer()
+
     def update_layer(self) -> None:
 
         layer = self.layer_selection.currentLayer()
