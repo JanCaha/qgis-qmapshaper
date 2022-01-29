@@ -7,6 +7,7 @@ from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
 from .utils import QMapshaperUtils
 from .processing.tool_simplify import SimplifyAlgorithm
+from .text_constants import TextConstants
 
 
 class QMapshaperProvider(QgsProcessingProvider):
@@ -45,10 +46,10 @@ class QMapshaperProvider(QgsProcessingProvider):
         self.addAlgorithm(SimplifyAlgorithm())
 
     def id(self):
-        return 'qmapshaper'
+        return TextConstants.plugin_id
 
     def name(self):
-        return "QMapshaper"
+        return TextConstants.plugin_name
 
     def icon(self):
         path = Path(__file__).parent / "icons" / "main_icon.png"
