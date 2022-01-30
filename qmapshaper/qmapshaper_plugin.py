@@ -88,8 +88,9 @@ class QMapshaperPlugin():
 
     def run_tool_interactive_simplifier(self):
 
-        if self.tool is None:
-            self.dlg = DialogTool(parent=self.iface.mainWindow(), iface=self.iface)
+        dlg = DialogTool(parent=self.iface.mainWindow(), iface=self.iface)
 
-        self.dlg.show()
-        self.dlg.exec_()
+        dlg.show()
+        dlg.exec_()
+
+        dlg = None
