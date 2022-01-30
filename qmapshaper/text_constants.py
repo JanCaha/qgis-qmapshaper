@@ -5,3 +5,5 @@ class TextConstants:
     plugin_name = "QMapshaper"
 
     tool_name_interactive_simplifier = "Interactive Simplifier"
+
+    JOIN_FIELD_NAME = "id_mapshaper"

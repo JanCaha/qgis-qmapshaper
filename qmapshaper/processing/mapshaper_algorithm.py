@@ -10,8 +10,7 @@ from qgis.core import (QgsProcessingAlgorithm, QgsProcessingUtils, QgsVectorFile
 from processing.algs.gdal.GdalUtils import GdalUtils
 
 from ..utils import QMapshaperUtils
-
-JOIN_FIELD_NAME = "id_mapshaper"
+from ..text_constants import TextConstants
 
 
 class MapshaperAlgorithm(QgsProcessingAlgorithm):
@@ -79,7 +78,7 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
         self.input_layer_memory.startEditing()
 
         join_field_index = self.input_layer_memory.addExpressionField(
-            "$id", QgsField(JOIN_FIELD_NAME, QVariant.Int))
+            "$id", QgsField(TextConstants.JOIN_FIELD_NAME, QVariant.Int))
 
         self.input_layer_memory.commitChanges()
 
@@ -108,9 +107,9 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
                          layer_to_join_from: QgsVectorLayer) -> None:
 
         join = QgsVectorLayerJoinInfo()
-        join.setTargetFieldName(JOIN_FIELD_NAME)
+        join.setTargetFieldName(TextConstants.JOIN_FIELD_NAME)
         join.setJoinLayer(layer_to_join_from)
-        join.setJoinFieldName(JOIN_FIELD_NAME)
+        join.setJoinFieldName(TextConstants.JOIN_FIELD_NAME)
         join.setUsingMemoryCache(True)
 
         layer_to_join_to.addJoin(join)
@@ -151,7 +150,7 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
 
         fields_indexes = [x for x in range(0, fields.count())]
 
-        fields_indexes.remove(fields.lookupField(JOIN_FIELD_NAME))
+        fields_indexes.remove(fields.lookupField(TextConstants.JOIN_FIELD_NAME))
 
         options = QgsVectorFileWriter.SaveVectorOptions()
         options.driverName = GdalUtils.getVectorDriverFromFileName(file)
@@ -173,7 +172,8 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
 
         layer.startEditing()
 
-        field_index = layer.addExpressionField("$id", QgsField(JOIN_FIELD_NAME, QVariant.Int))
+        field_index = layer.addExpressionField(
+            "$id", QgsField(TextConstants.JOIN_FIELD_NAME, QVariant.Int))
 
         layer.commitChanges()
 
