@@ -41,7 +41,7 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
         simplify_percent = self.parameterAsDouble(parameters, self.SIMPLIFY, context)
 
         arguments = self.prepare_arguments(input_file_name=input_layer,
-                                           output_file_name=self.output_layer_location,
+                                           output_file_name=self.mapshaper_output,
                                            simplify_percent=simplify_percent)
 
         return arguments
@@ -75,7 +75,7 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
             '{}%'.format(simplify_percent),
             'keep-shapes',
             '-o',
-            'format=geojson',
+            'format={}'.format(MapshaperAlgorithm.output_format()),
             output_file_name,
         ]
 

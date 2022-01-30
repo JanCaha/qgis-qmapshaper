@@ -9,7 +9,7 @@ from qgis.core import (QgsProcessingAlgorithm, QgsProcessingUtils, QgsVectorFile
                        QgsVectorLayerUtils, QgsProcessingException)
 from processing.algs.gdal.GdalUtils import GdalUtils
 
-from ..utils import QMapshaperUtils
+from ..utils import QMapshaperUtils, log
 from ..text_constants import TextConstants
 
 
@@ -20,11 +20,9 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
 
         self.input_layer_memory: QgsVectorLayer = None
 
-        self.mapshaper_geojson_output = QgsProcessingUtils.generateTempFilename(
-            "{}.geojson".format(uuid4()))
+        self.mapshaper_output = self.prepare_random_temp_filename()
 
-        self.mapshaper_geojson_input = QgsProcessingUtils.generateTempFilename("{}.geojson".format(
-            uuid4()))
+        self.mapshaper_input = self.prepare_random_temp_filename()
 
         self.output_layer_location = ""
 
@@ -82,17 +80,17 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
 
         self.input_layer_memory.commitChanges()
 
-        self.write_geojson_with_single_attribute(layer=self.input_layer_memory,
-                                                 file=self.mapshaper_geojson_input,
-                                                 col_index=join_field_index)
+        self.write_layer_with_single_attribute(layer=self.input_layer_memory,
+                                               file=self.mapshaper_input,
+                                               col_index=join_field_index)
 
-        return self.mapshaper_geojson_input
+        return self.mapshaper_input
 
     def process_output_layer(self, feedback: QgsProcessingFeedback):
 
-        layer_geojson = QgsVectorLayer(self.mapshaper_geojson_output, "geojson", "ogr")
+        layer_generalized = QgsVectorLayer(self.mapshaper_output, "data", "ogr")
 
-        memory_layer = self.copy_to_memory_layer(layer_geojson)
+        memory_layer = self.copy_to_memory_layer(layer_generalized)
 
         memory_layer.setCrs(self.input_layer_memory.crs())
 
@@ -131,11 +129,11 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
         return memory_layer
 
     @staticmethod
-    def write_geojson_with_single_attribute(layer: QgsVectorLayer, file: str,
-                                            col_index: int) -> None:
+    def write_layer_with_single_attribute(layer: QgsVectorLayer, file: str,
+                                          col_index: int) -> None:
 
         options = QgsVectorFileWriter.SaveVectorOptions()
-        options.driverName = "GeoJSON"
+        options.driverName = "ESRI Shapefile"
         options.attributes = [col_index]
 
         QgsVectorFileWriter.writeAsVectorFormatV3(layer=layer,
@@ -150,7 +148,10 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
 
         fields_indexes = [x for x in range(0, fields.count())]
 
-        fields_indexes.remove(fields.lookupField(TextConstants.JOIN_FIELD_NAME))
+        field_join_index = fields.lookupField(TextConstants.JOIN_FIELD_NAME)
+
+        if field_join_index in fields_indexes:
+            fields_indexes.remove(field_join_index)
 
         options = QgsVectorFileWriter.SaveVectorOptions()
         options.driverName = GdalUtils.getVectorDriverFromFileName(file)
@@ -164,8 +165,8 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
                                                   options=options)
 
     @staticmethod
-    def prepare_random_temp_geojson_filename() -> str:
-        return QgsProcessingUtils.generateTempFilename("{}.geojson".format(uuid4()))
+    def prepare_random_temp_filename() -> str:
+        return QgsProcessingUtils.generateTempFilename("{}.shp".format(uuid4()))
 
     @staticmethod
     def add_mapshaper_id_field(layer: QgsVectorLayer) -> int:
@@ -178,3 +179,7 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
         layer.commitChanges()
 
         return field_index
+
+    @staticmethod
+    def output_format() -> str:
+        return "shapefile"
