@@ -53,9 +53,10 @@ class QMapshaperUtils:
         return folder.absolute().as_posix()
 
     @staticmethod
-    def runMapshaper(commands: List[str], feedback: QgsProcessingFeedback):
+    def runMapshaper(commands: List[str], feedback: QgsProcessingFeedback = None):
 
-        feedback.pushInfo("Running command: {}".format(" ".join(commands)))
+        if feedback:
+            feedback.pushInfo("Running command: {}".format(" ".join(commands)))
 
         res = subprocess.Popen(commands,
                                stdout=subprocess.PIPE,
@@ -63,8 +64,15 @@ class QMapshaperUtils:
                                stderr=subprocess.STDOUT,
                                universal_newlines=True)
 
-        feedback.pushInfo("Result {}.".format(res.stdout.readlines()))
-        feedback.pushInfo("Command runned.")
+        if feedback:
+            feedback.pushInfo("Result: ")
+
+            lines = res.stdout.readlines()
+
+            for line in lines:
+                feedback.pushInfo("{}.".format(line))
+
+            feedback.pushInfo("Command runned.")
 
 
 def get_icons_folder() -> Path:
