@@ -1,10 +1,7 @@
 from pathlib import Path
-from typing import List, Dict
 
-from qgis.core import (QgsProject, QgsVectorLayer, QgsMapLayerProxyModel, QgsProcessingFeedback,
-                       QgsFeatureRenderer, Qgis)
-from qgis.gui import QgsMapCanvas, QgsMapLayerComboBox
-from qgis.PyQt import uic
+from qgis.core import (QgsProject, QgsVectorLayer, QgsMapLayerProxyModel, QgsProcessingFeedback)
+from qgis.gui import (QgsMapCanvas, QgsMapLayerComboBox, QgisInterface)
 from qgis.PyQt.QtWidgets import QDialog, QLabel, QVBoxLayout, QSlider, QPushButton
 from qgis.PyQt.QtCore import Qt
 
@@ -30,9 +27,11 @@ class DialogTool(QDialog):
     generalized_geojson_filename: str = ""
     generalized_geojson_layer: QgsVectorLayer = None
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, iface: QgisInterface = None):
 
         super().__init__(parent)
+
+        self.iface = iface
 
         self.setWindowTitle(TextConstants.tool_name_interactive_simplifier)
 
@@ -84,6 +83,9 @@ class DialogTool(QDialog):
 
         log(f"Data stored at: {self.base_geojson_filename}")
 
+        self.canvas.setDestinationCrs(self.iface.mapCanvas().project().crs())
+        self.canvas.setExtent(self.iface.mapCanvas().extent())
+
         self.update_generalized_layer()
 
     def update_generalized_layer(self) -> None:
@@ -118,7 +120,6 @@ class DialogTool(QDialog):
             log(f"features {features_count_with_non_empty_geoms(self.generalized_geojson_layer)}")
 
             self.canvas.setLayers([self.generalized_geojson_layer])
-            self.canvas.setExtent(self.generalized_geojson_layer.extent())
             self.canvas.redrawAllLayers()
 
     def send_layer_to_project(self) -> None:
@@ -126,6 +127,14 @@ class DialogTool(QDialog):
         generalized_layer = MapshaperAlgorithm.copy_to_memory_layer(self.generalized_geojson_layer)
 
         MapshaperAlgorithm.join_fields_back(generalized_layer, self.memory_layer)
+
+        generalized_layer = MapshaperAlgorithm.copy_to_memory_layer(generalized_layer)
+
+        index = generalized_layer.fields().lookupField(TextConstants.JOIN_FIELD_NAME)
+
+        generalized_layer.startEditing()
+        generalized_layer.deleteAttribute(index)
+        generalized_layer.commitChanges()
 
         generalized_layer.setName("{} generalized".format(self.memory_layer.name()))
         generalized_layer.setCrs(self.memory_layer.crs())
