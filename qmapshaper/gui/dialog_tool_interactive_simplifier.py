@@ -21,11 +21,11 @@ class DialogTool(QDialog):
 
     memory_layer: QgsVectorLayer = None
 
-    base_geojson_filename: str = ""
-    base_geojson_layer: QgsVectorLayer = None
+    base_data_filename: str = ""
+    base_data_layer: QgsVectorLayer = None
 
-    generalized_geojson_filename: str = ""
-    generalized_geojson_layer: QgsVectorLayer = None
+    generalized_data_filename: str = ""
+    generalized_data_layer: QgsVectorLayer = None
 
     def __init__(self, parent=None, iface: QgisInterface = None):
 
@@ -73,15 +73,15 @@ class DialogTool(QDialog):
 
         self.memory_layer = MapshaperAlgorithm.copy_to_memory_layer(layer)
 
-        self.base_geojson_filename = MapshaperAlgorithm.prepare_random_temp_geojson_filename()
+        self.base_data_filename = MapshaperAlgorithm.prepare_random_temp_filename()
 
         field_index = MapshaperAlgorithm.add_mapshaper_id_field(self.memory_layer)
 
-        MapshaperAlgorithm.write_geojson_with_single_attribute(layer=self.memory_layer,
-                                                               file=self.base_geojson_filename,
-                                                               col_index=field_index)
+        MapshaperAlgorithm.write_layer_with_single_attribute(layer=self.memory_layer,
+                                                             file=self.base_data_filename,
+                                                             col_index=field_index)
 
-        log(f"Data stored at: {self.base_geojson_filename}")
+        log(f"Data stored at: {self.base_data_filename}")
 
         self.canvas.setDestinationCrs(self.iface.mapCanvas().project().crs())
         self.canvas.setExtent(self.iface.mapCanvas().extent())
@@ -90,17 +90,16 @@ class DialogTool(QDialog):
 
     def update_generalized_layer(self) -> None:
 
-        if self.generalized_geojson_filename:
-            path = Path(self.generalized_geojson_filename)
+        if self.generalized_data_filename:
+            path = Path(self.generalized_data_filename)
             if path.exists() and path.is_file():
                 path.unlink(missing_ok=True)
 
-        self.generalized_geojson_filename = MapshaperAlgorithm.prepare_random_temp_geojson_filename(
-        )
+        self.generalized_data_filename = MapshaperAlgorithm.prepare_random_temp_filename()
 
         arguments = SimplifyAlgorithm.prepare_arguments(
-            input_file_name=self.base_geojson_filename,
-            output_file_name=self.generalized_geojson_filename,
+            input_file_name=self.base_data_filename,
+            output_file_name=self.generalized_data_filename,
             simplify_percent=self.percent_slider.value())
 
         command = QMapshaperUtils.full_path_command(command=SimplifyAlgorithm.get_command())
@@ -109,22 +108,22 @@ class DialogTool(QDialog):
 
         QMapshaperUtils.runMapshaper([command] + arguments, QgsProcessingFeedback())
 
-        log(f"Data to load: {self.generalized_geojson_filename}")
+        log(f"Data to load: {self.generalized_data_filename}")
 
-        self.generalized_geojson_layer = QgsVectorLayer(self.generalized_geojson_filename,
-                                                        "geojson", "ogr")
+        self.generalized_data_layer = QgsVectorLayer(self.generalized_data_filename, "geojson",
+                                                     "ogr")
 
-        if self.generalized_geojson_layer:
+        if self.generalized_data_layer:
 
-            log(f"Data source {self.generalized_geojson_layer.source()}")
-            log(f"features {features_count_with_non_empty_geoms(self.generalized_geojson_layer)}")
+            log(f"Data source {self.generalized_data_layer.source()}")
+            log(f"features {features_count_with_non_empty_geoms(self.generalized_data_layer)}")
 
-            self.canvas.setLayers([self.generalized_geojson_layer])
+            self.canvas.setLayers([self.generalized_data_layer])
             self.canvas.redrawAllLayers()
 
     def send_layer_to_project(self) -> None:
 
-        generalized_layer = MapshaperAlgorithm.copy_to_memory_layer(self.generalized_geojson_layer)
+        generalized_layer = MapshaperAlgorithm.copy_to_memory_layer(self.generalized_data_layer)
 
         MapshaperAlgorithm.join_fields_back(generalized_layer, self.memory_layer)
 
