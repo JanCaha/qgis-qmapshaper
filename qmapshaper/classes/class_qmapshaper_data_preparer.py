@@ -65,13 +65,15 @@ class QMapshaperDataPreparer:
 
     @staticmethod
     def join_fields_back(layer_to_join_to: QgsVectorLayer,
-                         layer_to_join_from: QgsVectorLayer) -> None:
+                         layer_to_join_from: QgsVectorLayer,
+                         prefix: str = "") -> None:
 
         join = QgsVectorLayerJoinInfo()
         join.setTargetFieldName(TextConstants.JOIN_FIELD_NAME)
         join.setJoinLayer(layer_to_join_from)
         join.setJoinFieldName(TextConstants.JOIN_FIELD_NAME)
         join.setUsingMemoryCache(True)
+        join.setPrefix(prefix)
 
         layer_to_join_to.addJoin(join)
 
