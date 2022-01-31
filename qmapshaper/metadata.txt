@@ -6,7 +6,7 @@
 name=QMapshaper
 qgisMinimumVersion=3.22
 description=
-version=0.2
+version=0.3
 author=Jan Caha
 email=jan.caha@outlook.com
 
