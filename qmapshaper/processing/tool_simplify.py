@@ -1,7 +1,8 @@
 from typing import List, Union, Dict
 
 from qgis.core import (QgsProcessingParameterVectorLayer, QgsProcessingParameterNumber,
-                       QgsProcessingFeedback, QgsProcessingParameterVectorDestination)
+                       QgsProcessingParameterEnum, QgsProcessingFeedback,
+                       QgsProcessingParameterVectorDestination)
 
 from .mapshaper_algorithm import MapshaperAlgorithm
 
@@ -10,6 +11,7 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
 
     INPUT_LAYER = "INPUT"
     SIMPLIFY = "SIMPLIFY"
+    METHOD = "METHOD"
     OUTPUT_LAYER = "OUTPUT"
 
     def initAlgorithm(self, config=None):
@@ -25,6 +27,12 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
                                          maxValue=99))
 
         self.addParameter(
+            QgsProcessingParameterEnum(self.METHOD,
+                                       "Simplification method",
+                                       options=list(self.methods().keys()),
+                                       defaultValue=0))
+
+        self.addParameter(
             QgsProcessingParameterVectorDestination(self.OUTPUT_LAYER, "Output Layer"))
 
     def prepare_data(self, parameters, context, feedback: QgsProcessingFeedback) -> None:
@@ -38,7 +46,11 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
 
         simplify_percent = self.parameterAsDouble(parameters, self.SIMPLIFY, context)
 
-        arguments = self.prepare_arguments(simplify_percent=simplify_percent)
+        method = self.parameterAsEnum(parameters, self.METHOD, context)
+
+        method = self.get_method(method)
+
+        arguments = self.prepare_arguments(simplify_percent=simplify_percent, method=method)
 
         return arguments
 
@@ -69,3 +81,11 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
         ]
 
         return arguments
+
+    @staticmethod
+    def methods() -> Dict[str, str]:
+        return {"Douglas-Peucker": "dp", "Visvalingam": "visvalingam"}
+
+    @staticmethod
+    def get_method(index: int) -> str:
+        return list(SimplifyAlgorithm.methods().values())[index]
