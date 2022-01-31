@@ -5,7 +5,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.core import QgsProcessingProvider
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
-from .utils import QMapshaperUtils
+from .classes.class_qmapshaper_paths import QMapshaperPaths
 from .processing.tool_simplify import SimplifyAlgorithm
 from .text_constants import TextConstants
 
@@ -28,9 +28,9 @@ class QMapshaperProvider(QgsProcessingProvider):
 
         ProcessingConfig.addSetting(
             Setting(self.name(),
-                    QMapshaperUtils.MAPSHAPER_FOLDER,
+                    TextConstants.MAPSHAPER_FOLDER,
                     self.tr('Mapshaper folder'),
-                    QMapshaperUtils.mapshaper_folder(),
+                    QMapshaperPaths.mapshaper_folder(),
                     valuetype=Setting.FOLDER))
 
         ProcessingConfig.readSettings()
