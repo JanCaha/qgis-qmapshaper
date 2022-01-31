@@ -2,7 +2,7 @@ from pathlib import Path
 
 from qgis.core import (QgsProject, QgsVectorLayer, QgsMapLayerProxyModel, QgsProcessingFeedback)
 from qgis.gui import (QgsMapCanvas, QgsMapLayerComboBox, QgisInterface)
-from qgis.PyQt.QtWidgets import QDialog, QLabel, QVBoxLayout, QSlider, QPushButton
+from qgis.PyQt.QtWidgets import QDialog, QLabel, QVBoxLayout, QSlider, QPushButton, QComboBox
 from qgis.PyQt.QtCore import Qt
 
 from ..processing.tool_simplify import SimplifyAlgorithm
@@ -21,6 +21,7 @@ class InteractiveSimplifierTool(QDialog):
     canvas: QgsMapCanvas
     layer_selection: QgsMapLayerComboBox
     button_insert: QPushButton
+    methods: QComboBox
 
     memory_layer: QgsVectorLayer = None
 
@@ -52,6 +53,11 @@ class InteractiveSimplifierTool(QDialog):
         self.percent_slider.setValue(50)
         self.percent_slider.sliderReleased.connect(self.update_generalized_layer)
 
+        self.methods = QComboBox(self)
+        self.methods.addItems(SimplifyAlgorithm.methods().keys())
+
+        self.methods.currentIndexChanged.connect(self.update_generalized_layer)
+
         self.canvas = QgsMapCanvas(self)
 
         self.button_insert = QPushButton(self)
@@ -63,6 +69,8 @@ class InteractiveSimplifierTool(QDialog):
         self.vlayout.addWidget(self.layer_selection)
         self.vlayout.addWidget(QLabel("Simplify to %"))
         self.vlayout.addWidget(self.percent_slider)
+        self.vlayout.addWidget(QLabel("Method"))
+        self.vlayout.addWidget(self.methods)
         self.vlayout.addWidget(QLabel("Map"))
         self.vlayout.addWidget(self.canvas)
         self.vlayout.addWidget(self.button_insert)
@@ -101,7 +109,8 @@ class InteractiveSimplifierTool(QDialog):
         self.generalized_data_filename = QMapshaperFile.random_temp_filename()
 
         arguments = SimplifyAlgorithm.prepare_arguments(
-            simplify_percent=self.percent_slider.value())
+            simplify_percent=self.percent_slider.value(),
+            method=SimplifyAlgorithm.get_method(self.methods.currentIndex()))
 
         commands = QMapshaperCommandBuilder.prepare_console_commands(
             input_data_path=self.base_data_filename,
