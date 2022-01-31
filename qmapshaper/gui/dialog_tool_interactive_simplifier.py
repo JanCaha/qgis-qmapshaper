@@ -5,13 +5,16 @@ from qgis.gui import (QgsMapCanvas, QgsMapLayerComboBox, QgisInterface)
 from qgis.PyQt.QtWidgets import QDialog, QLabel, QVBoxLayout, QSlider, QPushButton
 from qgis.PyQt.QtCore import Qt
 
-from ..processing.mapshaper_algorithm import MapshaperAlgorithm
 from ..processing.tool_simplify import SimplifyAlgorithm
-from ..utils import QMapshaperUtils, log, features_count_with_non_empty_geoms
+from ..utils import log, features_count_with_non_empty_geoms
 from ..text_constants import TextConstants
+from ..classes.class_qmapshaper_data_preparer import QMapshaperDataPreparer
+from ..classes.class_qmapshaper_file import QMapshaperFile
+from ..classes.class_qmapshaper_command_builder import QMapshaperCommandBuilder
+from ..classes.class_qmapshaper_runner import QMapshaperRunner
 
 
-class DialogTool(QDialog):
+class InteractiveSimplifierTool(QDialog):
 
     label_text: QLabel
     percent_slider: QSlider
@@ -71,15 +74,15 @@ class DialogTool(QDialog):
 
         layer = self.layer_selection.currentLayer()
 
-        self.memory_layer = MapshaperAlgorithm.copy_to_memory_layer(layer)
+        self.memory_layer = QMapshaperDataPreparer.copy_to_memory_layer(layer)
 
-        self.base_data_filename = MapshaperAlgorithm.prepare_random_temp_filename()
+        self.base_data_filename = QMapshaperFile.random_temp_filename()
 
-        field_index = MapshaperAlgorithm.add_mapshaper_id_field(self.memory_layer)
+        field_index = QMapshaperDataPreparer.add_mapshaper_id_field(self.memory_layer)
 
-        MapshaperAlgorithm.write_layer_with_single_attribute(layer=self.memory_layer,
-                                                             file=self.base_data_filename,
-                                                             col_index=field_index)
+        QMapshaperDataPreparer.write_layer_with_single_attribute(layer=self.memory_layer,
+                                                                 file=self.base_data_filename,
+                                                                 col_index=field_index)
 
         log(f"Data stored at: {self.base_data_filename}")
 
@@ -95,18 +98,20 @@ class DialogTool(QDialog):
             if path.exists() and path.is_file():
                 path.unlink(missing_ok=True)
 
-        self.generalized_data_filename = MapshaperAlgorithm.prepare_random_temp_filename()
+        self.generalized_data_filename = QMapshaperFile.random_temp_filename()
 
         arguments = SimplifyAlgorithm.prepare_arguments(
-            input_file_name=self.base_data_filename,
-            output_file_name=self.generalized_data_filename,
             simplify_percent=self.percent_slider.value())
 
-        command = QMapshaperUtils.full_path_command(command=SimplifyAlgorithm.get_command())
+        commands = QMapshaperCommandBuilder.prepare_console_commands(
+            input_data_path=self.base_data_filename,
+            output_data_path=self.generalized_data_filename,
+            command=SimplifyAlgorithm.command(),
+            arguments=arguments)
 
-        log(f"COMMAND TO RUN: {command} {' '.join(arguments)}")
+        log(f"COMMAND TO RUN: {' '.join(commands)}")
 
-        QMapshaperUtils.runMapshaper([command] + arguments, QgsProcessingFeedback())
+        QMapshaperRunner.run_mapshaper(commands, QgsProcessingFeedback())
 
         log(f"Data to load: {self.generalized_data_filename}")
 
@@ -123,11 +128,12 @@ class DialogTool(QDialog):
 
     def send_layer_to_project(self) -> None:
 
-        generalized_layer = MapshaperAlgorithm.copy_to_memory_layer(self.generalized_data_layer)
+        generalized_layer = QMapshaperDataPreparer.copy_to_memory_layer(
+            self.generalized_data_layer)
 
-        MapshaperAlgorithm.join_fields_back(generalized_layer, self.memory_layer)
+        QMapshaperDataPreparer.join_fields_back(generalized_layer, self.memory_layer)
 
-        generalized_layer = MapshaperAlgorithm.copy_to_memory_layer(generalized_layer)
+        generalized_layer = QMapshaperDataPreparer.copy_to_memory_layer(generalized_layer)
 
         index = generalized_layer.fields().lookupField(TextConstants.JOIN_FIELD_NAME)
 
