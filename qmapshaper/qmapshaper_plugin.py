@@ -9,7 +9,7 @@ from qgis.PyQt.QtWidgets import QAction
 
 from .qmapshaper_provider import QMapshaperProvider
 from .utils import get_icon_path
-from .gui.dialog_tool_interactive_simplifier import DialogTool
+from .gui.dialog_tool_interactive_simplifier import InteractiveSimplifierTool
 from .text_constants import TextConstants
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
@@ -88,7 +88,7 @@ class QMapshaperPlugin():
 
     def run_tool_interactive_simplifier(self):
 
-        dlg = DialogTool(parent=self.iface.mainWindow(), iface=self.iface)
+        dlg = InteractiveSimplifierTool(parent=self.iface.mainWindow(), iface=self.iface)
 
         dlg.show()
         dlg.exec_()
