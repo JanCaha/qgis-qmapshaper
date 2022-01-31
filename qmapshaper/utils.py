@@ -16,32 +16,29 @@ if os.environ.get("QMAPSHAPER_DEV"):
         LOG_DEV = True
 
 
-class QMapshaperUtils:
-
-    MAPSHAPER_FOLDER = "MAPSHAPER_FOLDER"
+class QMapshaperCommandsUtils:
 
     @staticmethod
     def full_path_command(command: str) -> str:
 
-        path = Path(QMapshaperUtils.mapshaper_bin_folder()) / command
+        path = Path(QMapshaperCommandsUtils.mapshaper_bin_folder()) / command
 
         return path.absolute().as_posix()
 
     @staticmethod
     def mapshaper_bin_folder() -> str:
 
-        folder = ProcessingConfig.getSetting(QMapshaperUtils.MAPSHAPER_FOLDER)
-
-        folder = Path(folder) / "bin"
+        folder = Path(QMapshaperCommandsUtils.mapshaper_folder()) / "bin"
 
         return folder.absolute().as_posix()
 
     @staticmethod
     def mapshaper_folder() -> str:
-        folder = ProcessingConfig.getSetting(QMapshaperUtils.MAPSHAPER_FOLDER)
+
+        folder = ProcessingConfig.getSetting(TextConstants.MAPSHAPER_FOLDER)
 
         if not folder:
-            folder = QMapshaperUtils.guess_mapshaper_folder()
+            folder = QMapshaperCommandsUtils.guess_mapshaper_folder()
 
         return folder if folder else ''
 
