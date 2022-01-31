@@ -1,4 +1,5 @@
-from typing import List
+from pathlib import Path
+from typing import List, Union
 import subprocess
 
 from qgis.core import QgsProcessingFeedback
@@ -27,3 +28,21 @@ class QMapshaperRunner:
                 feedback.pushInfo("{}.".format(line))
 
             feedback.pushInfo("Command runned.")
+
+    @staticmethod
+    def test_run(path: Union[str, Path]):
+
+        path_command = Path(path) / "bin" / "mapshaper"
+
+        res = subprocess.Popen([path_command],
+                               stdout=subprocess.PIPE,
+                               stdin=subprocess.DEVNULL,
+                               stderr=subprocess.STDOUT,
+                               universal_newlines=True)
+
+        lines = res.stdout.readlines()
+
+        if lines[0] == "Error: No commands to run":
+            return True
+
+        return False
