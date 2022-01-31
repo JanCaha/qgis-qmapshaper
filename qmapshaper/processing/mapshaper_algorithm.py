@@ -1,67 +1,93 @@
+import abc
 from pathlib import Path
-from uuid import uuid4
+from typing import List, Dict
 
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import QVariant
-from qgis.core import (QgsProcessingAlgorithm, QgsProcessingUtils, QgsVectorFileWriter,
-                       QgsCoordinateTransformContext, QgsVectorLayer, QgsField,
-                       QgsVectorLayerJoinInfo, QgsProcessingFeedback, QgsMemoryProviderUtils,
-                       QgsVectorLayerUtils, QgsProcessingException)
-from processing.algs.gdal.GdalUtils import GdalUtils
+from qgis.core import (QgsProcessingAlgorithm, QgsVectorLayer, QgsProcessingFeedback,
+                       QgsProcessingException)
 
-from ..utils import QMapshaperUtils, log
-from ..text_constants import TextConstants
+from ..utils import log
+from ..classes.class_qmapshaper_runner import QMapshaperRunner
+from ..classes.class_qmapshaper_command_builder import QMapshaperCommandBuilder
+from ..classes.class_qmapshaper_data_preparer import QMapshaperDataPreparer
+from ..classes.class_qmapshaper_file import QMapshaperFile
 
 
 class MapshaperAlgorithm(QgsProcessingAlgorithm):
+
+    __metaclass__ = abc.ABCMeta
+
+    input_layer_memory: QgsVectorLayer
+    """
+    Copy of input layer hold in memory. With added field for identification and joins.
+    """
+
+    mapshaper_input: str
+    """
+    Path to the file that will be used as input to mapshaper command.
+    """
+
+    mapshaper_output: str
+    """
+    Path to the file that will be used as output from mapshaper command.
+    """
 
     def __init__(self):
         super().__init__()
 
         self.input_layer_memory: QgsVectorLayer = None
 
-        self.mapshaper_output = self.prepare_random_temp_filename()
+        self.mapshaper_output = QMapshaperFile.random_temp_filename()
 
-        self.mapshaper_input = self.prepare_random_temp_filename()
+        self.mapshaper_input = QMapshaperFile.random_temp_filename()
 
-        self.output_layer_location = ""
+        self.result_layer_location = ""
 
-    def icon(self):
-
-        location = Path(__file__).parent.parent / "icons" / "main_icon.png"
-
-        return QIcon(location.absolute().as_posix())
-
-    def run_command(self):
-
-        bin_path = Path(QMapshaperUtils.mapshaper_bin_folder()) / self.commandName()
-
-        return bin_path.absolute().as_posix()
-
-    def commandName(self):
+    @abc.abstractmethod
+    def prepare_data(self, parameters, context, feedback: QgsProcessingFeedback) -> None:
         return None
 
-    def getConsoleCommands(self,
-                           parameters,
-                           context,
-                           feedback: QgsProcessingFeedback,
-                           executing=True):
-
-        return [self.run_command()] + self.getConsoleArguments(
-            parameters, context, feedback, executing=True)
-
-    def getConsoleArguments(self, parameters, context, feedback, executing=True):
+    @abc.abstractmethod
+    def get_arguments(self, parameters, context, feedback: QgsProcessingFeedback) -> List[str]:
         return None
+
+    @staticmethod
+    @abc.abstractmethod
+    def command() -> str:
+        return None
+
+    @abc.abstractmethod
+    def return_dict(self) -> Dict[str, str]:
+        return None
+
+    @staticmethod
+    def prepare_arguments() -> List[str]:
+        return None
+
+    def get_console_commands(self, parameters, context,
+                             feedback: QgsProcessingFeedback) -> List[str]:
+
+        arguments = self.get_arguments(parameters, context, feedback)
+
+        commands = QMapshaperCommandBuilder.prepare_console_commands(
+            input_data_path=self.mapshaper_input,
+            output_data_path=self.mapshaper_output,
+            command=self.name(),
+            arguments=arguments)
+
+        return commands
 
     def processAlgorithm(self, parameters, context, feedback: QgsProcessingFeedback):
 
-        commands = self.getConsoleCommands(parameters, context, feedback, executing=True)
+        self.prepare_data(parameters, context, feedback)
 
-        QMapshaperUtils.runMapshaper(commands, feedback)
+        commands = self.get_console_commands(parameters, context, feedback)
+
+        QMapshaperRunner.run_mapshaper(commands, feedback)
 
         self.process_output_layer(feedback)
 
-        return {}
+        return self.return_dict()
 
     def process_input_layer(self, parameter_name, parameters, context,
                             feedback: QgsProcessingFeedback) -> None:
@@ -71,115 +97,30 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
         if not layer:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT_LAYER))
 
-        self.input_layer_memory = self.copy_to_memory_layer(layer)
+        self.input_layer_memory = QMapshaperDataPreparer.copy_to_memory_layer(layer)
 
-        self.input_layer_memory.startEditing()
+        join_field_index = QMapshaperDataPreparer.add_mapshaper_id_field(self.input_layer_memory)
 
-        join_field_index = self.input_layer_memory.addExpressionField(
-            "$id", QgsField(TextConstants.JOIN_FIELD_NAME, QVariant.Int))
-
-        self.input_layer_memory.commitChanges()
-
-        self.write_layer_with_single_attribute(layer=self.input_layer_memory,
-                                               file=self.mapshaper_input,
-                                               col_index=join_field_index)
-
-        return self.mapshaper_input
+        QMapshaperDataPreparer.write_layer_with_single_attribute(layer=self.input_layer_memory,
+                                                                 file=self.mapshaper_input,
+                                                                 col_index=join_field_index)
 
     def process_output_layer(self, feedback: QgsProcessingFeedback):
 
         layer_generalized = QgsVectorLayer(self.mapshaper_output, "data", "ogr")
 
-        memory_layer = self.copy_to_memory_layer(layer_generalized)
+        memory_layer = QMapshaperDataPreparer.copy_to_memory_layer(layer_generalized)
 
         memory_layer.setCrs(self.input_layer_memory.crs())
 
-        self.join_fields_back(memory_layer, self.input_layer_memory)
+        QMapshaperDataPreparer.join_fields_back(memory_layer, self.input_layer_memory)
 
-        self.write_output_file(layer=memory_layer,
-                               file=self.output_layer_location,
-                               layer_name=self.input_layer_memory.name())
+        QMapshaperDataPreparer.write_output_file(layer=memory_layer,
+                                                 file=self.result_layer_location,
+                                                 layer_name=self.input_layer_memory.name())
 
-    @staticmethod
-    def join_fields_back(layer_to_join_to: QgsVectorLayer,
-                         layer_to_join_from: QgsVectorLayer) -> None:
+    def icon(self):
 
-        join = QgsVectorLayerJoinInfo()
-        join.setTargetFieldName(TextConstants.JOIN_FIELD_NAME)
-        join.setJoinLayer(layer_to_join_from)
-        join.setJoinFieldName(TextConstants.JOIN_FIELD_NAME)
-        join.setUsingMemoryCache(True)
+        location = Path(__file__).parent.parent / "icons" / "main_icon.png"
 
-        layer_to_join_to.addJoin(join)
-
-    @staticmethod
-    def copy_to_memory_layer(layer: QgsVectorLayer) -> QgsVectorLayer:
-
-        memory_layer = QgsMemoryProviderUtils.createMemoryLayer(layer.name(), layer.fields(),
-                                                                layer.wkbType(), layer.crs())
-
-        memory_layer.startEditing()
-
-        for feature in layer.getFeatures():
-            features = QgsVectorLayerUtils.makeFeatureCompatible(feature, memory_layer)
-            memory_layer.addFeatures(features)
-
-        memory_layer.commitChanges()
-
-        return memory_layer
-
-    @staticmethod
-    def write_layer_with_single_attribute(layer: QgsVectorLayer, file: str,
-                                          col_index: int) -> None:
-
-        options = QgsVectorFileWriter.SaveVectorOptions()
-        options.driverName = "ESRI Shapefile"
-        options.attributes = [col_index]
-
-        QgsVectorFileWriter.writeAsVectorFormatV3(layer=layer,
-                                                  fileName=file,
-                                                  transformContext=QgsCoordinateTransformContext(),
-                                                  options=options)
-
-    @staticmethod
-    def write_output_file(layer: QgsVectorLayer, file: str, layer_name: str) -> None:
-
-        fields = layer.fields()
-
-        fields_indexes = [x for x in range(0, fields.count())]
-
-        field_join_index = fields.lookupField(TextConstants.JOIN_FIELD_NAME)
-
-        if field_join_index in fields_indexes:
-            fields_indexes.remove(field_join_index)
-
-        options = QgsVectorFileWriter.SaveVectorOptions()
-        options.driverName = GdalUtils.getVectorDriverFromFileName(file)
-        options.layerName = layer_name
-        options.attributes = fields_indexes
-        options.actionOnExistingFile = QgsVectorFileWriter.CreateOrOverwriteFile
-
-        QgsVectorFileWriter.writeAsVectorFormatV3(layer=layer,
-                                                  fileName=file,
-                                                  transformContext=QgsCoordinateTransformContext(),
-                                                  options=options)
-
-    @staticmethod
-    def prepare_random_temp_filename() -> str:
-        return QgsProcessingUtils.generateTempFilename("{}.shp".format(uuid4()))
-
-    @staticmethod
-    def add_mapshaper_id_field(layer: QgsVectorLayer) -> int:
-
-        layer.startEditing()
-
-        field_index = layer.addExpressionField(
-            "$id", QgsField(TextConstants.JOIN_FIELD_NAME, QVariant.Int))
-
-        layer.commitChanges()
-
-        return field_index
-
-    @staticmethod
-    def output_format() -> str:
-        return "shapefile"
+        return QIcon(location.absolute().as_posix())

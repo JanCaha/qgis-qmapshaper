@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Dict
 
 from qgis.core import (QgsProcessingParameterVectorLayer, QgsProcessingParameterNumber,
                        QgsProcessingFeedback, QgsProcessingParameterVectorDestination)
@@ -27,56 +27,45 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorDestination(self.OUTPUT_LAYER, "Output Layer"))
 
-    def getConsoleArguments(self,
-                            parameters,
-                            context,
-                            feedback: QgsProcessingFeedback,
-                            executing=True):
+    def prepare_data(self, parameters, context, feedback: QgsProcessingFeedback) -> None:
 
-        input_layer = self.process_input_layer(self.INPUT_LAYER, parameters, context, feedback)
+        self.process_input_layer(self.INPUT_LAYER, parameters, context, feedback)
 
-        self.output_layer_location = self.parameterAsOutputLayer(parameters, self.OUTPUT_LAYER,
+        self.result_layer_location = self.parameterAsOutputLayer(parameters, self.OUTPUT_LAYER,
                                                                  context)
+
+    def get_arguments(self, parameters, context, feedback: QgsProcessingFeedback):
 
         simplify_percent = self.parameterAsDouble(parameters, self.SIMPLIFY, context)
 
-        arguments = self.prepare_arguments(input_file_name=input_layer,
-                                           output_file_name=self.mapshaper_output,
-                                           simplify_percent=simplify_percent)
+        arguments = self.prepare_arguments(simplify_percent=simplify_percent)
 
         return arguments
 
-    def commandName(self):
-        return self.get_command()
+    def return_dict(self) -> Dict[str, str]:
+        return {self.OUTPUT_LAYER: self.result_layer_location}
 
-    def name(self):
+    @staticmethod
+    def command() -> str:
         return "simplify"
 
+    def name(self):
+        return SimplifyAlgorithm.command()
+
     def displayName(self):
-        return "Simplify vector"
+        return "Simplify Vector"
 
     def createInstance(self):
         return SimplifyAlgorithm()
 
     @staticmethod
-    def get_command() -> str:
-        return "mapshaper-xl"
-
-    @staticmethod
-    def prepare_arguments(input_file_name: str,
-                          output_file_name: str,
-                          simplify_percent: Union[int, float, str] = 50,
+    def prepare_arguments(simplify_percent: Union[int, float, str] = 50,
                           method: str = "dp") -> List[str]:
 
         arguments = [
-            input_file_name,
-            '-simplify',
             method,
             '{}%'.format(simplify_percent),
             'keep-shapes',
-            '-o',
-            'format={}'.format(MapshaperAlgorithm.output_format()),
-            output_file_name,
         ]
 
         return arguments
