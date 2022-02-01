@@ -11,16 +11,28 @@ class QMapshaperPaths:
     @staticmethod
     def full_path_command(command: str) -> str:
 
-        path = Path(QMapshaperPaths.mapshaper_bin_folder()) / command
+        mapshaper_bin_folder = QMapshaperPaths.mapshaper_bin_folder()
 
-        return path.absolute().as_posix()
+        if mapshaper_bin_folder:
+
+            path = Path(mapshaper_bin_folder) / command
+
+            return path.absolute().as_posix()
+
+        else:
+            return command
 
     @staticmethod
     def mapshaper_bin_folder() -> str:
 
-        folder = Path(QMapshaperPaths.mapshaper_folder()) / "bin"
+        mapshaper_folder = QMapshaperPaths.mapshaper_folder()
 
-        return folder.absolute().as_posix()
+        if mapshaper_folder:
+            folder = Path(mapshaper_folder) / "bin"
+
+            return folder.absolute().as_posix()
+
+        return ""
 
     @staticmethod
     def mapshaper_folder() -> str:

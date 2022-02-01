@@ -14,11 +14,19 @@ class QMapshaperCommandBuilder:
     @staticmethod
     def mapshaper_command() -> str:
 
-        bin_path = Path(QMapshaperPaths.mapshaper_bin_folder())
+        mapshaper_bin_folder = QMapshaperPaths.mapshaper_bin_folder()
 
-        bin_path = bin_path / QMapshaperCommandBuilder.mapshaper_command_name()
+        if mapshaper_bin_folder:
 
-        return bin_path.absolute().as_posix()
+            bin_path = Path(mapshaper_bin_folder)
+
+            bin_path = bin_path / QMapshaperCommandBuilder.mapshaper_command_name()
+
+            return bin_path.absolute().as_posix()
+
+        else:
+
+            return QMapshaperCommandBuilder.mapshaper_command_name()
 
     @staticmethod
     def prepare_console_commands(input_data_path: str, output_data_path: str, command: str,
