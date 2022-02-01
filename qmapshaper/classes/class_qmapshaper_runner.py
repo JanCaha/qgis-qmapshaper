@@ -13,21 +13,21 @@ class QMapshaperRunner:
         if feedback:
             feedback.pushInfo("Running command: {}".format(" ".join(commands)))
 
-        res = subprocess.Popen(commands,
-                               stdout=subprocess.PIPE,
-                               stdin=subprocess.DEVNULL,
-                               stderr=subprocess.STDOUT,
-                               universal_newlines=True)
+        with subprocess.Popen(commands,
+                              stdout=subprocess.PIPE,
+                              stdin=subprocess.DEVNULL,
+                              stderr=subprocess.STDOUT,
+                              universal_newlines=True) as res:
 
-        if feedback:
-            feedback.pushInfo("Result: ")
+            if feedback:
+                feedback.pushInfo("Result: ")
 
-            lines = res.stdout.readlines()
+                lines = res.stdout.readlines()
 
-            for line in lines:
-                feedback.pushInfo("{}.".format(line))
+                for line in lines:
+                    feedback.pushInfo("{}.".format(line))
 
-            feedback.pushInfo("Command runned.")
+                feedback.pushInfo("Command runned.")
 
     @staticmethod
     def test_run(path: Union[str, Path]):
@@ -42,18 +42,18 @@ class QMapshaperRunner:
             path_command = "mapshaper"
 
         try:
-            res = subprocess.Popen([path_command],
-                                   stdout=subprocess.PIPE,
-                                   stdin=subprocess.DEVNULL,
-                                   stderr=subprocess.STDOUT,
-                                   universal_newlines=True)
+            with subprocess.Popen([path_command],
+                                  stdout=subprocess.PIPE,
+                                  stdin=subprocess.DEVNULL,
+                                  stderr=subprocess.STDOUT,
+                                  universal_newlines=True) as res:
+
+                lines = res.stdout.readlines()
+
+                if lines[0] == "Error: No commands to run":
+                    return True
 
         except FileNotFoundError:
             return False
-
-        lines = res.stdout.readlines()
-
-        if lines[0] == "Error: No commands to run":
-            return True
 
         return False
