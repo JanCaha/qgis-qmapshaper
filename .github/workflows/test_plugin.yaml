@@ -19,6 +19,7 @@ jobs:
 
       - name: Install NodeJS, npm and mapshaper
         run: |
+          apt update
           apt install nodejs npm
           npm install mapshaper
 
