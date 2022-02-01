@@ -20,8 +20,8 @@ jobs:
       - name: Install NodeJS, npm and mapshaper
         run: |
           apt update
-          apt install nodejs npm
-          npm install mapshaper
+          apt install -y nodejs npm
+          yes | npm install mapshaper
 
       - name: Checkout
         uses: actions/checkout@v2
