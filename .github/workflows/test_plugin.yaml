@@ -1,0 +1,33 @@
+name: Tests for Plugin QMapshaper
+
+on:
+  push:
+    paths:
+    - "qmapshaper/**"
+    - ".github/workflows/test_plugin.yaml"
+    - "tests/**"
+
+jobs:
+
+  Tests-plugin-QMapshaper:
+
+    runs-on: ubuntu-latest
+
+    container: cahik/vscode-ubuntu-qgis-testing:v2
+
+    steps:
+
+      - name: Install NodeJS, npm and mapshaper
+        run: |
+          apt install nodejs npm
+          npm install mapshaper
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Print Python Path
+        run: echo $PYTHONPATH
+ 
+      - name: Run Tests
+        run: |
+          pytest tests --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s
