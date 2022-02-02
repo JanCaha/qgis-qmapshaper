@@ -26,7 +26,7 @@ hasProcessingProvider=yes
 tags=vector, simplication, generalization
 
 homepage=https://jancaha.github.io/qgis-qmapshaper/
-icon=icons/qmapshaper.png
+icon=qmapshaper.png
 
 # experimental flag
 experimental=True
