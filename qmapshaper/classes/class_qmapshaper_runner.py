@@ -3,6 +3,7 @@ from typing import List, Union
 import subprocess
 
 from qgis.core import QgsProcessingFeedback
+from ..utils import log
 
 
 class QMapshaperRunner:

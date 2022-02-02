@@ -4,6 +4,7 @@ from processing.core.ProcessingConfig import ProcessingConfig
 
 from ..text_constants import TextConstants
 from .class_qmapshaper_runner import QMapshaperRunner
+from ..utils import log
 
 
 class QMapshaperPaths:
