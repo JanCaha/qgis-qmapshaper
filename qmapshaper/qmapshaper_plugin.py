@@ -37,7 +37,7 @@ class QMapshaperPlugin():
     def initGui(self):
         self.initProcessing()
 
-        self.add_action(icon_path=get_icon_path("main_icon.png"),
+        self.add_action(icon_path=get_icon_path("qmapshaper.png"),
                         text=TextConstants.tool_name_interactive_simplifier,
                         callback=self.run_tool_interactive_simplifier,
                         add_to_toolbar=True)

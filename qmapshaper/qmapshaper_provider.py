@@ -52,7 +52,7 @@ class QMapshaperProvider(QgsProcessingProvider):
         return TextConstants.plugin_name
 
     def icon(self):
-        path = Path(__file__).parent / "icons" / "main_icon.png"
+        path = Path(__file__).parent / "icons" / "qmapshaper.png"
         return QIcon(str(path))
 
     def longName(self):
