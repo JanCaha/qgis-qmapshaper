@@ -5,11 +5,38 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg8"
    version="1.1"
    viewBox="0 0 132.29166 132.29167"
    height="132.29167mm"
-   width="132.29167mm">
+   width="132.29167mm"
+   sodipodi:docname="qmapshaper.svg"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
+   inkscape:export-filename="/home/cahik/Codes/PyQGIS/Plugins/qgis-mapshaper/qmapshaper/icons/qmapshaper.png"
+   inkscape:export-xdpi="100"
+   inkscape:export-ydpi="100">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     id="namedview914"
+     showgrid="false"
+     inkscape:zoom="1.3350176"
+     inkscape:cx="213.27643"
+     inkscape:cy="279.67716"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="flowRoot1459" />
   <defs
      id="defs2" />
   <metadata
@@ -20,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -31,14 +58,20 @@
        id="text825"
        style="font-style:normal;font-weight:normal;font-size:88.22976685px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2646893"
        aria-label="QM">
-      <path
-         id="path829"
-         style="font-size:88.22976685px;stroke-width:0.2646893"
-         d="m 29.812011,201.67966 q -9.477807,0 -15.078329,7.06527 -5.5574414,7.06527 -5.5574414,19.25718 0,12.14883 5.5574414,19.2141 5.600522,7.06528 15.078329,7.06528 9.477807,0 14.992168,-7.06528 5.557441,-7.06527 5.557441,-19.2141 0,-12.19191 -5.557441,-19.25718 -5.514361,-7.06527 -14.992168,-7.06527 z m 12.191906,57.25457 11.459531,12.53655 H 42.951698 L 33.43081,261.17444 q -1.421671,0.0862 -2.197128,0.12924 -0.732376,0.0431 -1.421671,0.0431 -13.570496,0 -21.712794,-9.047 Q 1.6391277e-7,243.20968 1.6391277e-7,228.00211 q 0,-15.25065 8.09921683608723,-24.29765 8.142298,-9.09008 21.712794,-9.09008 13.527416,0 21.626633,9.09008 8.099216,9.047 8.099216,24.29765 0,11.20105 -4.523498,19.17102 -4.480418,7.96997 -13.010445,11.7611 z" />
-      <path
-         id="path831"
-         style="font-size:88.22976685px;stroke-width:0.2646893"
-         d="m 73.151441,195.77757 h 12.967363 l 16.413836,43.77023 16.5,-43.77023 h 12.96737 v 64.31984 h -8.48695 V 203.6183 L 106.9269,247.73318 H 98.181468 L 81.595305,203.6183 v 56.47911 h -8.443864 z" />
+      <g
+         aria-label="QM"
+         transform="matrix(0.25891945,0,0,0.25891945,190.86966,203.06128)"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:300px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+         id="flowRoot1459">
+        <path
+           d="m -618.67187,195.23242 h -4.39454 q -54.05273,0 -84.08203,-29.88281 -30.02929,-29.88281 -30.02929,-83.203126 0,-53.173828 29.88281,-83.349609 30.0293,-30.175781 82.61719,-30.175781 53.17382,0 82.76367,29.8828123 29.73633,29.8828127 29.73633,83.6425777 0,36.914066 -15.82032,63.574216 -15.67382,26.66016 -45.26367,40.13672 l 44.0918,49.21875 h -53.75977 z M -624.67773,9.4902344 q -25.78125,0 -39.99024,19.0429686 -14.20898,19.042969 -14.20898,53.613281 0,35.156246 13.91601,53.906246 13.91602,18.60352 40.28321,18.60352 25.92773,0 40.13671,-19.04297 14.20899,-19.04297 14.20899,-53.466796 0,-34.570312 -14.20899,-53.613281 Q -598.75,9.4902344 -624.67773,9.4902344 Z"
+           id="path1467"
+           inkscape:connector-curvature="0" />
+        <path
+           d="m -469.55078,-27.423828 h 71.77734 l 49.80469,117.041015 50.09766,-117.041015 h 71.63086 V 191.27734 h -53.32032 V 31.316406 l -50.39062,117.919924 h -35.74219 L -416.08398,31.316406 V 191.27734 h -53.4668 z"
+           id="path1469"
+           inkscape:connector-curvature="0" />
+      </g>
     </g>
   </g>
 </svg>
