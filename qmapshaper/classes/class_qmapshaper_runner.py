@@ -50,7 +50,7 @@ class QMapshaperRunner:
 
                 lines = res.stdout.readlines()
 
-                if lines[0] == "Error: No commands to run":
+                if lines[0].startswith("Error: No commands to run"):
                     return True
 
         except FileNotFoundError:
