@@ -38,4 +38,4 @@ jobs:
             /qmapshaper/zip_build/qmapshaper.zip
           name: ver. ${{ steps.version.outputs.VERSION }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GT_TOKEN }}
