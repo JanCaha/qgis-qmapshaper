@@ -189,6 +189,8 @@ class InteractiveSimplifierTool(QDialog):
         generalized_layer.setName("{} generalized".format(self.memory_layer.name()))
         generalized_layer.setCrs(self.memory_layer.crs())
 
+        generalized_layer.setRenderer(self.generalized_data_layer.renderer())
+
         QgsProject.instance().addMapLayer(generalized_layer)
 
     def slider_value_change(self):
