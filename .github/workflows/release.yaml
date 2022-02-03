@@ -1,0 +1,41 @@
+name: Release version
+
+on:
+  push:
+    paths:
+    - "qmapshaper/metadata.txt"
+
+jobs:
+
+  Release-plugin-QMapshaper:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Install pb_tool
+        run: |
+          pip install pb_tool
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get Version
+        id: version
+        run: |
+          echo "::set-output name=VERSION::$(cat qmapshaper/metadata.txt | grep '^version' | grep -o '[0-9\.]*')"
+
+      - name: Zip plugin
+        run: |
+          cd qmapshaper
+          pb_tool zip
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.VERSION }}
+          files: |
+            /qmapshaper/zip_build/qmapshaper.zip
+          name: ver. ${{ steps.version.outputs.VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
