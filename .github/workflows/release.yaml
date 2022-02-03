@@ -35,7 +35,7 @@ jobs:
         with:
           tag_name: ${{ steps.version.outputs.VERSION }}
           files: |
-            /qmapshaper/zip_build/qmapshaper.zip
+            qmapshaper/zip_build/qmapshaper.zip
           name: ver. ${{ steps.version.outputs.VERSION }}
         env:
           GITHUB_TOKEN: ${{ secrets.GT_TOKEN }}
