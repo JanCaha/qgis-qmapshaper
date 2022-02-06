@@ -1,0 +1,30 @@
+site_name: QMapshaper
+site_url: https://jancaha.github.io/qgis-qmapshaper/
+site_description: Plugin for QGIS that allows running mapshaper directly from QGIS.
+
+site_author: Jan Caha
+copyright: Copyright &copy; 2022 <a href="https://twitter.com/cahik13">Jan Caha</a>.
+
+repo_url: https://github.com/JanCaha/qgis-qmapshaper
+edit_uri: ""
+
+theme:
+    name: cerulean
+    custom_dir: custom_theme/
+    
+extra_css: 
+    - css\additions.css
+    - //cdnjs.cloudflare.com/ajax/libs/featherlight/v.1.7.14/featherlight.min.css
+
+extra_javascript:
+    - //code.jquery.com/jquery-3.6.0.min.js
+    - //cdnjs.cloudflare.com/ajax/libs/featherlight/v.1.7.14/featherlight.min.js
+
+docs_dir: pages
+site_dir: docs
+    
+plugins:
+    - search
+
+markdown_extensions:
+    - featherlight
