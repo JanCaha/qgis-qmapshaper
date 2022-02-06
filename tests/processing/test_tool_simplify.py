@@ -41,7 +41,7 @@ def test_outputs():
     assert isinstance(alg.outputDefinitions()[0], QgsProcessingOutputVectorLayer)
 
 
-def test_input_data(data_layer_path, data_result_file):
+def test_input_data_output_temp_file(data_layer_path):
 
     feedback = QgsProcessingFeedback()
     context = QgsProcessingContext()
@@ -68,6 +68,16 @@ def test_input_data(data_layer_path, data_result_file):
     assert result[1]
     assert len(result[0]) == len(alg.outputDefinitions())
     assert "OUTPUT" in result[0].keys()
+
+
+def test_input_data_output_named_file(data_layer_path, data_result_file):
+
+    feedback = QgsProcessingFeedback()
+    context = QgsProcessingContext()
+
+    alg = SimplifyAlgorithm()
+
+    alg.initAlgorithm()
 
     parameters = {
         "INPUT": data_layer_path,
