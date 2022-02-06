@@ -17,6 +17,15 @@
                 "panel": "new"
             },
             "problemMatcher": []
+        },
+        {
+            "label": "Show website",
+            "type": "shell",
+            "command": "mkdocs serve --config-file ./website/mkdocs.yml",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }
