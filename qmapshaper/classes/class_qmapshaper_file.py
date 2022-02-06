@@ -51,7 +51,7 @@ class QMapshaperGeojsonFile:
 
     @staticmethod
     def output_format() -> str:
-        return "gejson"
+        return "geojson"
 
     @staticmethod
     def extension() -> str:
