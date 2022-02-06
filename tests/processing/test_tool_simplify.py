@@ -67,7 +67,7 @@ def test_input_data_output_temp_file(data_layer_path):
     assert isinstance(result, tuple)
     assert result[1]
     assert len(result[0]) == len(alg.outputDefinitions())
-    assert "OUTPUT" in result[0].keys()
+    assert "Output" in result[0].keys()
 
 
 def test_input_data_output_named_file(data_layer_path, data_result_file):
@@ -99,4 +99,4 @@ def test_input_data_output_named_file(data_layer_path, data_result_file):
     assert isinstance(result, tuple)
     assert result[1]
     assert len(result[0]) == len(alg.outputDefinitions())
-    assert "OUTPUT" in result[0].keys()
+    assert "Output" in result[0].keys()
