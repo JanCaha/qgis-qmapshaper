@@ -6,7 +6,7 @@ from qgis.PyQt.QtCore import QVariant
 from processing.algs.gdal.GdalUtils import GdalUtils
 
 from ..text_constants import TextConstants
-from .class_qmapshaper_file import QMapshaperFile
+from .class_qmapshaper_file import QMapshaperFile, QMapshaperGeojsonFile
 
 
 class QMapshaperDataPreparer:
@@ -34,6 +34,17 @@ class QMapshaperDataPreparer:
         options = QgsVectorFileWriter.SaveVectorOptions()
         options.driverName = QMapshaperFile.driver_name()
         options.attributes = [col_index]
+
+        QgsVectorFileWriter.writeAsVectorFormatV3(layer=layer,
+                                                  fileName=file,
+                                                  transformContext=QgsCoordinateTransformContext(),
+                                                  options=options)
+
+    @staticmethod
+    def write_layer_with_as_geojson(layer: QgsVectorLayer, file: str) -> None:
+
+        options = QgsVectorFileWriter.SaveVectorOptions()
+        options.driverName = QMapshaperGeojsonFile.driver_name()
 
         QgsVectorFileWriter.writeAsVectorFormatV3(layer=layer,
                                                   fileName=file,
