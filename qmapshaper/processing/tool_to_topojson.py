@@ -2,7 +2,7 @@ from typing import List, Dict
 
 from qgis.core import (QgsProcessingParameterVectorLayer, QgsProcessingParameterField,
                        QgsProcessingFeedback, QgsProcessingParameterFileDestination, QgsField,
-                       QgsProcessingException)
+                       QgsProcessingParameterNumber, QgsProcessingException)
 
 from .mapshaper_algorithm import MapshaperAlgorithm
 from ..classes.class_qmapshaper_file import QMapshaperGeojsonFile, QMapshaperTopoJsonFile
@@ -14,6 +14,7 @@ class ConvertToTopoJSONAlgorithm(MapshaperAlgorithm):
 
     INPUT_LAYER = "Input"
     OUTPUT_FILE = "OutputFile"
+    DECIMAL_NUMBERS = "DecimalNumbers"
     FIELDS = "Fields"
 
     def __init__(self):
@@ -39,6 +40,14 @@ class ConvertToTopoJSONAlgorithm(MapshaperAlgorithm):
                                         optional=True))
 
         self.addParameter(
+            QgsProcessingParameterNumber(self.DECIMAL_NUMBERS,
+                                         "Number of decimal places for coordinates",
+                                         defaultValue=3,
+                                         minValue=0,
+                                         maxValue=16,
+                                         type=QgsProcessingParameterNumber.Integer))
+
+        self.addParameter(
             QgsProcessingParameterFileDestination(self.OUTPUT_FILE,
                                                   "Output TopoJSON",
                                                   fileFilter="Topojson (*.topojson)"))
@@ -59,6 +68,8 @@ class ConvertToTopoJSONAlgorithm(MapshaperAlgorithm):
 
         layer = self.parameterAsVectorLayer(parameters, parameter_name, context)
 
+        decimal_numbers = self.parameterAsInt(parameters, self.DECIMAL_NUMBERS, context)
+
         if not layer:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT_LAYER))
 
@@ -71,9 +82,6 @@ class ConvertToTopoJSONAlgorithm(MapshaperAlgorithm):
 
         field: QgsField
 
-        feedback.pushInfo("|".join(self.fields_to_retain))
-        feedback.pushInfo("|".join([x.name() for x in fields_existing]))
-
         for field in fields_existing:
 
             if field.name() not in self.fields_to_retain:
@@ -85,10 +93,9 @@ class ConvertToTopoJSONAlgorithm(MapshaperAlgorithm):
 
         self.input_layer_memory.commitChanges()
 
-        feedback.pushInfo("|".join([str(x) for x in fields_to_delete]))
-
         QMapshaperDataPreparer.write_layer_with_as_geojson(layer=self.input_layer_memory,
-                                                           file=self.mapshaper_input)
+                                                           file=self.mapshaper_input,
+                                                           decimal_precision=decimal_numbers)
 
     def get_arguments(self, parameters, context, feedback: QgsProcessingFeedback):
 
