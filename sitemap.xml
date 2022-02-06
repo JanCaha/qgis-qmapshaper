@@ -11,6 +11,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://jancaha.github.io/qgis-qmapshaper/GUI%20Tools/tool_interactive_simplifier/</loc>
+         <lastmod>2022-02-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://jancaha.github.io/qgis-qmapshaper/tools/tool_simplify/</loc>
          <lastmod>2022-02-06</lastmod>
          <changefreq>daily</changefreq>
