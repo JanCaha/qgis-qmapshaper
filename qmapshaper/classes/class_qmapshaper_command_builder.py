@@ -51,7 +51,7 @@ class QMapshaperCommandBuilder:
     def prepare_console_output_data(output_data_path: str) -> List[str]:
 
         command = ["-o"]
-        command.append('format={}'.format(QMapshaperFile.output_format()))
+        command.append('format={}'.format(QMapshaperFile.get_format(output_data_path)))
         command.append(output_data_path)
 
         return command
