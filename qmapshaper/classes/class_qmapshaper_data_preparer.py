@@ -41,10 +41,15 @@ class QMapshaperDataPreparer:
                                                   options=options)
 
     @staticmethod
-    def write_layer_with_as_geojson(layer: QgsVectorLayer, file: str) -> None:
+    def write_layer_with_as_geojson(layer: QgsVectorLayer,
+                                    file: str,
+                                    decimal_precision: int = None) -> None:
 
         options = QgsVectorFileWriter.SaveVectorOptions()
         options.driverName = QMapshaperGeojsonFile.driver_name()
+
+        if decimal_precision:
+            options.layerOptions = ["COORDINATE_PRECISION={}".format(decimal_precision)]
 
         QgsVectorFileWriter.writeAsVectorFormatV3(layer=layer,
                                                   fileName=file,
