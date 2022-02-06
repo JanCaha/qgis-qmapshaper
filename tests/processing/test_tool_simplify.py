@@ -13,19 +13,19 @@ def test_parameters():
 
     assert alg.countVisibleParameters() == 4
 
-    parameter = alg.parameterDefinition("INPUT")
+    parameter = alg.parameterDefinition("Input")
 
     assert isinstance(parameter, QgsProcessingParameterVectorLayer)
 
-    parameter = alg.parameterDefinition("SIMPLIFY")
+    parameter = alg.parameterDefinition("Simplify")
 
     assert isinstance(parameter, QgsProcessingParameterNumber)
 
-    parameter = alg.parameterDefinition("METHOD")
+    parameter = alg.parameterDefinition("Method")
 
     assert isinstance(parameter, QgsProcessingParameterEnum)
 
-    parameter = alg.parameterDefinition("OUTPUT")
+    parameter = alg.parameterDefinition("Output")
 
     assert isinstance(parameter, QgsProcessingParameterVectorDestination)
 
@@ -51,10 +51,10 @@ def test_input_data_output_temp_file(data_layer_path):
     alg.initAlgorithm()
 
     parameters = {
-        "INPUT": data_layer_path,
-        "SIMPLIFY": 12,
-        "METHOD": 0,
-        "OUTPUT": "TEMPORARY_OUTPUT"
+        "Input": data_layer_path,
+        "Simplify": 12,
+        "Method": 0,
+        "Output": "TEMPORARY_OUTPUT"
     }
 
     can_run, param_check_msg = alg.checkParameterValues(parameters=parameters, context=context)
@@ -80,10 +80,10 @@ def test_input_data_output_named_file(data_layer_path, data_result_file):
     alg.initAlgorithm()
 
     parameters = {
-        "INPUT": data_layer_path,
-        "SIMPLIFY": 12,
-        "METHOD": 0,
-        "OUTPUT": data_result_file
+        "Input": data_layer_path,
+        "Simplify": 12,
+        "Method": 0,
+        "Output": data_result_file
     }
 
     can_run, param_check_msg = alg.checkParameterValues(parameters=parameters, context=context)
