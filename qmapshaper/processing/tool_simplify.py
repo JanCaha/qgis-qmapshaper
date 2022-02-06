@@ -9,10 +9,10 @@ from .mapshaper_algorithm import MapshaperAlgorithm
 
 class SimplifyAlgorithm(MapshaperAlgorithm):
 
-    INPUT_LAYER = "INPUT"
-    SIMPLIFY = "SIMPLIFY"
-    METHOD = "METHOD"
-    OUTPUT_LAYER = "OUTPUT"
+    INPUT_LAYER = "Input"
+    SIMPLIFY = "Simplify"
+    METHOD = "Method"
+    OUTPUT_LAYER = "Output"
 
     def initAlgorithm(self, config=None):
 
