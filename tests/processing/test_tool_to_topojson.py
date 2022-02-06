@@ -1,8 +1,9 @@
 from pathlib import Path
 
 from qgis.core import (QgsProcessingParameterVectorLayer, QgsProcessingParameterField,
-                       QgsProcessingParameterFileDestination, QgsVectorLayer,
-                       QgsProcessingFeedback, QgsProcessingContext, QgsProcessingOutputFile)
+                       QgsProcessingParameterNumber, QgsProcessingParameterFileDestination,
+                       QgsVectorLayer, QgsProcessingFeedback, QgsProcessingContext,
+                       QgsProcessingOutputFile)
 
 from qmapshaper.processing.tool_to_topojson import ConvertToTopoJSONAlgorithm
 
@@ -13,7 +14,7 @@ def test_parameters():
 
     alg.initAlgorithm()
 
-    assert alg.countVisibleParameters() == 3
+    assert alg.countVisibleParameters() == 4
 
     parameter = alg.parameterDefinition("Input")
 
@@ -22,6 +23,10 @@ def test_parameters():
     parameter = alg.parameterDefinition("Fields")
 
     assert isinstance(parameter, QgsProcessingParameterField)
+
+    parameter = alg.parameterDefinition("DecimalNumbers")
+
+    assert isinstance(parameter, QgsProcessingParameterNumber)
 
     parameter = alg.parameterDefinition("OutputFile")
 
@@ -48,7 +53,12 @@ def test_input_data_temp_file(data_layer_path):
 
     alg.initAlgorithm()
 
-    parameters = {"Input": data_layer_path, "Fields": [], "OutputFile": "TEMPORARY_OUTPUT"}
+    parameters = {
+        "Input": data_layer_path,
+        "Fields": [],
+        "DecimalNumbers": 3,
+        "OutputFile": "TEMPORARY_OUTPUT"
+    }
 
     can_run, param_check_msg = alg.checkParameterValues(parameters=parameters, context=context)
 
@@ -82,6 +92,7 @@ def test_input_data_specified_file(data_layer_path, data_result_path):
     parameters = {
         "Input": data_layer_path,
         "Fields": [],
+        "DecimalNumbers": 3,
         "OutputFile": data_result_file.as_posix()
     }
 
