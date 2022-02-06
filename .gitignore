@@ -1,4 +1,4 @@
 __pycache__
-/tests/_data/results/*.gpkg
+/tests/_data/results/*
 .coverage
 /qmapshaper/zip_build
