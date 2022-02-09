@@ -41,7 +41,7 @@ def test_outputs():
     assert isinstance(alg.outputDefinitions()[0], QgsProcessingOutputVectorLayer)
 
 
-def test_input_data_output_temp_file(data_layer_path):
+def test_input_data_output_temp_file(data_layer):
 
     feedback = QgsProcessingFeedback()
     context = QgsProcessingContext()
@@ -50,12 +50,7 @@ def test_input_data_output_temp_file(data_layer_path):
 
     alg.initAlgorithm()
 
-    parameters = {
-        "Input": data_layer_path,
-        "Simplify": 12,
-        "Method": 0,
-        "Output": "TEMPORARY_OUTPUT"
-    }
+    parameters = {"Input": data_layer, "Simplify": 12, "Method": 0, "Output": "TEMPORARY_OUTPUT"}
 
     can_run, param_check_msg = alg.checkParameterValues(parameters=parameters, context=context)
 
@@ -70,7 +65,7 @@ def test_input_data_output_temp_file(data_layer_path):
     assert "Output" in result[0].keys()
 
 
-def test_input_data_output_named_file(data_layer_path, data_result_file):
+def test_input_data_output_named_file(data_layer, data_result_file):
 
     feedback = QgsProcessingFeedback()
     context = QgsProcessingContext()
@@ -79,12 +74,7 @@ def test_input_data_output_named_file(data_layer_path, data_result_file):
 
     alg.initAlgorithm()
 
-    parameters = {
-        "Input": data_layer_path,
-        "Simplify": 12,
-        "Method": 0,
-        "Output": data_result_file
-    }
+    parameters = {"Input": data_layer, "Simplify": 12, "Method": 0, "Output": data_result_file}
 
     can_run, param_check_msg = alg.checkParameterValues(parameters=parameters, context=context)
 
