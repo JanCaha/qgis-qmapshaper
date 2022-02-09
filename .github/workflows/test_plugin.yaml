@@ -13,7 +13,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    container: cahik/vscode-ubuntu-qgis-testing:v2
+    container: cahik/vscode-ubuntu-qgis-testing:mapshaper
 
     steps:
 
