@@ -2,13 +2,13 @@ import os
 import sys
 import inspect
 
-from qgis.core import (QgsApplication)
+from qgis.core import (QgsApplication, QgsProject)
 from qgis.gui import (QgisInterface)
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
 from .qmapshaper_provider import QMapshaperProvider
-from .utils import get_icon_path
+from .utils import get_icon_path, log
 from .gui.dialog_tool_interactive_simplifier import InteractiveSimplifierTool
 from .text_constants import TextConstants
 
@@ -90,7 +90,10 @@ class QMapshaperPlugin():
 
         dlg = InteractiveSimplifierTool(parent=self.iface.mainWindow(), iface=self.iface)
 
-        dlg.show()
-        dlg.exec_()
+        result = dlg.exec_()
+
+        if result == 1:
+
+            QgsProject.instance().addMapLayer(dlg.get_layer_for_project())
 
         dlg = None
