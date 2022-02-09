@@ -4,7 +4,7 @@ from pathlib import Path
 
 from pytest_qgis import QgsVectorLayer
 
-from qgis.core import (QgsProcessingFeedback, QgsMessageLog, Qgis)
+from qgis.core import (QgsMessageLog, Qgis)
 
 from .text_constants import TextConstants
 
