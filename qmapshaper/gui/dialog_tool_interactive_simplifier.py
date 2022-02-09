@@ -1,17 +1,16 @@
 from pathlib import Path
 
-from qgis.core import (QgsProject, QgsVectorLayer, QgsMapLayerProxyModel)
+from qgis.core import (QgsVectorLayer, QgsMapLayerProxyModel)
 from qgis.gui import (QgsMapCanvas, QgsMapLayerComboBox, QgisInterface)
-from qgis.PyQt.QtWidgets import QDialog, QLabel, QVBoxLayout, QHBoxLayout, QSlider, QPushButton, QComboBox, QSpinBox
-from qgis.PyQt.QtCore import Qt, QThreadPool
+from qgis.PyQt.QtWidgets import (QDialog, QLabel, QVBoxLayout, QHBoxLayout, QSlider, QPushButton,
+                                 QComboBox, QSpinBox, QDialogButtonBox)
+from qgis.PyQt.QtCore import (Qt, QThreadPool, pyqtSignal)
 
 from ..processing.tool_simplify import SimplifyAlgorithm
-from ..utils import log, features_count_with_non_empty_geoms
+from ..utils import log
 from ..text_constants import TextConstants
-from ..classes.class_qmapshaper_data_preparer import QMapshaperDataPreparer
-from ..classes.class_qmapshaper_file import QMapshaperFile
-from ..classes.class_qmapshaper_command_builder import QMapshaperCommandBuilder
-from ..classes.classes_workers import ConvertWorker, WaitWorker
+from ..classes.classes_workers import WaitWorker
+from .interactive_simplifier_process import InteractiveSimplifierProcess
 
 
 class InteractiveSimplifierTool(QDialog):
@@ -23,29 +22,35 @@ class InteractiveSimplifierTool(QDialog):
     layer_selection: QgsMapLayerComboBox
     button_insert: QPushButton
     methods: QComboBox
-
-    memory_layer: QgsVectorLayer = None
-
-    base_data_filename: str = ""
-    base_data_layer: QgsVectorLayer = None
-
-    generalized_data_filename: str = ""
-    generalized_data_layer: QgsVectorLayer = None
+    button_box: QDialogButtonBox
 
     threadpool: QThreadPool
-    convert_worker: ConvertWorker
+    # convert_worker: ConvertWorker
     """
     Worker that takes care of converting input layer into generalized version. Runs on solo thread to avoid blocking GUI.
     """
-    wait_worker: WaitWorker
+    # wait_worker: WaitWorker
     """
-    Worker that waits for small amount of time (current 0.2 second). Helps avoid calling ConvertWorker to often. 
+    Worker that waits for small amount of time (current 0.2 second). Helps avoid calling ConvertWorker to often.
     Generally, the value of percent_spin_box needs to be stable while this run to trigger the data generalization.
     """
+
+    process: InteractiveSimplifierProcess
+
+    map_updated = pyqtSignal()
+    data_generalized = pyqtSignal()
+    input_data_changed = pyqtSignal()
+    input_parameters_changed = pyqtSignal()
 
     def __init__(self, parent=None, iface: QgisInterface = None):
 
         super().__init__(parent)
+
+        self.process = InteractiveSimplifierProcess(parent=self)
+        self.process.generalized_layer_prepared.connect(self.load_generalized_data)
+
+        self.input_data_changed.connect(self.generalize_layer)
+        self.input_parameters_changed.connect(self.generalize_layer)
 
         self.iface = iface
 
@@ -56,9 +61,7 @@ class InteractiveSimplifierTool(QDialog):
 
         self.threadpool = QThreadPool()
 
-        self.create_convert_worker()
-
-        self.layer_selection = QgsMapLayerComboBox()
+        self.layer_selection = QgsMapLayerComboBox(self)
         self.layer_selection.setFilters(QgsMapLayerProxyModel.VectorLayer)
 
         self.layer_selection.layerChanged.connect(self.update_input_layer)
@@ -82,13 +85,14 @@ class InteractiveSimplifierTool(QDialog):
         self.methods = QComboBox(self)
         self.methods.addItems(SimplifyAlgorithm.methods().keys())
 
-        self.methods.currentIndexChanged.connect(self.generalize_layer)
+        self.methods.currentIndexChanged.connect(self.trigger_input_parameters_change)
 
         self.canvas = QgsMapCanvas(self)
 
-        self.button_insert = QPushButton(self)
-        self.button_insert.setText("Export layer back to project")
-        self.button_insert.clicked.connect(self.send_layer_to_project)
+        self.button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok, self)
+
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
 
         self.hlayout = QHBoxLayout()
         self.hlayout.addWidget(self.percent_slider)
@@ -103,95 +107,48 @@ class InteractiveSimplifierTool(QDialog):
         self.vlayout.addWidget(self.methods)
         self.vlayout.addWidget(QLabel("Map"))
         self.vlayout.addWidget(self.canvas)
-        self.vlayout.addWidget(self.button_insert)
+        self.vlayout.addWidget(self.button_box)
         self.setLayout(self.vlayout)
 
-        self.update_input_layer()
+        self.setup_canvas()
+
+        self.process.set_input_data(self.layer_selection.currentLayer())
+
+    def setup_canvas(self):
+        self.canvas.setDestinationCrs(self.iface.mapCanvas().project().crs())
+        self.canvas.setExtent(self.iface.mapCanvas().extent())
+        self.canvas.setLayers([self.layer_selection.currentLayer()])
 
     def update_input_layer(self) -> None:
 
         layer = self.layer_selection.currentLayer()
 
-        self.memory_layer = QMapshaperDataPreparer.copy_to_memory_layer(layer)
+        if layer:
 
-        self.base_data_filename = QMapshaperFile.random_temp_filename()
+            self.process.set_input_data(layer)
 
-        field_index = QMapshaperDataPreparer.add_mapshaper_id_field(self.memory_layer)
-
-        QMapshaperDataPreparer.write_layer_with_single_attribute(layer=self.memory_layer,
-                                                                 file=self.base_data_filename,
-                                                                 col_index=field_index)
-
-        log(f"Data stored at: {self.base_data_filename}")
-
-        self.canvas.setDestinationCrs(self.iface.mapCanvas().project().crs())
-        self.canvas.setExtent(self.iface.mapCanvas().extent())
-
-        self.generalize_layer()
+            self.input_data_changed.emit()
 
     def generalize_layer(self) -> None:
 
-        if self.generalized_data_filename:
-            path = Path(self.generalized_data_filename)
-            if path.exists() and path.is_file():
-                path.unlink(missing_ok=True)
+        self.process.generalize_layer(simplify_percent=self.percent_spin_box.value(),
+                                      simplify_method=SimplifyAlgorithm.get_method(
+                                          self.methods.currentIndex()))
 
-        self.generalized_data_filename = QMapshaperFile.random_temp_filename()
-
-        arguments = SimplifyAlgorithm.prepare_arguments(
-            simplify_percent=self.percent_spin_box.value(),
-            method=SimplifyAlgorithm.get_method(self.methods.currentIndex()))
-
-        commands = QMapshaperCommandBuilder.prepare_console_commands(
-            input_data_path=self.base_data_filename,
-            output_data_path=self.generalized_data_filename,
-            command=SimplifyAlgorithm.command(),
-            arguments=arguments)
-
-        log(f"COMMAND TO RUN: {' '.join(commands)}")
-
-        self.create_convert_worker()
-
-        self.convert_worker.set_commands(commands)
-
-        self.threadpool.start(self.convert_worker)
-
-        log(f"Data to load: {self.generalized_data_filename}")
+        self.data_generalized.emit()
 
     def load_generalized_data(self) -> None:
 
-        self.generalized_data_layer = QgsVectorLayer(self.generalized_data_filename, "geojson",
-                                                     "ogr")
+        if self.process.generalized_data_only_geometry:
 
-        if self.generalized_data_layer:
-
-            log(f"Data source {self.generalized_data_layer.source()}")
-            log(f"features {features_count_with_non_empty_geoms(self.generalized_data_layer)}")
-
-            self.canvas.setLayers([self.generalized_data_layer])
+            self.canvas.setLayers([self.process.generalized_data_only_geometry])
             self.canvas.redrawAllLayers()
 
-    def send_layer_to_project(self) -> None:
+        self.map_updated.emit()
 
-        generalized_layer = QMapshaperDataPreparer.copy_to_memory_layer(
-            self.generalized_data_layer)
+    def get_layer_for_project(self) -> QgsVectorLayer:
 
-        QMapshaperDataPreparer.join_fields_back(generalized_layer, self.memory_layer)
-
-        generalized_layer = QMapshaperDataPreparer.copy_to_memory_layer(generalized_layer)
-
-        index = generalized_layer.fields().lookupField(TextConstants.JOIN_FIELD_NAME)
-
-        generalized_layer.startEditing()
-        generalized_layer.deleteAttribute(index)
-        generalized_layer.commitChanges()
-
-        generalized_layer.setName("{} generalized".format(self.memory_layer.name()))
-        generalized_layer.setCrs(self.memory_layer.crs())
-
-        generalized_layer.setRenderer(self.generalized_data_layer.renderer())
-
-        QgsProject.instance().addMapLayer(generalized_layer)
+        return self.process.generalized_data_with_attributes
 
     def slider_value_change(self):
 
@@ -201,20 +158,20 @@ class InteractiveSimplifierTool(QDialog):
 
         self.create_wait_worker()
 
-        self.threadpool.start(self.wait_worker)
-
     def run_update(self, percent: int):
 
         log(f"Prev: {percent} - curr: {self.percent_spin_box.value()}")
 
         if percent == self.percent_spin_box.value():
-            self.generalize_layer()
+            self.trigger_input_parameters_change()
 
-    def create_convert_worker(self) -> None:
-        self.convert_worker = ConvertWorker()
-        self.convert_worker.signals.result.connect(self.load_generalized_data)
+    def trigger_input_parameters_change(self) -> None:
+
+        self.input_parameters_changed.emit()
 
     def create_wait_worker(self) -> None:
 
-        self.wait_worker = WaitWorker(self.percent_spin_box.value())
-        self.wait_worker.signals.percent.connect(self.run_update)
+        wait_worker = WaitWorker(self.percent_spin_box.value())
+        wait_worker.signals.percent.connect(self.run_update)
+
+        self.threadpool.start(wait_worker)
