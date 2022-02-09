@@ -1,8 +1,6 @@
 from typing import List
-import time
 
-from qgis.PyQt.QtCore import (QRunnable, QObject, pyqtSignal, pyqtSlot)
-from qgis.core import (QgsProcessingFeedback)
+from qgis.PyQt.QtCore import (QRunnable, QObject, pyqtSignal, pyqtSlot, QThread)
 
 from .class_qmapshaper_runner import QMapshaperRunner
 
@@ -20,7 +18,7 @@ class WaitWorker(QRunnable):
     @pyqtSlot()
     def run(self):
 
-        time.sleep(0.2)
+        QThread.msleep(200)
 
         self.signals.percent.emit(self.percent)
 
@@ -44,7 +42,7 @@ class ConvertWorker(QRunnable):
     @pyqtSlot()
     def run(self):
 
-        QMapshaperRunner.run_mapshaper(self.commands, QgsProcessingFeedback())
+        QMapshaperRunner.run_mapshaper(self.commands)
 
         self.signals.result.emit()
 
