@@ -58,3 +58,24 @@ class QMapshaperPaths:
             return folder.absolute().as_posix()
 
         return ""
+
+    @staticmethod
+    def mapshaper_command_name():
+        return "mapshaper-xl"
+
+    @staticmethod
+    def mapshaper_command_call() -> str:
+
+        mapshaper_bin_folder = QMapshaperPaths.mapshaper_bin_folder()
+
+        if mapshaper_bin_folder:
+
+            bin_path = Path(mapshaper_bin_folder)
+
+            bin_path = bin_path / QMapshaperPaths.mapshaper_command_name()
+
+            return bin_path.absolute().as_posix()
+
+        else:
+
+            return QMapshaperPaths.mapshaper_command_name()
