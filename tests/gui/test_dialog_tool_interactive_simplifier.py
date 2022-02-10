@@ -1,16 +1,18 @@
+from pathlib import Path
 import pytest
 
 from pytestqt.qtbot import QtBot
 
-from qgis.core import (QgsProject, QgsVectorLayer, QgsApplication)
+from qgis.core import (QgsProject, QgsVectorLayer)
 from qgis.gui import (QgisInterface, QgsMapCanvas)
+from qgis.PyQt.QtCore import QThread
 
 from qmapshaper.gui.dialog_tool_interactive_simplifier import InteractiveSimplifierTool
 
 
 @pytest.mark.qt_no_exception_capture
 def test(data_layer: QgsVectorLayer, qgis_iface: QgisInterface, qgis_parent,
-         qgis_canvas: QgsMapCanvas, qgis_new_project, qtbot: QtBot, qgis_app: QgsApplication):
+         qgis_canvas: QgsMapCanvas, qgis_new_project, qtbot: QtBot):
 
     assert isinstance(data_layer, QgsVectorLayer)
 
@@ -23,61 +25,57 @@ def test(data_layer: QgsVectorLayer, qgis_iface: QgisInterface, qgis_parent,
 
     assert qgis_canvas.layerCount() == 1
 
-    dialog = InteractiveSimplifierTool(qgis_parent, qgis_iface)
+    # dialog = InteractiveSimplifierTool(qgis_parent, qgis_iface)
 
-    qtbot.addWidget(dialog)
+    # assert isinstance(dialog.layer_selection.currentLayer(), QgsVectorLayer)
 
-    assert isinstance(dialog.layer_selection.currentLayer(), QgsVectorLayer)
+    # with qtbot.waitSignal(dialog.input_data_changed, timeout=3000, raising=True):
+    #     dialog.update_input_layer()
 
-    with qtbot.waitSignal(dialog.input_data_changed, timeout=3000, raising=True):
-        dialog.update_input_layer()
+    # def test_1():
+    #     assert Path(dialog.process.input_data_filename).exists()
 
-    assert isinstance(dialog.canvas, QgsMapCanvas)
+    # qtbot.wait_until(test_1)
 
-    assert dialog.canvas.extent().contains(data_layer.extent())
+    # assert isinstance(dialog.canvas, QgsMapCanvas)
 
-    with qtbot.waitSignal(dialog.process.generalized_layer_changed, timeout=5000):
-        dialog.process.generalize_layer(50, "dp")
+    # assert dialog.canvas.extent().contains(data_layer.extent())
 
-    with qtbot.waitSignal(dialog.process.generalized_layer_prepared, timeout=5000):
-        dialog.process.load_generalized_layer()
+    # with qtbot.waitSignals(
+    #     [dialog.process.generalized_layer_prepared, dialog.data_generalized, dialog.map_updated]):
+    #     dialog.generalize_layer()
 
-    with qtbot.waitSignal(dialog.map_updated, timeout=5000):
-        dialog.load_generalized_data()
+    # def check_data_1():
+    #     assert dialog.process.generalized_data_only_geometry == "a"
 
-    def check_data_1():
-        assert dialog.process.generalized_data_only_geometry.featureCount(
-        ) == data_layer.featureCount()
+    # qtbot.waitUntil(check_data_1)
 
-    qtbot.waitUntil(check_data_1)
+    # def check_data_2():
+    #     assert dialog.process.generalized_data_with_attributes.featureCount(
+    #     ) == data_layer.featureCount()
+    #     assert dialog.process.generalized_data_with_attributes.fields().count(
+    #     ) == data_layer.fields().count()
 
-    with qtbot.waitSignal(dialog.map_updated, timeout=5000):
-        dialog.load_generalized_data()
+    # qtbot.waitUntil(check_data_2)
 
-    def check_data_2():
-        assert dialog.process.generalized_data_with_attributes.featureCount(
-        ) == data_layer.featureCount()
-        assert dialog.process.generalized_data_with_attributes.fields().count(
-        ) == data_layer.fields().count()
+    # assert isinstance(dialog.get_layer_for_project(), QgsVectorLayer)
+    # assert dialog.get_layer_for_project().featureCount() == data_layer.featureCount()
 
-    qtbot.waitUntil(check_data_2)
+    # layer = dialog.get_layer_for_project()
 
-    assert isinstance(dialog.get_layer_for_project(), QgsVectorLayer)
-    assert dialog.get_layer_for_project().featureCount() == data_layer.featureCount()
+    # assert isinstance(layer, QgsVectorLayer)
+    # assert layer.fields().names() == data_layer.fields().names()
+    # assert layer.crs().toWkt() == data_layer.crs().toWkt()
+    # assert layer.featureCount() == data_layer.featureCount()
+    # assert layer.wkbType() == data_layer.wkbType()
 
-    layer = dialog.get_layer_for_project()
+    # dialog.accept()
 
-    assert isinstance(layer, QgsVectorLayer)
-    assert layer.fields().names() == data_layer.fields().names()
-    assert layer.crs().toWkt() == data_layer.crs().toWkt()
-    assert layer.featureCount() == data_layer.featureCount()
-    assert layer.wkbType() == data_layer.wkbType()
+    # def no_tasks_running():
+    #     assert dialog.threadpool.activeThreadCount() == 0
 
-    dialog.accept()
+    # qtbot.waitUntil(no_tasks_running)
 
-    def no_tasks_running():
-        assert dialog.threadpool.activeThreadCount() == 0
+    # dialog.reject()
 
-    qtbot.waitUntil(no_tasks_running)
-
-    dialog.reject()
+    # QThread.sleep(5)
