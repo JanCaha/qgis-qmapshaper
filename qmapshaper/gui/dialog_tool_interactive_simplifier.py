@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from qgis.core import (QgsVectorLayer, QgsMapLayerProxyModel)
 from qgis.gui import (QgsMapCanvas, QgsMapLayerComboBox, QgisInterface)
 from qgis.PyQt.QtWidgets import (QDialog, QLabel, QVBoxLayout, QHBoxLayout, QSlider, QPushButton,
@@ -25,13 +23,10 @@ class InteractiveSimplifierTool(QDialog):
     button_box: QDialogButtonBox
 
     threadpool: QThreadPool
-    # convert_worker: ConvertWorker
+
+    wait_worker: WaitWorker
     """
-    Worker that takes care of converting input layer into generalized version. Runs on solo thread to avoid blocking GUI.
-    """
-    # wait_worker: WaitWorker
-    """
-    Worker that waits for small amount of time (current 0.2 second). Helps avoid calling ConvertWorker to often.
+    Worker that waits for small amount of time (current 0.2 second). Helps avoid calling MapshaperProcess to often.
     Generally, the value of percent_spin_box needs to be stable while this run to trigger the data generalization.
     """
 
@@ -47,6 +42,7 @@ class InteractiveSimplifierTool(QDialog):
         super().__init__(parent)
 
         self.process = InteractiveSimplifierProcess(parent=self)
+
         self.process.generalized_layer_prepared.connect(self.load_generalized_data)
 
         self.input_data_changed.connect(self.generalize_layer)
