@@ -9,7 +9,7 @@ class QMapshaperCommandBuilder:
     def prepare_console_commands(input_data_path: str, output_data_path: str, command: str,
                                  arguments: List[str]) -> List[str]:
 
-        commands = [QMapshaperCommandBuilder.mapshaper_command()]
+        commands = []
 
         commands.append(input_data_path)
 
