@@ -1,60 +1,78 @@
 from pathlib import Path
-from typing import List, Union
-import subprocess
+from typing import Union
 
-from qgis.core import QgsProcessingFeedback
-from ..utils import log
+from qgis.PyQt.QtCore import QProcess
+
+from .class_qmapshaper_paths import QMapshaperPaths
 
 
-class QMapshaperRunner:
+class MapshaperProcess(QProcess):
 
-    @staticmethod
-    def run_mapshaper(commands: List[str], feedback: QgsProcessingFeedback = None):
+    output_lines: str = ""
 
-        if feedback:
-            feedback.pushInfo("Running command: {}".format(" ".join(commands)))
+    error_lines: str = ""
 
-        with subprocess.Popen(commands,
-                              stdout=subprocess.PIPE,
-                              stdin=subprocess.DEVNULL,
-                              stderr=subprocess.STDOUT,
-                              universal_newlines=True) as res:
+    finished_correctly = False
 
-            if feedback:
-                feedback.pushInfo("Result: ")
+    def __init__(self) -> None:
 
-                lines = res.stdout.readlines()
+        super().__init__()
 
-                for line in lines:
-                    feedback.pushInfo("{}.".format(line))
+        self.setProcessChannelMode(QProcess.MergedChannels)
 
-                feedback.pushInfo("Command runned.")
+        self.setProgram(QMapshaperPaths.mapshaper_command_call())
 
-    @staticmethod
-    def test_run(path: Union[str, Path]):
+        self.finished.connect(self.read_output)
+        self.error.connect(self.read_output)
+
+    def run(self):
+
+        self.start()
+
+        self.waitForStarted()
+
+        self.waitForFinished()
+
+    def read_output(self):
+
+        self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
+        self.error_lines = bytes(self.readAllStandardError()).decode("utf8")
+
+        if "Wrote" in self.output_lines:
+            self.finished_correctly = True
+
+
+class MapshaperProcessChecker(QProcess):
+
+    output_lines: str
+
+    found = False
+
+    def __init__(self, path: Union[str, Path] = None) -> None:
+
+        super().__init__()
+
+        self.setProcessChannelMode(QProcess.MergedChannels)
 
         if path:
 
-            path_command = Path(path) / "bin" / "mapshaper"
+            path_ms = Path(path) / "bin" / "mapshaper"
 
-            path_command = path_command.absolute().as_posix()
+            path = path_ms.absolute().as_posix()
 
         else:
-            path_command = "mapshaper"
 
-        try:
-            with subprocess.Popen([path_command],
-                                  stdout=subprocess.PIPE,
-                                  stdin=subprocess.DEVNULL,
-                                  stderr=subprocess.STDOUT,
-                                  universal_newlines=True) as res:
+            path = "mapshaper"
 
-                lines = res.stdout.readlines()
+        self.setProgram(path)
 
-                if lines[0].startswith("Error: No commands to run"):
-                    return True
+        self.start()
 
-        except FileNotFoundError:
-            return False
+        self.waitForStarted()
 
-        return False
+        self.waitForFinished()
+
+        self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
+
+        if "Error: No commands to run" in self.output_lines:
+            self.found = True
