@@ -3,7 +3,6 @@ from pathlib import Path
 from processing.core.ProcessingConfig import ProcessingConfig
 
 from ..text_constants import TextConstants
-from .class_qmapshaper_runner import QMapshaperRunner
 from ..utils import log
 
 
@@ -48,13 +47,17 @@ class QMapshaperPaths:
     @staticmethod
     def guess_mapshaper_folder() -> str:
 
+        from .class_qmapshaper_runner import MapshaperProcessChecker
+
         # globally available
-        if QMapshaperRunner.test_run(""):
+        mp = MapshaperProcessChecker("")
+        if mp.found:
             return ""
 
         folder = Path.home() / "node_modules" / "mapshaper"
 
-        if QMapshaperRunner.test_run(folder):
+        mp = MapshaperProcessChecker(folder)
+        if mp.found:
             return folder.absolute().as_posix()
 
         return ""
