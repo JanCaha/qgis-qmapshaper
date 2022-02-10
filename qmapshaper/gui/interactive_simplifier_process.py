@@ -3,25 +3,19 @@ from typing import Optional, List
 import random
 
 from qgis.core import (QgsVectorLayer, QgsSingleSymbolRenderer, QgsFillSymbol)
-from qgis.PyQt.QtCore import (QThreadPool, QObject, pyqtSignal)
+from qgis.PyQt.QtCore import (QObject, pyqtSignal)
 from qgis.PyQt.QtWidgets import (QDialog)
 
 from ..classes.class_qmapshaper_file import QMapshaperFile
 from ..classes.class_qmapshaper_data_preparer import QMapshaperDataPreparer
 from ..classes.class_qmapshaper_command_builder import QMapshaperCommandBuilder
+from ..classes.class_qmapshaper_runner import MapshaperProcess
 from ..processing.tool_simplify import SimplifyAlgorithm
-from ..classes.classes_workers import ConvertWorker
 from ..text_constants import TextConstants
 from ..utils import log
 
 
 class InteractiveSimplifierProcess(QObject):
-
-    threadpool: QThreadPool
-    convert_worker: ConvertWorker
-    """
-    Worker that takes care of converting input layer into generalized version. Runs on solo thread to avoid blocking GUI.
-    """
 
     memory_layer: QgsVectorLayer = None
 
@@ -44,8 +38,6 @@ class InteractiveSimplifierProcess(QObject):
 
         self.parent_gui = parent
 
-        self.threadpool = QThreadPool()
-
         self.input_layer_changed.connect(self.export_for_generalization)
         self.generalized_layer_changed.connect(self.load_generalized_layer)
 
@@ -64,7 +56,6 @@ class InteractiveSimplifierProcess(QObject):
         QMapshaperDataPreparer.write_layer_with_single_attribute(layer=self.memory_layer,
                                                                  file=self.input_data_filename,
                                                                  col_index=field_index)
-
         log(f"Data stored at: {self.input_data_filename}")
 
     def generalize_layer(self, simplify_percent: float, simplify_method: str) -> None:
@@ -87,7 +78,7 @@ class InteractiveSimplifierProcess(QObject):
 
         log(f"COMMAND TO RUN: {' '.join(commands)}")
 
-        self.create_convert_worker(commands)
+        self.run_mapshaper_process(commands)
 
         log(f"Data to load: {self.generalized_data_filename}")
 
@@ -147,14 +138,15 @@ class InteractiveSimplifierProcess(QObject):
             return None
 
     def generalized_layer_updated(self) -> None:
+
         self.generalized_layer_changed.emit()
 
-    def create_convert_worker(self, commands: List[str]) -> None:
+    def run_mapshaper_process(self, commands: List[str]) -> None:
 
-        convert_worker = ConvertWorker()
+        process = MapshaperProcess()
 
-        convert_worker.set_commands(commands=commands)
+        process.finished.connect(self.generalized_layer_updated)
 
-        convert_worker.signals.result.connect(self.generalized_layer_updated)
+        process.setArguments(commands)
 
-        self.threadpool.start(convert_worker)
+        process.run()
