@@ -6,8 +6,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.core import (QgsProcessingAlgorithm, QgsVectorLayer, QgsProcessingFeedback,
                        QgsProcessingException)
 
-from ..utils import log
-from ..classes.class_qmapshaper_runner import QMapshaperRunner
+from ..classes.class_qmapshaper_runner import MapshaperProcess
 from ..classes.class_qmapshaper_command_builder import QMapshaperCommandBuilder
 from ..classes.class_qmapshaper_data_preparer import QMapshaperDataPreparer
 from ..classes.class_qmapshaper_file import QMapshaperFile
@@ -83,7 +82,15 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
 
         commands = self.get_console_commands(parameters, context, feedback)
 
-        QMapshaperRunner.run_mapshaper(commands, feedback)
+        ms = MapshaperProcess()
+        ms.setArguments(commands)
+        ms.run()
+
+        if ms.output_lines:
+            feedback.pushInfo(ms.output_lines)
+
+        if ms.error_lines:
+            feedback.pushWarning(ms.output_lines)
 
         self.process_output_layer(feedback)
 
