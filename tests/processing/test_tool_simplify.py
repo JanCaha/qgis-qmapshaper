@@ -1,6 +1,9 @@
+from pathlib import Path
+
 from qgis.core import (QgsProcessingParameterVectorLayer, QgsProcessingParameterNumber,
                        QgsProcessingParameterEnum, QgsProcessingParameterVectorDestination,
-                       QgsProcessingFeedback, QgsProcessingContext, QgsProcessingOutputVectorLayer)
+                       QgsProcessingFeedback, QgsProcessingContext, QgsProcessingOutputVectorLayer,
+                       QgsVectorLayer)
 
 from qmapshaper.processing.tool_simplify import SimplifyAlgorithm
 
@@ -64,6 +67,12 @@ def test_input_data_output_temp_file(data_layer):
     assert len(result[0]) == len(alg.outputDefinitions())
     assert "Output" in result[0].keys()
 
+    layer = QgsVectorLayer(result[0]["Output"], "layer", "ogr")
+
+    assert isinstance(layer, QgsVectorLayer)
+    assert Path(layer.source()).exists()
+    assert layer.featureCount() == 404
+
 
 def test_input_data_output_named_file(data_layer, data_result_file):
 
@@ -90,3 +99,9 @@ def test_input_data_output_named_file(data_layer, data_result_file):
     assert result[1]
     assert len(result[0]) == len(alg.outputDefinitions())
     assert "Output" in result[0].keys()
+
+    layer = QgsVectorLayer(result[0]["Output"], "layer", "ogr")
+
+    assert isinstance(layer, QgsVectorLayer)
+    assert Path(layer.source()).exists()
+    assert layer.featureCount() == 404

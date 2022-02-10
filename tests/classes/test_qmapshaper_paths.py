@@ -22,14 +22,13 @@ def test_mapshaper_bin_folder():
 
 def test_full_path_command():
 
-    assert QMapshaperPaths.full_path_command(QMapshaperCommandBuilder.mapshaper_command_name()
-                                            ) == QMapshaperCommandBuilder.mapshaper_command_name()
+    assert QMapshaperPaths.full_path_command(
+        QMapshaperPaths.mapshaper_command_name()) == QMapshaperPaths.mapshaper_command_name()
 
 
 def test_mapshaper_builder_command():
 
-    assert QMapshaperCommandBuilder.mapshaper_command(
-    ) == QMapshaperCommandBuilder.mapshaper_command_name()
+    assert QMapshaperPaths.mapshaper_command_call() == QMapshaperPaths.mapshaper_command_name()
 
 
 def test_with_folder_setting_set():
@@ -46,6 +45,16 @@ def test_with_folder_setting_set():
     assert QMapshaperPaths.mapshaper_folder() == "/usr/local"
     assert QMapshaperPaths.mapshaper_bin_folder() == "/usr/local/bin"
 
-    command = QMapshaperCommandBuilder.mapshaper_command_name()
+    command = QMapshaperPaths.mapshaper_command_name()
 
     assert QMapshaperPaths.full_path_command(command) == f"/usr/local/bin/{command}"
+
+
+def test_mapshaper_command_name():
+
+    assert QMapshaperPaths.mapshaper_command_name() == "mapshaper-xl"
+
+
+def test_mapshaper_command():
+
+    assert QMapshaperPaths.mapshaper_command_call() == "/usr/local/bin/mapshaper-xl"

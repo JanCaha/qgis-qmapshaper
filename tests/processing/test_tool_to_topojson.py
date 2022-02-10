@@ -44,7 +44,7 @@ def test_outputs():
     assert isinstance(alg.outputDefinitions()[0], QgsProcessingOutputFile)
 
 
-def test_input_data_temp_file(data_layer_path):
+def test_input_data_temp_file(data_layer):
 
     feedback = QgsProcessingFeedback()
     context = QgsProcessingContext()
@@ -54,7 +54,7 @@ def test_input_data_temp_file(data_layer_path):
     alg.initAlgorithm()
 
     parameters = {
-        "Input": data_layer_path,
+        "Input": data_layer,
         "Fields": [],
         "DecimalNumbers": 3,
         "OutputFile": "TEMPORARY_OUTPUT"
@@ -75,10 +75,12 @@ def test_input_data_temp_file(data_layer_path):
     layer = QgsVectorLayer(result[0]["OutputFile"], "layer", "ogr")
 
     assert isinstance(layer, QgsVectorLayer)
+    assert "OutputFile.topojson" in layer.source()
+    assert Path(layer.source()).exists()
     assert layer.featureCount() == 404
 
 
-def test_input_data_specified_file(data_layer_path, data_result_path):
+def test_input_data_specified_file(data_layer, data_result_path):
 
     feedback = QgsProcessingFeedback()
     context = QgsProcessingContext()
@@ -90,7 +92,7 @@ def test_input_data_specified_file(data_layer_path, data_result_path):
     data_result_file = Path(data_result_path) / "test.topojson"
 
     parameters = {
-        "Input": data_layer_path,
+        "Input": data_layer,
         "Fields": [],
         "DecimalNumbers": 3,
         "OutputFile": data_result_file.as_posix()
@@ -114,4 +116,5 @@ def test_input_data_specified_file(data_layer_path, data_result_path):
     layer = QgsVectorLayer(result[0]["OutputFile"], "layer", "ogr")
 
     assert isinstance(layer, QgsVectorLayer)
+    assert Path(layer.source()).exists()
     assert layer.featureCount() == 404
