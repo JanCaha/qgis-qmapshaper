@@ -1,18 +1,19 @@
 from pathlib import Path
 import pytest
+import time
 
 from pytestqt.qtbot import QtBot
 
-from qgis.core import (QgsProject, QgsVectorLayer)
-from qgis.gui import (QgisInterface, QgsMapCanvas)
-from qgis.PyQt.QtCore import QThread
+from qgis.core import (QgsProject, QgsVectorLayer, QgsApplication)
+from qgis.gui import (QgisInterface, QgsMapCanvas, QgsMapLayerComboBox)
+from qgis.PyQt.QtCore import (QThread, QCoreApplication, Qt, pyqtSignal, pyqtBoundSignal)
+from qgis.PyQt.QtWidgets import (QSlider, QLabel, QSpinBox, QDialogButtonBox, QComboBox)
 
 from qmapshaper.gui.dialog_tool_interactive_simplifier import InteractiveSimplifierTool
 
 
-@pytest.mark.qt_no_exception_capture
 def test(data_layer: QgsVectorLayer, qgis_iface: QgisInterface, qgis_parent,
-         qgis_canvas: QgsMapCanvas, qgis_new_project, qtbot: QtBot):
+         qgis_canvas: QgsMapCanvas, qgis_new_project, qtbot: QtBot, qgis_app: QgsApplication):
 
     assert isinstance(data_layer, QgsVectorLayer)
 
@@ -25,57 +26,35 @@ def test(data_layer: QgsVectorLayer, qgis_iface: QgisInterface, qgis_parent,
 
     assert qgis_canvas.layerCount() == 1
 
-    # dialog = InteractiveSimplifierTool(qgis_parent, qgis_iface)
+    dialog = InteractiveSimplifierTool(qgis_parent, qgis_iface)
 
-    # assert isinstance(dialog.layer_selection.currentLayer(), QgsVectorLayer)
+    qtbot.addWidget(dialog)
+    dialog.show()
 
-    # with qtbot.waitSignal(dialog.input_data_changed, timeout=3000, raising=True):
-    #     dialog.update_input_layer()
+    assert isinstance(dialog.percent_slider, QSlider)
+    assert isinstance(dialog.percent_spin_box, QSpinBox)
+    assert isinstance(dialog.layer_selection, QgsMapLayerComboBox)
+    assert isinstance(dialog.methods, QComboBox)
+    assert isinstance(dialog.canvas, QgsMapCanvas)
+    assert isinstance(dialog.button_box, QDialogButtonBox)
 
-    # def test_1():
-    #     assert Path(dialog.process.input_data_filename).exists()
+    assert isinstance(dialog.map_updated, pyqtBoundSignal)
+    assert isinstance(dialog.data_generalized, pyqtBoundSignal)
+    assert isinstance(dialog.input_data_changed, pyqtBoundSignal)
+    assert isinstance(dialog.input_parameters_changed, pyqtBoundSignal)
 
-    # qtbot.wait_until(test_1)
+    assert isinstance(dialog.layer_selection.currentLayer(), QgsVectorLayer)
 
-    # assert isinstance(dialog.canvas, QgsMapCanvas)
+    dialog.process.export_for_generalization()
 
-    # assert dialog.canvas.extent().contains(data_layer.extent())
+    def test_1():
+        assert Path(dialog.process.input_data_filename).exists()
 
-    # with qtbot.waitSignals(
-    #     [dialog.process.generalized_layer_prepared, dialog.data_generalized, dialog.map_updated]):
-    #     dialog.generalize_layer()
+    qtbot.waitUntil(test_1)
 
-    # def check_data_1():
-    #     assert dialog.process.generalized_data_only_geometry == "a"
+    qgis_app.processEvents()
+    time.sleep(5)
 
-    # qtbot.waitUntil(check_data_1)
+    dialog.hide()
 
-    # def check_data_2():
-    #     assert dialog.process.generalized_data_with_attributes.featureCount(
-    #     ) == data_layer.featureCount()
-    #     assert dialog.process.generalized_data_with_attributes.fields().count(
-    #     ) == data_layer.fields().count()
-
-    # qtbot.waitUntil(check_data_2)
-
-    # assert isinstance(dialog.get_layer_for_project(), QgsVectorLayer)
-    # assert dialog.get_layer_for_project().featureCount() == data_layer.featureCount()
-
-    # layer = dialog.get_layer_for_project()
-
-    # assert isinstance(layer, QgsVectorLayer)
-    # assert layer.fields().names() == data_layer.fields().names()
-    # assert layer.crs().toWkt() == data_layer.crs().toWkt()
-    # assert layer.featureCount() == data_layer.featureCount()
-    # assert layer.wkbType() == data_layer.wkbType()
-
-    # dialog.accept()
-
-    # def no_tasks_running():
-    #     assert dialog.threadpool.activeThreadCount() == 0
-
-    # qtbot.waitUntil(no_tasks_running)
-
-    # dialog.reject()
-
-    # QThread.sleep(5)
+    dialog.accept()
