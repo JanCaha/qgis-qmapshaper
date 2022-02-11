@@ -1,7 +1,7 @@
 from qgis.core import (QgsVectorLayer, QgsMapLayerProxyModel)
 from qgis.gui import (QgsMapCanvas, QgsMapLayerComboBox, QgisInterface)
-from qgis.PyQt.QtWidgets import (QDialog, QLabel, QVBoxLayout, QHBoxLayout, QSlider, QPushButton,
-                                 QComboBox, QSpinBox, QDialogButtonBox)
+from qgis.PyQt.QtWidgets import (QDialog, QLabel, QVBoxLayout, QHBoxLayout, QSlider, QComboBox,
+                                 QSpinBox, QDialogButtonBox)
 from qgis.PyQt.QtCore import (Qt, QThreadPool, pyqtSignal)
 
 from ..processing.tool_simplify import SimplifyAlgorithm
@@ -13,12 +13,10 @@ from .interactive_simplifier_process import InteractiveSimplifierProcess
 
 class InteractiveSimplifierTool(QDialog):
 
-    label_text: QLabel
     percent_slider: QSlider
     percent_spin_box: QSpinBox
     canvas: QgsMapCanvas
     layer_selection: QgsMapLayerComboBox
-    button_insert: QPushButton
     methods: QComboBox
     button_box: QDialogButtonBox
 
