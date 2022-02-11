@@ -50,7 +50,11 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
 
         method = self.get_method(method)
 
-        arguments = self.prepare_arguments(simplify_percent=simplify_percent, method=method)
+        planar = not self.input_layer_memory.crs().isGeographic()
+
+        arguments = self.prepare_arguments(simplify_percent=simplify_percent,
+                                           method=method,
+                                           planar=planar)
 
         return arguments
 
@@ -72,13 +76,17 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
 
     @staticmethod
     def prepare_arguments(simplify_percent: Union[int, float, str] = 50,
-                          method: str = "dp") -> List[str]:
+                          method: str = "dp",
+                          planar: bool = False) -> List[str]:
 
         arguments = [
             method,
             '{}%'.format(simplify_percent),
             'keep-shapes',
         ]
+
+        if planar:
+            arguments.append("planar")
 
         return arguments
 
