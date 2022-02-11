@@ -6,7 +6,7 @@
 name=QMapshaper
 qgisMinimumVersion=3.22
 description=This allows running mapshaper tool (need to be locally installed) as a processing tool or using interactive GUI tool.
-version=0.3.2
+version=0.4.0
 author=Jan Caha
 email=jan.caha@outlook.com
 
@@ -25,7 +25,7 @@ hasProcessingProvider=yes
 # Tags are comma separated with spaces allowed
 tags=vector, simplication, generalization
 
-homepage=https://github.com/JanCaha/qgis-qmapshaper
+homepage=https://jancaha.github.io/qgis-qmapshaper/
 icon=qmapshaper.png
 
 # experimental flag
