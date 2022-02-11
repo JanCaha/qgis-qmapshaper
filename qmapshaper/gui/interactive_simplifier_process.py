@@ -67,8 +67,11 @@ class InteractiveSimplifierProcess(QObject):
 
         self.generalized_data_filename = QMapshaperFile.random_temp_filename()
 
+        planar = not self.memory_layer.crs().isGeographic()
+
         arguments = SimplifyAlgorithm.prepare_arguments(simplify_percent=simplify_percent,
-                                                        method=simplify_method)
+                                                        method=simplify_method,
+                                                        planar=planar)
 
         commands = QMapshaperCommandBuilder.prepare_console_commands(
             input_data_path=self.input_data_filename,
