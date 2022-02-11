@@ -86,6 +86,10 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
         ms.setArguments(commands)
         ms.run()
 
+        feedback.pushInfo("COMMAND TO RUN:")
+        feedback.pushInfo(ms.command_to_run())
+        feedback.pushInfo("RESULT:")
+
         if ms.output_lines:
             feedback.pushInfo(ms.output_lines)
 
