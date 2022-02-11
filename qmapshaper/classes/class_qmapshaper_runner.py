@@ -25,6 +25,10 @@ class MapshaperProcess(QProcess):
         self.finished.connect(self.read_output)
         self.error.connect(self.read_output)
 
+    def command_to_run(self) -> str:
+        commands = [self.program()] + self.arguments()
+        return " ".join(commands)
+
     def run(self):
 
         self.start()
