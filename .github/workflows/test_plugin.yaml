@@ -31,4 +31,4 @@ jobs:
  
       - name: Run Tests
         run: |
-          pytest tests --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s  -p no:xvfb
+          pytest tests -rP -vv -s  -p no:xvfb
