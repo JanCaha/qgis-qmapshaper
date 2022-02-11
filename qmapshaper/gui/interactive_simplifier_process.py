@@ -21,7 +21,7 @@ class InteractiveSimplifierProcess(QObject):
 
     input_data_filename: str = ""
 
-    generalized_data_filename: str = ""
+    generalized_data_filename: str = None
     _generalized_data_layer: QgsVectorLayer = None
 
     _generalized_data_layer_memory: QgsVectorLayer = None
