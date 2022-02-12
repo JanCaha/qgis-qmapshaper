@@ -1,13 +1,12 @@
 from pathlib import Path
-import pytest
 import time
 
 from pytestqt.qtbot import QtBot
 
 from qgis.core import (QgsProject, QgsVectorLayer, QgsApplication)
 from qgis.gui import (QgisInterface, QgsMapCanvas, QgsMapLayerComboBox)
-from qgis.PyQt.QtCore import (QThread, QCoreApplication, Qt, pyqtSignal, pyqtBoundSignal)
-from qgis.PyQt.QtWidgets import (QSlider, QLabel, QSpinBox, QDialogButtonBox, QComboBox)
+from qgis.PyQt.QtCore import (pyqtBoundSignal)
+from qgis.PyQt.QtWidgets import (QSlider, QSpinBox, QDialogButtonBox, QComboBox)
 
 from qmapshaper.gui.dialog_tool_interactive_simplifier import InteractiveSimplifierTool
 
@@ -52,8 +51,13 @@ def test(data_layer: QgsVectorLayer, qgis_iface: QgisInterface, qgis_parent,
 
     qtbot.waitUntil(test_1)
 
-    qgis_app.processEvents()
-    time.sleep(5)
+    with qtbot.waitSignal(dialog.map_updated):
+        dialog.generalize_layer()
+
+    assert dialog.canvas.layerCount() == 1
+
+    assert isinstance(dialog.get_layer_for_project(), QgsVectorLayer)
+    assert dialog.get_layer_for_project().featureCount() == 404
 
     dialog.hide()
 
