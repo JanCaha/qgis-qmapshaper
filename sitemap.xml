@@ -2,27 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://jancaha.github.io/qgis-qmapshaper/</loc>
-         <lastmod>2022-02-11</lastmod>
+         <lastmod>2022-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://jancaha.github.io/qgis-qmapshaper/changelog/</loc>
-         <lastmod>2022-02-11</lastmod>
+         <lastmod>2022-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://jancaha.github.io/qgis-qmapshaper/GUI%20Tools/tool_interactive_simplifier/</loc>
-         <lastmod>2022-02-11</lastmod>
+         <lastmod>2022-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://jancaha.github.io/qgis-qmapshaper/tools/tool_simplify/</loc>
-         <lastmod>2022-02-11</lastmod>
+         <lastmod>2022-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://jancaha.github.io/qgis-qmapshaper/tools/tool_to_topojson/</loc>
-         <lastmod>2022-02-11</lastmod>
+         <lastmod>2022-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
