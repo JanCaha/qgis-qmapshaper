@@ -25,4 +25,4 @@ jobs:
  
       - name: Run Tests
         run: |
-          pytest tests --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s -n1
+          QT_QPA_PLATFORM=offscreen pytest tests --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s -n1
