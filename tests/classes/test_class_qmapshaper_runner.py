@@ -24,7 +24,7 @@ def test_NpmPackageLocationCheckerProcess():
     assert npm.npm_exist()
 
     assert npm.npm_package_locations()
-    assert "qgis-mapshaper/node_modules" in npm.packages_location
+    assert "node_modules" in npm.packages_location
 
     assert npm.mapshaper_exists()
 
