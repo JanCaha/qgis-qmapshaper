@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Union
+from typing import Union, Optional
 
 from qgis.PyQt.QtCore import QProcess
 
@@ -52,23 +52,27 @@ class MapshaperProcessChecker(QProcess):
 
     found = False
 
-    def __init__(self, path: Union[str, Path] = None) -> None:
+    path: str
+
+    def __init__(self, path: Optional[Union[str, Path]] = None) -> None:
 
         super().__init__()
 
+        self.path = path
+
         self.setProcessChannelMode(QProcess.MergedChannels)
 
-        if path:
+        if self.path:
 
-            path_ms = Path(path) / "bin" / "mapshaper"
+            path_ms = Path(self.path) / "bin" / "mapshaper"
 
-            path = path_ms.absolute().as_posix()
+            self.path = path_ms.absolute().as_posix()
 
         else:
 
-            path = "mapshaper"
+            self.path = "mapshaper"
 
-        self.setProgram(path)
+        self.setProgram(self.path)
 
         self.start()
 
@@ -80,3 +84,93 @@ class MapshaperProcessChecker(QProcess):
 
         if "Error: No commands to run" in self.output_lines:
             self.found = True
+
+
+class NpmPackageLocationCheckerProcess(QProcess):
+
+    output_lines: str
+
+    packages_location: str = None
+
+    mapshaper_present: bool = False
+
+    _mapshaper_location: str = None
+
+    def __init__(self) -> None:
+
+        super().__init__()
+
+    def npm_exist(self) -> bool:
+
+        self.setProgram("npm")
+
+        self.start()
+
+        self.waitForStarted()
+
+        self.waitForFinished()
+
+        self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
+
+        if "Usage: npm <command>" in self.output_lines:
+            return True
+
+        return False
+
+    def npm_package_locations(self) -> bool:
+
+        self.setProgram("npm")
+        self.setArguments(["root"])
+
+        self.start()
+
+        self.waitForStarted()
+
+        self.waitForFinished()
+
+        self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
+
+        if 0 < len(self.output_lines):
+
+            self.packages_location = self.output_lines.strip()
+
+            return True
+
+        return False
+
+    def mapshaper_exists(self) -> bool:
+
+        self.setProgram("npm")
+        self.setArguments(["list"])
+
+        self.start()
+
+        self.waitForStarted()
+
+        self.waitForFinished()
+
+        self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
+
+        if "mapshaper" in self.output_lines:
+
+            self.mapshaper_present = True
+
+            path = Path(self.packages_location) / "mapshaper"
+
+            self._mapshaper_location = path.absolute().as_posix()
+
+            return True
+
+        return False
+
+    def mapshaper_path(self) -> Optional[str]:
+
+        if self.npm_exist():
+
+            if self.npm_package_locations():
+
+                if self.mapshaper_exists():
+
+                    return self._mapshaper_location
+
+        return None

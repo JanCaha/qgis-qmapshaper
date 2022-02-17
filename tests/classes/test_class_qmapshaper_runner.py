@@ -1,4 +1,4 @@
-from qmapshaper.classes.class_qmapshaper_runner import MapshaperProcessChecker, MapshaperProcess
+from qmapshaper.classes.class_qmapshaper_runner import MapshaperProcessChecker, NpmPackageLocationCheckerProcess
 
 
 def test_MapshaperProcessChecker():
@@ -15,3 +15,17 @@ def test_MapshaperProcessChecker():
     assert ms.output_lines == ""
 
     assert ms.found is False
+
+
+def test_NpmPackageLocationCheckerProcess():
+
+    npm = NpmPackageLocationCheckerProcess()
+
+    assert npm.npm_exist()
+
+    assert npm.npm_package_locations()
+    assert npm.packages_location == "/workspaces/qgis-mapshaper/node_modules"
+
+    assert npm.mapshaper_exists()
+
+    assert npm.mapshaper_path() is None
