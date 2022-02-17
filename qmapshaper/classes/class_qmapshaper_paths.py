@@ -47,18 +47,20 @@ class QMapshaperPaths:
     @staticmethod
     def guess_mapshaper_folder() -> str:
 
-        from .class_qmapshaper_runner import MapshaperProcessChecker
+        from .class_qmapshaper_runner import MapshaperProcessChecker, NpmPackageLocationCheckerProcess
 
         # globally available
         mp = MapshaperProcessChecker("")
         if mp.found:
             return ""
 
-        folder = Path.home() / "node_modules" / "mapshaper"
+        npm_checker = NpmPackageLocationCheckerProcess()
+
+        folder = npm_checker.mapshaper_path()
 
         mp = MapshaperProcessChecker(folder)
         if mp.found:
-            return folder.absolute().as_posix()
+            return mp.path
 
         return ""
 
