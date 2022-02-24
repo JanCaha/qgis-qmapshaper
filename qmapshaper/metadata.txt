@@ -6,7 +6,7 @@
 name=QMapshaper
 qgisMinimumVersion=3.22
 description=This allows running mapshaper tool (need to be locally installed) as a processing tool or using interactive GUI tool.
-version=0.4.0
+version=0.5.0
 author=Jan Caha
 email=jan.caha@outlook.com
 
@@ -29,7 +29,7 @@ homepage=https://jancaha.github.io/qgis-qmapshaper/
 icon=qmapshaper.png
 
 # experimental flag
-experimental=True
+experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
