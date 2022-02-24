@@ -2,6 +2,7 @@
 
 QGIS plugin to that allows running [mapshaper](https://github.com/mbloch/mapshaper) directly from QGIS as a processing tool or an interactive tool.
 
+[![Tests for Plugin QMapshaper](https://github.com/JanCaha/qgis-qmapshaper/actions/workflows/test_plugin.yaml/badge.svg)](https://github.com/JanCaha/qgis-qmapshaper/actions/workflows/test_plugin.yaml)
 
 ## Link to QGIS Plugin repository
 
