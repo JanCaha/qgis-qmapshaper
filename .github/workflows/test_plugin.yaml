@@ -23,6 +23,18 @@ jobs:
       - name: Print Python Path
         run: echo $PYTHONPATH
  
-      - name: Run Tests
+      # - name: Run Tests
+      #   run: |
+      #     QT_QPA_PLATFORM=offscreen pytest tests --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s -n1
+      
+      - name: Run Tests classes
         run: |
-          QT_QPA_PLATFORM=offscreen pytest tests --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s -n1
+          QT_QPA_PLATFORM=offscreen pytest tests/classes --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s -n1
+
+      - name: Run Tests gui
+        run: |
+          QT_QPA_PLATFORM=offscreen pytest/gui tests --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s -n1
+      
+      - name: Run Tests processing
+        run: |
+          QT_QPA_PLATFORM=offscreen pytest tests/processing --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s -n1
