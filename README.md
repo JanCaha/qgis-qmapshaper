@@ -1,6 +1,8 @@
 # QMapshaper
 
-**Work in progress !!!** Development of the QGIS plugin to turn [mapshaper](https://github.com/mbloch/mapshaper) into QGIS tool.
+[![Tests for Plugin QMapshaper](https://github.com/JanCaha/qgis-qmapshaper/actions/workflows/test_plugin.yaml/badge.svg)](https://github.com/JanCaha/qgis-qmapshaper/actions/workflows/test_plugin.yaml)
+
+QGIS plugin to turn [mapshaper](https://github.com/mbloch/mapshaper) into QGIS tool.
 
 ## Installation
 
