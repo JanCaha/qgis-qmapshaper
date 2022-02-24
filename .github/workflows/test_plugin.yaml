@@ -31,10 +31,16 @@ jobs:
         run: |
           QT_QPA_PLATFORM=offscreen pytest tests/classes --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s -n1
 
-      - name: Run Tests gui
-        run: |
-          QT_QPA_PLATFORM=offscreen pytest tests/gui --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s -n1
-      
       - name: Run Tests processing
         run: |
           QT_QPA_PLATFORM=offscreen pytest tests/processing --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s -n1
+
+      - name: Run Tests gui process
+        run: |
+          QT_QPA_PLATFORM=offscreen pytest tests/gui/test_interactive_simplifier_process.py --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s -n1
+      
+      - name: Run Tests gui tool
+        run: |
+          QT_QPA_PLATFORM=offscreen pytest tests/gui/test_dialog_tool_interactive_simplifier.py --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s -n1
+      
+      
