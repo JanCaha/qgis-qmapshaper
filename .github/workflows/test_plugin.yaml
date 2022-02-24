@@ -33,7 +33,7 @@ jobs:
 
       - name: Run Tests gui
         run: |
-          QT_QPA_PLATFORM=offscreen pytest/gui tests --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s -n1
+          QT_QPA_PLATFORM=offscreen pytest tests/gui --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s -n1
       
       - name: Run Tests processing
         run: |
