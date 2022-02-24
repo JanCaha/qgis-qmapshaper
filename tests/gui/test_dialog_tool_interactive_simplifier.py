@@ -13,6 +13,7 @@ from qgis.PyQt.QtWidgets import (QSlider, QSpinBox, QDialogButtonBox, QComboBox)
 from qmapshaper.gui.dialog_tool_interactive_simplifier import InteractiveSimplifierTool
 
 
+@pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") is not None, reason="Skip on Github Actions.")
 def test_elements(data_layer: QgsVectorLayer, qgis_canvas: QgsMapCanvas, qgis_iface: QgisInterface,
                   qgis_parent):
 
