@@ -1,5 +1,7 @@
 from pathlib import Path
 import time
+import pytest
+import os
 
 from pytestqt.qtbot import QtBot
 
@@ -36,6 +38,7 @@ def test_elements(data_layer: QgsVectorLayer, qgis_canvas: QgsMapCanvas, qgis_if
     assert isinstance(dialog.input_parameters_changed, pyqtBoundSignal)
 
 
+@pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") is not None, reason="Skip on Github Actions.")
 def test_usage(data_layer: QgsVectorLayer, qgis_iface: QgisInterface, qgis_parent,
                qgis_canvas: QgsMapCanvas, qgis_new_project, qtbot: QtBot,
                qgis_app: QgsApplication):
