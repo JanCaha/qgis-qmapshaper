@@ -1,5 +1,13 @@
 # Changelog
 
+## version 0.5
+
+- plugin is no longer experimental
+
+- better mapshaper location identification, now based on existence system presence of `npm`
+
+- GUI tests that caused issue on Github Actions are now skipped on Github Actions
+
 ## version 0.4
 
 - use QProcess instead of Python's subprocess
