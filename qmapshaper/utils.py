@@ -2,9 +2,7 @@ import os
 from typing import Any
 from pathlib import Path
 
-from pytest_qgis import QgsVectorLayer
-
-from qgis.core import (QgsMessageLog, Qgis)
+from qgis.core import (QgsMessageLog, QgsVectorLayer, Qgis)
 
 from .text_constants import TextConstants
 
