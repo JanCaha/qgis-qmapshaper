@@ -1,5 +1,9 @@
 # Changelog
 
+## version 0.5.1
+
+- fix wrong import in utils.py causing an error
+
 ## version 0.5
 
 - plugin is no longer experimental
