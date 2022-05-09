@@ -78,6 +78,7 @@ class QMapshaperPlugin():
 
         if add_to_menu:
             self.iface.addPluginToMenu(self.menu, action)
+            self.iface.addPluginToVectorMenu(self.menu, action)
 
         if add_to_specific_toolbar:
             add_to_specific_toolbar.addAction(action)
