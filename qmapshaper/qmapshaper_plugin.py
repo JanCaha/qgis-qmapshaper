@@ -47,6 +47,7 @@ class QMapshaperPlugin():
 
         for action in self.actions:
             self.iface.removePluginMenu(TextConstants.plugin_name, action)
+            self.iface.removePluginVectorMenu(TextConstants.plugin_name, action)
             self.iface.removeToolBarIcon(action)
 
     def add_action(self,
