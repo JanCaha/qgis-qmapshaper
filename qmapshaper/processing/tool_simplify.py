@@ -2,7 +2,7 @@ from typing import List, Union, Dict
 
 from qgis.core import (QgsProcessingParameterVectorLayer, QgsProcessingParameterNumber,
                        QgsProcessingParameterEnum, QgsProcessingFeedback,
-                       QgsProcessingParameterVectorDestination)
+                       QgsProcessingParameterVectorDestination, QgsProcessingParameterField)
 
 from .mapshaper_algorithm import MapshaperAlgorithm
 
@@ -12,6 +12,7 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
     INPUT_LAYER = "Input"
     SIMPLIFY = "Simplify"
     METHOD = "Method"
+    FIELD = "Field"
     OUTPUT_LAYER = "Output"
 
     def initAlgorithm(self, config=None):
@@ -33,14 +34,33 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
                                        defaultValue=0))
 
         self.addParameter(
+            QgsProcessingParameterField(self.FIELD,
+                                        "Perform simplification on feature field",
+                                        parentLayerParameterName=self.INPUT_LAYER,
+                                        optional=True,
+                                        allowMultiple=False))
+
+        self.addParameter(
             QgsProcessingParameterVectorDestination(self.OUTPUT_LAYER, "Output Layer"))
 
     def prepare_data(self, parameters, context, feedback: QgsProcessingFeedback) -> None:
+
+        self.process_field(self.FIELD, parameters, context, feedback)
 
         self.process_input_layer(self.INPUT_LAYER, parameters, context, feedback)
 
         self.result_layer_location = self.parameterAsOutputLayer(parameters, self.OUTPUT_LAYER,
                                                                  context)
+
+    def process_field(self, field_name: str, parameters, context,
+                      feedback: QgsProcessingFeedback) -> None:
+
+        field = self.parameterAsFields(parameters, field_name, context)
+
+        if field:
+            field = field[0]
+
+        self.field = field
 
     def get_arguments(self, parameters, context, feedback: QgsProcessingFeedback):
 
@@ -54,7 +74,8 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
 
         arguments = self.prepare_arguments(simplify_percent=simplify_percent,
                                            method=method,
-                                           planar=planar)
+                                           planar=planar,
+                                           field=self.field_shortened)
 
         return arguments
 
@@ -90,7 +111,6 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
             ])
 
         else:
-            # arguments.extend([method])
 
             arguments.append('{}%'.format(simplify_percent))
 
