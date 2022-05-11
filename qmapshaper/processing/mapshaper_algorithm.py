@@ -112,9 +112,9 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
 
         join_field_index = QMapshaperDataPreparer.add_mapshaper_id_field(self.input_layer_memory)
 
-        QMapshaperDataPreparer.write_layer_with_single_attribute(layer=self.input_layer_memory,
-                                                                 file=self.mapshaper_input,
-                                                                 col_index=join_field_index)
+        QMapshaperDataPreparer.write_layer_with_minimal_attributes(layer=self.input_layer_memory,
+                                                                   file=self.mapshaper_input,
+                                                                   col_index=join_field_index)
 
     def process_output_layer(self, feedback: QgsProcessingFeedback):
 

@@ -1,3 +1,5 @@
+from typing import List, Union
+
 from qgis.core import (QgsVectorLayer, QgsVectorLayerUtils, QgsMemoryProviderUtils,
                        QgsVectorFileWriter, QgsCoordinateTransformContext, QgsVectorLayerJoinInfo,
                        QgsField, QgsFeatureSink)
@@ -28,12 +30,16 @@ class QMapshaperDataPreparer:
         return memory_layer
 
     @staticmethod
-    def write_layer_with_single_attribute(layer: QgsVectorLayer, file: str,
-                                          col_index: int) -> None:
+    def write_layer_with_minimal_attributes(layer: QgsVectorLayer, file: str,
+                                            col_index: Union[int, List[int]]) -> None:
 
         options = QgsVectorFileWriter.SaveVectorOptions()
         options.driverName = QMapshaperFile.driver_name()
-        options.attributes = [col_index]
+
+        if isinstance(col_index, int):
+            options.attributes = [col_index]
+        else:
+            options.attributes = col_index
 
         QgsVectorFileWriter.writeAsVectorFormatV3(layer=layer,
                                                   fileName=file,

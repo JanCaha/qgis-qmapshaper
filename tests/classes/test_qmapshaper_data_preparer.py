@@ -20,12 +20,12 @@ def test_copy_to_memory_layer(data_layer):
     assert copied_in_memory.name() == data_layer.name()
 
 
-def test_write_layer_with_single_attribute(data_layer, data_result_path):
+def test_write_layer_with_minimal_attributes(data_layer, data_result_path):
 
     file = Path(data_result_path) / "output.shp"
     file = file.as_posix()
 
-    QMapshaperDataPreparer.write_layer_with_single_attribute(data_layer, file, 1)
+    QMapshaperDataPreparer.write_layer_with_minimal_attributes(data_layer, file, 1)
 
     layer = QgsVectorLayer(file, "layer", "ogr")
 
