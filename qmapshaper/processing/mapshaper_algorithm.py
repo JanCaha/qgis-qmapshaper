@@ -31,6 +31,8 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
     Path to the file that will be used as output from mapshaper command.
     """
 
+    simplify_field = None
+
     def __init__(self):
         super().__init__()
 
@@ -48,6 +50,11 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
 
     @abc.abstractmethod
     def get_arguments(self, parameters, context, feedback: QgsProcessingFeedback) -> List[str]:
+        return None
+
+    @abc.abstractmethod
+    def process_field(self, parameter_name, parameters, context,
+                      feedback: QgsProcessingFeedback) -> None:
         return None
 
     @staticmethod
@@ -100,6 +107,18 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
 
         return self.return_dict()
 
+    @property
+    def field_full_name(self) -> str:
+        if self.simplify_field:
+            return self.simplify_field
+        return None
+
+    @property
+    def field_shortened(self) -> str:
+        if self.simplify_field:
+            return self.simplify_field[0:10]
+        return None
+
     def process_input_layer(self, parameter_name, parameters, context,
                             feedback: QgsProcessingFeedback) -> None:
 
@@ -110,11 +129,19 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
 
         self.input_layer_memory = QMapshaperDataPreparer.copy_to_memory_layer(layer)
 
+        fields = []
+
         join_field_index = QMapshaperDataPreparer.add_mapshaper_id_field(self.input_layer_memory)
+
+        fields.append(join_field_index)
+
+        if self.simplify_field:
+            index = self.input_layer_memory.fields().lookupField(self.field_full_name)
+            fields.append(index)
 
         QMapshaperDataPreparer.write_layer_with_minimal_attributes(layer=self.input_layer_memory,
                                                                    file=self.mapshaper_input,
-                                                                   col_index=join_field_index)
+                                                                   col_index=fields)
 
     def process_output_layer(self, feedback: QgsProcessingFeedback):
 
