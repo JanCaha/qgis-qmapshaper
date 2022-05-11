@@ -3,7 +3,7 @@ from pathlib import Path
 from qgis.core import (QgsProcessingParameterVectorLayer, QgsProcessingParameterNumber,
                        QgsProcessingParameterEnum, QgsProcessingParameterVectorDestination,
                        QgsProcessingFeedback, QgsProcessingContext, QgsProcessingOutputVectorLayer,
-                       QgsVectorLayer)
+                       QgsVectorLayer, QgsProcessingParameterField)
 
 from qmapshaper.processing.tool_simplify import SimplifyAlgorithm
 
@@ -14,7 +14,7 @@ def test_parameters():
 
     alg.initAlgorithm()
 
-    assert alg.countVisibleParameters() == 4
+    assert alg.countVisibleParameters() == 5
 
     parameter = alg.parameterDefinition("Input")
 
@@ -31,6 +31,10 @@ def test_parameters():
     parameter = alg.parameterDefinition("Output")
 
     assert isinstance(parameter, QgsProcessingParameterVectorDestination)
+
+    parameter = alg.parameterDefinition("Field")
+
+    assert isinstance(parameter, QgsProcessingParameterField)
 
 
 def test_outputs():
