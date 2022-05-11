@@ -77,13 +77,24 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
     @staticmethod
     def prepare_arguments(simplify_percent: Union[int, float, str] = 50,
                           method: str = "dp",
-                          planar: bool = False) -> List[str]:
+                          planar: bool = False,
+                          field: str = None) -> List[str]:
 
-        arguments = [
-            method,
-            '{}%'.format(simplify_percent),
-            'keep-shapes',
-        ]
+        arguments = [method]
+
+        if field:
+
+            arguments.extend([
+                "variable", "percentage", "=", "{} ? {} : 1".format(field,
+                                                                    float(simplify_percent) / 100)
+            ])
+
+        else:
+            # arguments.extend([method])
+
+            arguments.append('{}%'.format(simplify_percent))
+
+        arguments.append('keep-shapes')
 
         if planar:
             arguments.append("planar")
