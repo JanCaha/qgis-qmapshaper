@@ -82,6 +82,23 @@ def test_add_mapshaper_id_field(data_layer):
     assert TextConstants.JOIN_FIELD_NAME in copied_in_memory.fields().names()
 
 
+def test_generalization_field(data_layer):
+
+    assert isinstance(data_layer, QgsVectorLayer)
+
+    copied_in_memory = QMapshaperDataPreparer.copy_to_memory_layer(data_layer)
+
+    ids = copied_in_memory.allFeatureIds()[1:20]
+
+    QMapshaperDataPreparer.add_mapshaper_generalization_field(copied_in_memory, ids)
+
+    assert TextConstants.GENERALIZATION_FIELD_NAME in copied_in_memory.fields().names()
+
+    index = copied_in_memory.fields().lookupField(TextConstants.GENERALIZATION_FIELD_NAME)
+
+    assert sorted(copied_in_memory.uniqueValues(index)) == sorted([False, True])
+
+
 def test_join_fields_back(data_layer):
 
     assert isinstance(data_layer, QgsVectorLayer)

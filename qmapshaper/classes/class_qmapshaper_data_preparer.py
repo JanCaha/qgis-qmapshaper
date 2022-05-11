@@ -2,7 +2,7 @@ from typing import List, Union
 
 from qgis.core import (QgsVectorLayer, QgsVectorLayerUtils, QgsMemoryProviderUtils,
                        QgsVectorFileWriter, QgsCoordinateTransformContext, QgsVectorLayerJoinInfo,
-                       QgsField, QgsFeatureSink)
+                       QgsField)
 from qgis.PyQt.QtCore import QVariant
 
 from processing.algs.gdal.GdalUtils import GdalUtils
@@ -106,6 +106,27 @@ class QMapshaperDataPreparer:
 
         field_index = layer.addExpressionField(
             "$id", QgsField(TextConstants.JOIN_FIELD_NAME, QVariant.Int))
+
+        layer.commitChanges()
+
+        return field_index
+
+    @staticmethod
+    def add_mapshaper_generalization_field(layer: QgsVectorLayer,
+                                           ids: List[int],
+                                           selected_generalize: bool = True) -> int:
+
+        ids_string = ",".join([str(x) for x in ids])
+
+        expr = f'array_contains(array({ids_string}), $id)'
+
+        if not selected_generalize:
+            expr = "NOT " + expr
+
+        layer.startEditing()
+
+        field_index = layer.addExpressionField(
+            expr, QgsField(TextConstants.GENERALIZATION_FIELD_NAME, QVariant.Bool))
 
         layer.commitChanges()
 
