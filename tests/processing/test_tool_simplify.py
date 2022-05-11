@@ -105,3 +105,39 @@ def test_input_data_output_named_file(data_layer, data_result_file):
     assert isinstance(layer, QgsVectorLayer)
     assert Path(layer.source()).exists()
     assert layer.featureCount() == 404
+
+
+def test_input_data_output_temp_with_field(data_layer, data_result_file):
+
+    feedback = QgsProcessingFeedback()
+    context = QgsProcessingContext()
+
+    alg = SimplifyAlgorithm()
+
+    alg.initAlgorithm()
+
+    parameters = {
+        "Input": data_layer,
+        "Simplify": 12,
+        "Method": 0,
+        "Field": "generalized",
+        "Output": data_result_file
+    }
+
+    can_run, param_check_msg = alg.checkParameterValues(parameters=parameters, context=context)
+
+    assert param_check_msg == ""
+    assert can_run
+
+    result = alg.run(parameters=parameters, context=context, feedback=feedback)
+
+    assert isinstance(result, tuple)
+    assert result[1]
+    assert len(result[0]) == len(alg.outputDefinitions())
+    assert "Output" in result[0].keys()
+
+    layer = QgsVectorLayer(result[0]["Output"], "layer", "ogr")
+
+    assert isinstance(layer, QgsVectorLayer)
+    assert Path(layer.source()).exists()
+    assert layer.featureCount() == 404
