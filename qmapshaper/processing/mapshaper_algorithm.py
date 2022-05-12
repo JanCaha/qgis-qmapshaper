@@ -32,6 +32,8 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
     """
 
     simplify_field = None
+    clean_data_before = False
+    clean_data_after = False
 
     def __init__(self):
         super().__init__()
@@ -79,7 +81,9 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
             input_data_path=self.mapshaper_input,
             output_data_path=self.mapshaper_output,
             command=self.name(),
-            arguments=arguments)
+            arguments=arguments,
+            clean_before=self.clean_data_before,
+            clean_after=self.clean_data_after)
 
         return commands
 
