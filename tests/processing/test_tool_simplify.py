@@ -110,6 +110,11 @@ def test_input_data_output_temp_file(data_layer):
 }])
 def test_parameter_combinations(params: dict, data_layer, data_result_file):
 
+    path_data_result_file = Path(data_result_file)
+
+    if path_data_result_file.exists():
+        path_data_result_file.unlink()
+
     params.update({"Input": data_layer, "Output": data_result_file})
 
     feedback = QgsProcessingFeedback()
