@@ -83,12 +83,13 @@ class InteractiveSimplifierTool(QDialog):
 
         self.button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok, self)
 
-        self.modify_only_part = QCheckBox("Modify only part of data", self)
+        self.modify_only_part = QCheckBox("Generalize only part of layer (based on selection)",
+                                          self)
         self.modify_only_part.stateChanged.connect(self.set_selection)
 
         self.modify_selection = QComboBox(self)
-        self.modify_selection.addItem("generalize only selected features", True)
-        self.modify_selection.addItem("do not generalize selected features", False)
+        self.modify_selection.addItem("Generalize only selected features", True)
+        self.modify_selection.addItem("Generalize all not selected features", False)
         self.modify_selection.setEnabled(False)
         self.modify_selection.currentIndexChanged.connect(self.set_generalization_type)
 
