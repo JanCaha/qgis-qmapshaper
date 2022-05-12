@@ -2,7 +2,8 @@ from typing import List, Union, Dict
 
 from qgis.core import (QgsProcessingParameterVectorLayer, QgsProcessingParameterNumber,
                        QgsProcessingParameterEnum, QgsProcessingFeedback,
-                       QgsProcessingParameterVectorDestination, QgsProcessingParameterField)
+                       QgsProcessingParameterVectorDestination, QgsProcessingParameterField,
+                       QgsProcessingParameterBoolean)
 
 from .mapshaper_algorithm import MapshaperAlgorithm
 
@@ -13,6 +14,7 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
     SIMPLIFY = "Simplify"
     METHOD = "Method"
     FIELD = "Field"
+    CLEAN_DATA = "CleanData"
     OUTPUT_LAYER = "Output"
 
     def initAlgorithm(self, config=None):
@@ -41,6 +43,10 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
                                         allowMultiple=False))
 
         self.addParameter(
+            QgsProcessingParameterBoolean(self.CLEAN_DATA,
+                                          "Clean data prior and after simplification"))
+
+        self.addParameter(
             QgsProcessingParameterVectorDestination(self.OUTPUT_LAYER, "Output Layer"))
 
     def prepare_data(self, parameters, context, feedback: QgsProcessingFeedback) -> None:
@@ -63,6 +69,11 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
         self.simplify_field = field
 
     def get_arguments(self, parameters, context, feedback: QgsProcessingFeedback):
+
+        clean_data = self.parameterAsBool(parameters, self.CLEAN_DATA, context)
+
+        self.clean_data_before = clean_data
+        self.clean_data_after = clean_data
 
         simplify_percent = self.parameterAsDouble(parameters, self.SIMPLIFY, context)
 

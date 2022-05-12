@@ -93,6 +93,9 @@ class InteractiveSimplifierTool(QDialog):
         self.modify_selection.setEnabled(False)
         self.modify_selection.currentIndexChanged.connect(self.set_generalization_type)
 
+        self.clean_data = QCheckBox("Clean data prior and after simplification", self)
+        self.clean_data.stateChanged.connect(self.set_clean_data)
+
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
 
@@ -111,6 +114,8 @@ class InteractiveSimplifierTool(QDialog):
         self.vlayout.addWidget(self.modify_only_part)
         self.vlayout.addWidget(QLabel("Selection"))
         self.vlayout.addWidget(self.modify_selection)
+        self.vlayout.addWidget(QLabel("Topologically clean data"))
+        self.vlayout.addWidget(self.clean_data)
         self.vlayout.addWidget(QLabel("Map"))
         self.vlayout.addWidget(self.canvas)
         self.vlayout.addWidget(self.button_box)
@@ -207,4 +212,10 @@ class InteractiveSimplifierTool(QDialog):
         self.process.generalize_select_features = self.modify_selection.currentData()
 
         self.set_input_data()
+        self.generalize_layer()
+
+    def set_clean_data(self):
+
+        self.process.clean_data = self.clean_data.isChecked()
+
         self.generalize_layer()

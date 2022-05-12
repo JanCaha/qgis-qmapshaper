@@ -21,6 +21,7 @@ class InteractiveSimplifierProcess(QObject):
     stored_ids: List[int] = []
     generalize_select: bool = False
     generalize_select_features: bool = True
+    clean_data: bool = False
 
     input_data_filename: str = ""
 
@@ -103,7 +104,9 @@ class InteractiveSimplifierProcess(QObject):
             input_data_path=self.input_data_filename,
             output_data_path=self.generalized_data_filename,
             command=SimplifyAlgorithm.command(),
-            arguments=arguments)
+            arguments=arguments,
+            clean_before=self.clean_data,
+            clean_after=self.clean_data)
 
         log(f"COMMAND TO RUN: {' '.join(commands)}")
 
