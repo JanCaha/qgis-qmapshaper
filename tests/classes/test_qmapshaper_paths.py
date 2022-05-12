@@ -15,15 +15,21 @@ def test_mapshaper_folder():
     assert QMapshaperPaths.mapshaper_folder() == ""
 
 
-def test_mapshaper_bin_folder():
+def test_mapshaper_executable_path():
 
-    assert QMapshaperPaths.mapshaper_bin_folder() == ""
+    assert QMapshaperPaths.mapshaper_executable_path() == ""
 
+    ProcessingConfig.addSetting(
+        Setting(TextConstants.plugin_name,
+                TextConstants.MAPSHAPER_FOLDER,
+                'Mapshaper folder',
+                "/usr/local/test",
+                valuetype=Setting.FOLDER))
 
-def test_full_path_command():
+    ProcessingConfig.readSettings()
 
-    assert QMapshaperPaths.full_path_command(
-        QMapshaperPaths.mapshaper_command_name()) == QMapshaperPaths.mapshaper_command_name()
+    assert QMapshaperPaths.mapshaper_executable_path(use_defined=True) ==\
+        "/usr/local/test/mapshaper-xl"
 
 
 def test_mapshaper_builder_command():
@@ -37,17 +43,12 @@ def test_with_folder_setting_set():
         Setting(TextConstants.plugin_name,
                 TextConstants.MAPSHAPER_FOLDER,
                 'Mapshaper folder',
-                "/usr/local",
+                "/usr/local/test",
                 valuetype=Setting.FOLDER))
 
     ProcessingConfig.readSettings()
 
-    assert QMapshaperPaths.mapshaper_folder() == "/usr/local"
-    assert QMapshaperPaths.mapshaper_bin_folder() == "/usr/local/bin"
-
-    command = QMapshaperPaths.mapshaper_command_name()
-
-    assert QMapshaperPaths.full_path_command(command) == f"/usr/local/bin/{command}"
+    assert QMapshaperPaths.mapshaper_folder() == "/usr/local/test"
 
 
 def test_mapshaper_command_name():
@@ -57,4 +58,16 @@ def test_mapshaper_command_name():
 
 def test_mapshaper_command():
 
-    assert QMapshaperPaths.mapshaper_command_call() == "/usr/local/bin/mapshaper-xl"
+    assert QMapshaperPaths.mapshaper_command_call() == "mapshaper-xl"
+
+    ProcessingConfig.addSetting(
+        Setting(TextConstants.plugin_name,
+                TextConstants.MAPSHAPER_FOLDER,
+                'Mapshaper folder',
+                "/usr/local/test",
+                valuetype=Setting.FOLDER))
+
+    ProcessingConfig.readSettings()
+
+    assert QMapshaperPaths.mapshaper_command_call(use_settings_path=True) ==\
+        "/usr/local/test/mapshaper-xl"
