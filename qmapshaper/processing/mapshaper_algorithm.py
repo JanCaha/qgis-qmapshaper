@@ -108,13 +108,13 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
         return self.return_dict()
 
     @property
-    def field_full_name(self) -> str:
+    def simplified_field_full_name(self) -> str:
         if self.simplify_field:
             return self.simplify_field
         return None
 
     @property
-    def field_shortened(self) -> str:
+    def simplified_field_shortened(self) -> str:
         if self.simplify_field:
             return self.simplify_field[0:10]
         return None
@@ -136,7 +136,7 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
         fields.append(join_field_index)
 
         if self.simplify_field:
-            index = self.input_layer_memory.fields().lookupField(self.field_full_name)
+            index = self.input_layer_memory.fields().lookupField(self.simplified_field_full_name)
             fields.append(index)
 
         QMapshaperDataPreparer.write_layer_with_minimal_attributes(layer=self.input_layer_memory,

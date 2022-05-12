@@ -35,7 +35,7 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterField(self.FIELD,
-                                        "Perform simplification on feature field",
+                                        "Perform simplification based on feature field",
                                         parentLayerParameterName=self.INPUT_LAYER,
                                         optional=True,
                                         allowMultiple=False))
@@ -60,7 +60,7 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
         if field:
             field = field[0]
 
-        self.field = field
+        self.simplify_field = field
 
     def get_arguments(self, parameters, context, feedback: QgsProcessingFeedback):
 
@@ -75,7 +75,7 @@ class SimplifyAlgorithm(MapshaperAlgorithm):
         arguments = self.prepare_arguments(simplify_percent=simplify_percent,
                                            method=method,
                                            planar=planar,
-                                           field=self.field_shortened)
+                                           field=self.simplified_field_shortened)
 
         return arguments
 
