@@ -7,7 +7,7 @@
         {
             "label": "Run Pytest tests",
             "type": "shell",
-            "command": "pytest tests --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s -p no:xvfb",
+            "command": "pytest tests --cov=qmapshaper --cov-report=term-missing:skip-covered -rP -vv -s",
             "group": {
                 "kind": "test",
                 "isDefault": true
