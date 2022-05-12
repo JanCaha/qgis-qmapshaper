@@ -9,28 +9,21 @@ from ..utils import log
 class QMapshaperPaths:
 
     @staticmethod
-    def full_path_command(command: str) -> str:
-
-        mapshaper_bin_folder = QMapshaperPaths.mapshaper_bin_folder()
-
-        if mapshaper_bin_folder:
-
-            path = Path(mapshaper_bin_folder) / command
-
-            return path.absolute().as_posix()
-
-        else:
-            return command
-
-    @staticmethod
-    def mapshaper_bin_folder() -> str:
+    def mapshaper_executable_path(use_defined: bool = False) -> str:
 
         mapshaper_folder = QMapshaperPaths.mapshaper_folder()
 
         if mapshaper_folder:
-            folder = Path(mapshaper_folder) / "bin"
 
-            return folder.absolute().as_posix()
+            exec_path = Path(mapshaper_folder) / QMapshaperPaths.mapshaper_command_name()
+
+            if exec_path.exists() or use_defined:
+                return exec_path.as_posix()
+
+            exec_path = Path(mapshaper_folder) / "bin" / QMapshaperPaths.mapshaper_command_name()
+
+            if exec_path.exists() or use_defined:
+                return exec_path.as_posix()
 
         return ""
 
@@ -69,17 +62,14 @@ class QMapshaperPaths:
         return "mapshaper-xl"
 
     @staticmethod
-    def mapshaper_command_call() -> str:
+    def mapshaper_command_call(use_settings_path: bool = False) -> str:
 
-        mapshaper_bin_folder = QMapshaperPaths.mapshaper_bin_folder()
+        mapshaper_bin_folder = QMapshaperPaths.mapshaper_executable_path(
+            use_defined=use_settings_path)
 
         if mapshaper_bin_folder:
 
-            bin_path = Path(mapshaper_bin_folder)
-
-            bin_path = bin_path / QMapshaperPaths.mapshaper_command_name()
-
-            return bin_path.absolute().as_posix()
+            return mapshaper_bin_folder
 
         else:
 
