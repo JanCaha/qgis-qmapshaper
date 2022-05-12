@@ -16,13 +16,15 @@ class QMapshaperPaths:
         if mapshaper_folder:
 
             exec_path = Path(mapshaper_folder) / QMapshaperPaths.mapshaper_command_name()
+            exec_path_bin = exec_path.parent / "bin" / QMapshaperPaths.mapshaper_command_name()
 
-            if exec_path.exists() or use_defined:
+            if exec_path_bin.exists():
+                return exec_path_bin.as_posix()
+
+            if exec_path.exists():
                 return exec_path.as_posix()
 
-            exec_path = Path(mapshaper_folder) / "bin" / QMapshaperPaths.mapshaper_command_name()
-
-            if exec_path.exists() or use_defined:
+            if use_defined:
                 return exec_path.as_posix()
 
         return ""
@@ -62,7 +64,11 @@ class QMapshaperPaths:
         return "mapshaper-xl"
 
     @staticmethod
-    def mapshaper_command_call(use_settings_path: bool = False) -> str:
+    def mapshaper_command_call(use_settings_path: bool = None) -> str:
+
+        if use_settings_path is None:
+            use_settings_path = ProcessingConfig.getSetting(
+                TextConstants.STRICT_USE_MAPSHAPER_FOLDER)
 
         mapshaper_bin_folder = QMapshaperPaths.mapshaper_executable_path(
             use_defined=use_settings_path)
