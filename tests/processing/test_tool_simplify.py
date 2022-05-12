@@ -89,19 +89,14 @@ def test_input_data_output_temp_file(data_layer):
     assert layer.featureCount() == 404
 
 
-def test_parameter_combinations(params: dict, data_layer, data_result_file):
-
-    path_data_result_file = Path(data_result_file)
-
-    if path_data_result_file.exists():
-        path_data_result_file.unlink()
-
+def test_parameter_combinations(data_layer, data_result_file):
     params = {
         "Input": data_layer,
         "Output": data_result_file,
         "Simplify": 12,
         "Method": 0,
-        "CleanData": False
+        "Field": "generalized",
+        "CleanData": True
     }
 
     feedback = QgsProcessingFeedback()
