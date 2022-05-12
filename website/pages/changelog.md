@@ -1,5 +1,9 @@
 # Changelog
 
+## version 0.6
+
+- allow partial generalization of layer based on selection for GUI tool and based on attribute value for processing tool
+
 ## version 0.5.1
 
 - fix wrong import in utils.py causing an error
