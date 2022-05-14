@@ -5,7 +5,8 @@ on:
     branches:
     - master
     paths:
-    - "website/**"
+    # - "website/**"
+    - "qmapshaper/metadata.txt"
 
 jobs:
 
@@ -15,10 +16,10 @@ jobs:
     
     steps:
     
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
 
     - name: Set up Python
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v3
       with:
         python-version: '3.6'
         architecture: 'x64'
