@@ -35,6 +35,9 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
     clean_data_before = False
     clean_data_after = False
 
+    output_lines = None
+    error_lines = None
+
     def __init__(self):
         super().__init__()
 
@@ -103,9 +106,12 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
 
         if ms.output_lines:
             feedback.pushInfo(ms.output_lines)
+            self.output_lines = ms.output_lines
 
         if ms.error_lines:
             feedback.pushWarning(ms.output_lines)
+            feedback.pushWarning(ms.error_lines)
+            self.error_lines = ms.error_lines
 
         self.process_output_layer(feedback)
 
