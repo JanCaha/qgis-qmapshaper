@@ -89,15 +89,23 @@ def test_input_data_output_temp_file(data_layer):
     assert layer.featureCount() == 404
 
 
-def test_parameter_combinations(data_layer, data_result_file):
-    params = {
-        "Input": data_layer,
-        "Output": data_result_file,
-        "Simplify": 12,
-        "Method": 0,
-        "Field": "generalized",
-        "CleanData": True
-    }
+@pytest.mark.parametrize("params", [{
+    "Simplify": 12,
+    "Method": 0,
+    "Field": "generalized",
+    "CleanData": True
+}, {
+    "Simplify": 12,
+    "Method": 0,
+    "CleanData": True
+}, {
+    "Simplify": 12,
+    "Method": 0,
+    "CleanData": False
+}])
+def test_parameter_combinations(data_layer, data_result_file, params):
+
+    params.update({"Input": data_layer, "Output": data_result_file})
 
     feedback = QgsProcessingFeedback()
     context = QgsProcessingContext()

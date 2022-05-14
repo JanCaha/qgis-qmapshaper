@@ -83,3 +83,5 @@ def test_usage(data_layer: QgsVectorLayer, qgis_iface: QgisInterface, qgis_paren
     dialog.hide()
 
     dialog.accept()
+
+    dialog.destroy()
