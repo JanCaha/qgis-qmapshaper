@@ -53,43 +53,12 @@ def test_outputs():
     assert isinstance(alg.outputDefinitions()[0], QgsProcessingOutputVectorLayer)
 
 
-def test_input_data_output_temp_file(data_layer):
-
-    feedback = QgsProcessingFeedback()
-    context = QgsProcessingContext()
-
-    alg = SimplifyAlgorithm()
-
-    alg.initAlgorithm()
-
-    parameters = {
-        "Input": data_layer,
-        "Simplify": 12,
-        "Method": 0,
-        "Output": "TEMPORARY_OUTPUT",
-        "CleanData": False
-    }
-
-    can_run, param_check_msg = alg.checkParameterValues(parameters=parameters, context=context)
-
-    assert param_check_msg == ""
-    assert can_run
-
-    result = alg.run(parameters=parameters, context=context, feedback=feedback)
-
-    assert isinstance(result, tuple)
-    assert result[1]
-    assert len(result[0]) == len(alg.outputDefinitions())
-    assert "Output" in result[0].keys()
-
-    layer = QgsVectorLayer(result[0]["Output"], "layer", "ogr")
-
-    assert isinstance(layer, QgsVectorLayer)
-    assert Path(layer.source()).exists()
-    assert layer.featureCount() == 404
-
-
 @pytest.mark.parametrize("params", [{
+    "Simplify": 12,
+    "Method": 0,
+    "Output": "TEMPORARY_OUTPUT",
+    "CleanData": False
+}, {
     "Simplify": 12,
     "Method": 0,
     "Field": "generalized",
@@ -102,10 +71,14 @@ def test_input_data_output_temp_file(data_layer):
     "Simplify": 12,
     "Method": 0,
     "CleanData": False
-}])
+}],
+                         ids=["temporary_output", "with_field", "clean_data", "dont_clean_data"])
 def test_parameter_combinations(data_layer, data_result_file, params):
 
-    params.update({"Input": data_layer, "Output": data_result_file})
+    params.update({"Input": data_layer})
+
+    if "Output" not in params.keys():
+        params.update({"Output": data_result_file})
 
     feedback = QgsProcessingFeedback()
     context = QgsProcessingContext()

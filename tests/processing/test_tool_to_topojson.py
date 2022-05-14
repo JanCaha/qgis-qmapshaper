@@ -1,3 +1,4 @@
+import pytest
 from pathlib import Path
 
 from qgis.core import (QgsProcessingParameterVectorLayer, QgsProcessingParameterField,
@@ -44,7 +45,28 @@ def test_outputs():
     assert isinstance(alg.outputDefinitions()[0], QgsProcessingOutputFile)
 
 
-def test_input_data_temp_file(data_layer):
+@pytest.mark.parametrize("params", [{
+    "Fields": [],
+    "DecimalNumbers": 3,
+    "OutputFile": "TEMPORARY_OUTPUT"
+}, {
+    "Fields": [],
+    "DecimalNumbers": 3,
+}, {
+    "Fields": ["generalized"],
+    "DecimalNumbers": 3,
+}],
+                         ids=["temporary_output", "without_field", "with_field"])
+def test_parameter_combinations(data_layer, data_result_path, params):
+
+    output_filename = None
+
+    params.update({"Input": data_layer})
+
+    if "OutputFile" not in params.keys():
+        output_filename = "test.topojson"
+        data_result_file = Path(data_result_path) / output_filename
+        params.update({"OutputFile": data_result_file.as_posix()})
 
     feedback = QgsProcessingFeedback()
     context = QgsProcessingContext()
@@ -53,19 +75,12 @@ def test_input_data_temp_file(data_layer):
 
     alg.initAlgorithm()
 
-    parameters = {
-        "Input": data_layer,
-        "Fields": [],
-        "DecimalNumbers": 3,
-        "OutputFile": "TEMPORARY_OUTPUT"
-    }
-
-    can_run, param_check_msg = alg.checkParameterValues(parameters=parameters, context=context)
+    can_run, param_check_msg = alg.checkParameterValues(parameters=params, context=context)
 
     assert param_check_msg == ""
     assert can_run
 
-    result = alg.run(parameters=parameters, context=context, feedback=feedback)
+    result = alg.run(parameters=params, context=context, feedback=feedback)
 
     assert isinstance(result, tuple)
     assert result[1]
@@ -75,46 +90,11 @@ def test_input_data_temp_file(data_layer):
     layer = QgsVectorLayer(result[0]["OutputFile"], "layer", "ogr")
 
     assert isinstance(layer, QgsVectorLayer)
-    assert "OutputFile.topojson" in layer.source()
-    assert Path(layer.source()).exists()
-    assert layer.featureCount() == 404
 
+    if output_filename:
+        assert output_filename in layer.source()
+    else:
+        assert "OutputFile.topojson" in layer.source()
 
-def test_input_data_specified_file(data_layer, data_result_path):
-
-    feedback = QgsProcessingFeedback()
-    context = QgsProcessingContext()
-
-    alg = ConvertToTopoJSONAlgorithm()
-
-    alg.initAlgorithm()
-
-    data_result_file = Path(data_result_path) / "test.topojson"
-
-    parameters = {
-        "Input": data_layer,
-        "Fields": [],
-        "DecimalNumbers": 3,
-        "OutputFile": data_result_file.as_posix()
-    }
-
-    can_run, param_check_msg = alg.checkParameterValues(parameters=parameters, context=context)
-
-    assert param_check_msg == ""
-    assert can_run
-
-    result = alg.run(parameters=parameters,
-                     context=context,
-                     feedback=feedback,
-                     catchExceptions=False)
-
-    assert isinstance(result, tuple)
-    assert result[1]
-    assert len(result[0]) == len(alg.outputDefinitions())
-    assert "OutputFile" in result[0].keys()
-
-    layer = QgsVectorLayer(result[0]["OutputFile"], "layer", "ogr")
-
-    assert isinstance(layer, QgsVectorLayer)
     assert Path(layer.source()).exists()
     assert layer.featureCount() == 404
