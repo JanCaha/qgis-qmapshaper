@@ -88,7 +88,8 @@ class QMapshaperDataPreparer:
     @staticmethod
     def join_fields_back(layer_to_join_to: QgsVectorLayer,
                          layer_to_join_from: QgsVectorLayer,
-                         prefix: str = "") -> None:
+                         prefix: str = "",
+                         join_fids_back=True) -> None:
 
         join = QgsVectorLayerJoinInfo()
         join.setTargetFieldName(TextConstants.JOIN_FIELD_NAME)
@@ -96,6 +97,9 @@ class QMapshaperDataPreparer:
         join.setJoinFieldName(TextConstants.JOIN_FIELD_NAME)
         join.setUsingMemoryCache(True)
         join.setPrefix(prefix)
+
+        if join_fids_back is False:
+            join.setJoinFieldNamesBlockList(["fid", "FID"])
 
         layer_to_join_to.addJoin(join)
 
