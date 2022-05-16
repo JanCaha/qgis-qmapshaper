@@ -38,6 +38,10 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
     output_lines = None
     error_lines = None
 
+    needs_join = False
+
+    join_fid_field_back = True
+
     def __init__(self):
         super().__init__()
 
@@ -46,6 +50,8 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
         self.mapshaper_output = QMapshaperFile.random_temp_filename()
 
         self.mapshaper_input = QMapshaperFile.random_temp_filename()
+
+        self.mapshaper_join = QMapshaperFile.random_temp_filename()
 
         self.result_layer_location = ""
 
@@ -153,6 +159,11 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
                                                                    file=self.mapshaper_input,
                                                                    col_index=fields)
 
+        if self.needs_join:
+
+            QMapshaperDataPreparer.write_layer_with_minimal_attributes(
+                layer=self.input_layer_memory, file=self.mapshaper_join, col_index=fields)
+
     def process_output_layer(self, feedback: QgsProcessingFeedback):
 
         layer_generalized = QgsVectorLayer(self.mapshaper_output, "data", "ogr")
@@ -161,7 +172,9 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
 
         memory_layer.setCrs(self.input_layer_memory.crs())
 
-        QMapshaperDataPreparer.join_fields_back(memory_layer, self.input_layer_memory)
+        QMapshaperDataPreparer.join_fields_back(memory_layer,
+                                                self.input_layer_memory,
+                                                join_fids_back=self.join_fid_field_back)
 
         QMapshaperDataPreparer.write_output_file(layer=memory_layer,
                                                  file=self.result_layer_location,
