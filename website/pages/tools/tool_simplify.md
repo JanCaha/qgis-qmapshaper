@@ -6,13 +6,14 @@ Field for parameter `Perform simplification based on feature field` should conta
 
 ## Parameters
 
-| Label                                         | Name       | Type                             | Description                                                                                                   |
-| --------------------------------------------- | ---------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Input layer                                   | `Input`    | [vector]                         | Input vector layer to simplify.                                                                               |
-| Simplify %                                    | `Simplify` | [number] <br/> Default: `50`     | Simplify to this percent of vertices from original layer.                                                     |
-| Simplification method                         | `Method`   | [enumeration] <br/> Default: `0` | Type of simplification method. <br/><br/> **Values**: <br/> **0** - Douglas-Peucker <br/> **1** - Visvalingam |
-| Perform simplification based on feature field | `Field`    | [field] <br/> Default: `None`    | Optional field that specifies which features should be generalized and which should be left intact.           |
-| Output Layer                                  | `Output`   | [vector]                         | Simplified vector layer.                                                                                      |
+| Label                                         | Name        | Type                             | Description                                                                                                   |
+| --------------------------------------------- | ----------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Input layer                                   | `Input`     | [vector]                         | Input vector layer to simplify.                                                                               |
+| Simplify %                                    | `Simplify`  | [number] <br/> Default: `50`     | Simplify to this percent of vertices from original layer.                                                     |
+| Simplification method                         | `Method`    | [enumeration] <br/> Default: `0` | Type of simplification method. <br/><br/> **Values**: <br/> **0** - Douglas-Peucker <br/> **1** - Visvalingam |
+| Perform simplification based on feature field | `Field`     | [field] <br/> Default: `None`    | Optional field that specifies which features should be generalized and which should be left intact.           | ` |
+| Clean data prior and after simplification     | `CleanData` | [boolean] <br/> Default: `False` | Should the data be cleaned using mapshapers `-clean` before and after performing other steps?                 |
+| Output Layer                                  | `Output`    | [vector]                         | Simplified vector layer.                                                                                      |
 
 
 

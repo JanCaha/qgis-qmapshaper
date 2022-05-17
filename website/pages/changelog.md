@@ -4,7 +4,13 @@
 
 - allow partial generalization of layer based on selection for GUI tool and based on attribute value for processing tool
 
+- add parameter to clean data in simplify tools (both processing and gui based ones)
+
 - add tool to simplify inner or outer lines of polygon layers
+
+- reworked the way how **mapshaper** folder is guessed 
+
+- added option to specify command name to be runned in the Options - processing -> Providers
 
 ## version 0.5.1
 
