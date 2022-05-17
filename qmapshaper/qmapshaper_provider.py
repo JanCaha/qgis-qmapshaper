@@ -36,8 +36,11 @@ class QMapshaperProvider(QgsProcessingProvider):
                     valuetype=Setting.FOLDER))
 
         ProcessingConfig.addSetting(
-            Setting(self.name(), TextConstants.STRICT_USE_MAPSHAPER_FOLDER,
-                    self.tr('Strictly use defined Mapshaper folder'), False))
+            Setting(self.name(),
+                    TextConstants.MAPSHAPER_TOOL_NAME,
+                    self.tr('Mapshaper tool name'),
+                    QMapshaperPaths.guess_mapshaper_command_name(),
+                    valuetype=Setting.STRING))
 
         ProcessingConfig.readSettings()
 
