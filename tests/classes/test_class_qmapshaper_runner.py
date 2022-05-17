@@ -28,4 +28,4 @@ def test_NpmPackageLocationCheckerProcess():
 
     assert npm.mapshaper_exists()
 
-    assert npm.mapshaper_path() is None
+    assert npm.mapshaper_path() is not None

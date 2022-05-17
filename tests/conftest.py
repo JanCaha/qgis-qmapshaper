@@ -4,6 +4,11 @@ from pathlib import Path
 from pytest_qgis import clean_qgis_layer
 
 from qgis.core import QgsProject, QgsLayout, QgsVectorLayer
+from processing.core.ProcessingConfig import ProcessingConfig
+
+from qmapshaper.qmapshaper_plugin import QMapshaperPlugin
+from qmapshaper.text_constants import TextConstants
+from qmapshaper.classes.class_qmapshaper_paths import QMapshaperPaths
 
 
 @pytest.fixture
@@ -48,3 +53,20 @@ def data_result_file(data_result_path) -> str:
     path = Path(data_result_path) / "result.gpkg"
 
     return path.absolute().as_posix()
+
+
+@pytest.fixture(autouse=True, scope="session")
+def plugin_load(qgis_iface) -> QMapshaperPlugin:
+
+    plugin = QMapshaperPlugin(qgis_iface)
+
+    plugin.initProcessing()
+
+    return plugin
+
+
+@pytest.fixture(autouse=True, scope="function")
+def resetSettings() -> None:
+
+    ProcessingConfig.setSettingValue(TextConstants.MAPSHAPER_FOLDER, "")
+    ProcessingConfig.setSettingValue(TextConstants.MAPSHAPER_TOOL_NAME, "mapshaper-xl")
