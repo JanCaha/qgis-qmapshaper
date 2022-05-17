@@ -1,9 +1,17 @@
 from pathlib import Path
+from sys import flags
 from typing import Union, Optional
 
 from qgis.PyQt.QtCore import QProcess
 
 from .class_qmapshaper_paths import QMapshaperPaths
+
+GLOBAL_FLAG = '-g'
+FLAGS = ['', GLOBAL_FLAG]
+
+
+def isGlobalFlag(flag: str) -> bool:
+    return (flag == GLOBAL_FLAG)
 
 
 class MapshaperProcess(QProcess):
@@ -54,6 +62,8 @@ class MapshaperProcessChecker(QProcess):
 
     path: str
 
+    global_flag = False
+
     def __init__(self, path: Optional[Union[str, Path]] = None) -> None:
 
         super().__init__()
@@ -64,7 +74,7 @@ class MapshaperProcessChecker(QProcess):
 
         if self.path:
 
-            path_ms = Path(self.path) / "bin" / "mapshaper"
+            path_ms = Path(self.path) / "mapshaper"
 
             self.path = path_ms.absolute().as_posix()
 
@@ -74,16 +84,21 @@ class MapshaperProcessChecker(QProcess):
 
         self.setProgram(self.path)
 
-        self.start()
+        for flag in FLAGS:
 
-        self.waitForStarted()
+            self.start()
 
-        self.waitForFinished()
+            self.setArguments([flag])
 
-        self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
+            self.waitForStarted()
 
-        if "Error: No commands to run" in self.output_lines:
-            self.found = True
+            self.waitForFinished()
+
+            self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
+
+            if "Error: No commands to run" in self.output_lines:
+                self.found = True
+                self.global_flag = isGlobalFlag(flag)
 
 
 class NpmPackageLocationCheckerProcess(QProcess):
@@ -96,6 +111,8 @@ class NpmPackageLocationCheckerProcess(QProcess):
 
     _mapshaper_location: str = None
 
+    global_flag = False
+
     def __init__(self) -> None:
 
         super().__init__()
@@ -104,23 +121,37 @@ class NpmPackageLocationCheckerProcess(QProcess):
 
         self.setProgram("npm")
 
-        self.start()
+        for flag in FLAGS:
 
-        self.waitForStarted()
+            self.setArguments([flag])
 
-        self.waitForFinished()
+            self.start()
 
-        self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
+            self.waitForStarted()
 
-        if "Usage: npm <command>" in self.output_lines:
-            return True
+            self.waitForFinished()
+
+            self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
+
+            if "Usage: npm <command>" in self.output_lines:
+                self.global_flag = isGlobalFlag(flag)
+                return True
 
         return False
+
+    def _addGlobalFlagToArguments(self) -> None:
+
+        if self.global_flag:
+            args = self.arguments()
+            args.append(GLOBAL_FLAG)
+            self.setArguments(args)
 
     def npm_package_locations(self) -> bool:
 
         self.setProgram("npm")
         self.setArguments(["root"])
+
+        self._addGlobalFlagToArguments()
 
         self.start()
 
@@ -142,6 +173,8 @@ class NpmPackageLocationCheckerProcess(QProcess):
 
         self.setProgram("npm")
         self.setArguments(["list"])
+
+        self._addGlobalFlagToArguments()
 
         self.start()
 

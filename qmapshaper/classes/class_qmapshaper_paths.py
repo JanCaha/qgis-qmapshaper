@@ -9,25 +9,32 @@ from ..utils import log
 class QMapshaperPaths:
 
     @staticmethod
-    def mapshaper_executable_path(use_defined: bool = False) -> str:
+    def mapshaper_executable_path() -> str:
 
         mapshaper_folder = QMapshaperPaths.mapshaper_folder()
 
         if mapshaper_folder:
-
-            exec_path = Path(mapshaper_folder) / QMapshaperPaths.mapshaper_command_name()
-            exec_path_bin = exec_path.parent / "bin" / QMapshaperPaths.mapshaper_command_name()
-
-            if exec_path_bin.exists():
-                return exec_path_bin.as_posix()
-
-            if exec_path.exists():
-                return exec_path.as_posix()
-
-            if use_defined:
-                return exec_path.as_posix()
+            path = QMapshaperPaths.subfolder_bin(
+                mapshaper_folder) / QMapshaperPaths.mapshaper_command_name()
+            return path.as_posix()
 
         return ""
+
+    @staticmethod
+    def subfolder_bin(folder) -> Path:
+
+        command = "mapshaper"
+
+        exec_path = Path(folder) / command
+        exec_path_bin = exec_path.parent / "bin" / command
+
+        if exec_path_bin.exists():
+            return exec_path_bin.parent
+
+        if exec_path.exists():
+            return exec_path.parent
+
+        return exec_path.parent
 
     @staticmethod
     def mapshaper_folder() -> str:
@@ -60,18 +67,23 @@ class QMapshaperPaths:
         return ""
 
     @staticmethod
-    def mapshaper_command_name():
+    def mapshaper_command_name() -> str:
+
+        tool = ProcessingConfig.getSetting(TextConstants.MAPSHAPER_TOOL_NAME)
+
+        if not tool:
+            return QMapshaperPaths.guess_mapshaper_command_name()
+
+        return tool
+
+    @staticmethod
+    def guess_mapshaper_command_name() -> str:
         return "mapshaper-xl"
 
     @staticmethod
-    def mapshaper_command_call(use_settings_path: bool = None) -> str:
+    def mapshaper_command_call() -> str:
 
-        if use_settings_path is None:
-            use_settings_path = ProcessingConfig.getSetting(
-                TextConstants.STRICT_USE_MAPSHAPER_FOLDER)
-
-        mapshaper_bin_folder = QMapshaperPaths.mapshaper_executable_path(
-            use_defined=use_settings_path)
+        mapshaper_bin_folder = QMapshaperPaths.mapshaper_executable_path()
 
         if mapshaper_bin_folder:
 
