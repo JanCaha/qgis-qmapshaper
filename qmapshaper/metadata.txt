@@ -6,7 +6,7 @@
 name=QMapshaper
 qgisMinimumVersion=3.22
 description=This allows running mapshaper tool (need to be locally installed) as a processing tool or using interactive GUI tool.
-version=0.5.1
+version=0.6.0
 author=Jan Caha
 email=jan.caha@outlook.com
 
