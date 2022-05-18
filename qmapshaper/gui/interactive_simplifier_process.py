@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Optional, List
 import random
 import shutil
+import platform
 
 from qgis.core import (QgsVectorLayer, QgsSingleSymbolRenderer, QgsFillSymbol)
 from qgis.PyQt.QtCore import (QObject, pyqtSignal)
@@ -84,7 +85,7 @@ class InteractiveSimplifierProcess(QObject):
 
         self._generalized_data_layer = None
 
-        if self.generalized_data_filename:
+        if self.generalized_data_filename and platform.system() != "Windows":
             path = Path(self.generalized_data_filename)
             if path.exists() and path.is_file():
                 shutil.rmtree(path.parent)
