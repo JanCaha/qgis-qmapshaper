@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Optional, List
 import random
+import shutil
 
 from qgis.core import (QgsVectorLayer, QgsSingleSymbolRenderer, QgsFillSymbol)
 from qgis.PyQt.QtCore import (QObject, pyqtSignal)
@@ -81,10 +82,12 @@ class InteractiveSimplifierProcess(QObject):
 
     def generalize_layer(self, simplify_percent: float, simplify_method: str) -> None:
 
+        self._generalized_data_layer = None
+
         if self.generalized_data_filename:
             path = Path(self.generalized_data_filename)
             if path.exists() and path.is_file():
-                path.unlink(missing_ok=True)
+                shutil.rmtree(path.parent)
 
         self.generalized_data_filename = QMapshaperFile.random_temp_filename()
 
