@@ -2,7 +2,7 @@
 
 Tool that allows to generalized only inner (shared) or outer borders polygon layer. 
 
-!!! Note that event thought that the tools tries as much as possible to return the same layer (in terms of features, not geometries obviously), it is quite possible that the layers won't fit together. Number of features may change and some it might be problematic or not possible to join attributes back to features. This tool should only be used to create layers for visualization and the outcome should be double checked for errors.
+!!! Note that event thought that the tools tries as much as possible to return the same layer (in terms of features, not geometries obviously), it is quite possible that the layers won't fit together. Number of features may change and some it might be problematic or not possible to join attributes back to features. This tool should only be used to create layers for visualization and the outcome should be double checked for potential errors.
 
 ## Parameters
 
@@ -25,5 +25,4 @@ Output file does not store information about used **CRS**!
 
 ## Tool screenshot
 
-![Simplify Polygon Lines](../../images/tool_to_topojson.png)
-	
+![Simplify Polygon Lines](../../images/tool_simplify_lines.png)
