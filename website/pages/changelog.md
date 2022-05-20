@@ -1,6 +1,6 @@
 # Changelog
 
-## version 0.6
+## version 0.7
 
 - allow partial generalization of layer based on selection for GUI tool and based on attribute value for processing tool
 
@@ -8,9 +8,11 @@
 
 - add tool to simplify inner or outer lines of polygon layers
 
-- reworked the way how **mapshaper** folder is guessed 
+- reworked the way how **mapshaper** folder is guessed - should do better job now
 
 - added option to specify command name to be runned in the Options - processing -> Providers
+
+- on Windows the temp data created by interactive tool are not deleted immediately but the deletion should be handle by QGIS upon closing
 
 ## version 0.5.1
 
