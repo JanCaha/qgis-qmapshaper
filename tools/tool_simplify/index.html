@@ -59,6 +59,10 @@
 </li>
                                     
 <li>
+    <a href="../tool_simplify_lines/" class="dropdown-item">Simplify Polygon Lines</a>
+</li>
+                                    
+<li>
     <a href="../tool_to_topojson/" class="dropdown-item">Convert to TopoJSON</a>
 </li>
                                 </ul>
@@ -116,6 +120,7 @@
 
 <h1 id="simplify-vector">Simplify Vector</h1>
 <p>Simplifies provided vector layer to specific percent of original vertices.</p>
+<p>Field for parameter <code>Perform simplification based on feature field</code> should contains values <code>0</code> and <code>1</code>. Features with value <code>1</code> will be generalized and features with value <code>0</code> will not be generalized. If the parameter is not set, all elements in layer will be generalized.</p>
 <h2 id="parameters">Parameters</h2>
 <table>
 <thead>
@@ -144,6 +149,18 @@
 <td><code>Method</code></td>
 <td>[enumeration] <br/> Default: <code>0</code></td>
 <td>Type of simplification method. <br/><br/> <strong>Values</strong>: <br/> <strong>0</strong> - Douglas-Peucker <br/> <strong>1</strong> - Visvalingam</td>
+</tr>
+<tr>
+<td>Perform simplification based on feature field</td>
+<td><code>Field</code></td>
+<td>[field] <br/> Default: <code>None</code></td>
+<td>Optional field that specifies which features should be generalized and which should be left intact.</td>
+</tr>
+<tr>
+<td>Clean data prior and after simplification</td>
+<td><code>CleanData</code></td>
+<td>[boolean] <br/> Default: <code>False</code></td>
+<td>Should the data be cleaned using mapshapers <code>-clean</code> before and after performing other steps?</td>
 </tr>
 <tr>
 <td>Output Layer</td>

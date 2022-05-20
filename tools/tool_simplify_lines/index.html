@@ -6,9 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="author" content="Jan Caha">
-        <link rel="canonical" href="https://jancaha.github.io/qgis-qmapshaper/GUI%20Tools/tool_interactive_simplifier/">
+        <link rel="canonical" href="https://jancaha.github.io/qgis-qmapshaper/tools/tool_simplify_lines/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>Interactive Simplifier - QMapshaper</title>
+        <title>Simplify Polygon Lines - QMapshaper</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -41,29 +41,29 @@
                             <li class="navitem">
                                 <a href="../../changelog/" class="nav-link">Changelog</a>
                             </li>
-                            <li class="dropdown active">
+                            <li class="dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">GUI Tools <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="./" class="dropdown-item active">Interactive Simplifier</a>
+    <a href="../../GUI%20Tools/tool_interactive_simplifier/" class="dropdown-item">Interactive Simplifier</a>
 </li>
                                 </ul>
                             </li>
-                            <li class="dropdown">
+                            <li class="dropdown active">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Tools <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="../../tools/tool_simplify/" class="dropdown-item">Simplify Vector</a>
+    <a href="../tool_simplify/" class="dropdown-item">Simplify Vector</a>
 </li>
                                     
 <li>
-    <a href="../../tools/tool_simplify_lines/" class="dropdown-item">Simplify Polygon Lines</a>
+    <a href="./" class="dropdown-item active">Simplify Polygon Lines</a>
 </li>
                                     
 <li>
-    <a href="../../tools/tool_to_topojson/" class="dropdown-item">Convert to TopoJSON</a>
+    <a href="../tool_to_topojson/" class="dropdown-item">Convert to TopoJSON</a>
 </li>
                                 </ul>
                             </li>
@@ -97,13 +97,17 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#interactive-simplifier" class="nav-link">Interactive Simplifier</a>
+            <li class="nav-item" data-level="1"><a href="#simplify-polygon-lines" class="nav-link">Simplify Polygon Lines</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#tool-screenshot" class="nav-link">Tool screenshot</a>
+            <li class="nav-item" data-level="2"><a href="#parameters" class="nav-link">Parameters</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-level="2"><a href="#tool-use-case" class="nav-link">Tool Use Case</a>
+            <li class="nav-item" data-level="2"><a href="#outputs" class="nav-link">Outputs</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#tool-screenshot" class="nav-link">Tool screenshot</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -114,13 +118,80 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="interactive-simplifier">Interactive Simplifier</h1>
-<p>The tool is an interactive version of <a href="../../tools/tool_simplify/">Simplify Vector</a>, providing the same settings but allowing to immediately check the outcome of the simplification (as soon as it is calculated) and if deemed fine the outcome can be exported back to QGIS project.</p>
-<p>The only difference is that partial generalization is based on active selection on the layer (instead of attribute). User can select if selected features should be generalized (leaving the rest intact) or if the selected features should remain intact and all other features should be generalized.  </p>
+<h1 id="simplify-polygon-lines">Simplify Polygon Lines</h1>
+<p>Tool that allows to generalized only inner (shared) or outer borders polygon layer. </p>
+<p>!!! Note that event thought that the tools tries as much as possible to return the same layer (in terms of features, not geometries obviously), it is quite possible that the layers won't fit together. Number of features may change and some it might be problematic or not possible to join attributes back to features. This tool should only be used to create layers for visualization and the outcome should be double checked for potential errors.</p>
+<h2 id="parameters">Parameters</h2>
+<table>
+<thead>
+<tr>
+<th>Label</th>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Input layer</td>
+<td><code>Input</code></td>
+<td>[vector]</td>
+<td>Input vector layer to convert.</td>
+</tr>
+<tr>
+<td>Simplify %</td>
+<td><code>Simplify</code></td>
+<td>[number] <br/> Default: <code>50</code></td>
+<td>Simplify to this percent of vertices from original layer.</td>
+</tr>
+<tr>
+<td>Simplification method</td>
+<td><code>Method</code></td>
+<td>[enumeration] <br/> Default: <code>0</code></td>
+<td>Type of simplification method. <br/><br/> <strong>Values</strong>: <br/> <strong>0</strong> - Douglas-Peucker <br/> <strong>1</strong> - Visvalingam</td>
+</tr>
+<tr>
+<td>Generalize polygon's lines</td>
+<td><code>Lines</code></td>
+<td>[enumeration] <br/> Default: <code>0</code></td>
+<td>Which lines should be generalized. <br/><br/> <strong>Values</strong>: <br/> <strong>0</strong> - Inner lines <br/> <strong>1</strong> - Outer lines</td>
+</tr>
+<tr>
+<td>Clean data prior and after simplification</td>
+<td><code>CleanData</code></td>
+<td>[boolean] <br/> Default: <code>False</code></td>
+<td>Should the data be cleaned using mapshapers <code>-clean</code> before and after performing other steps?</td>
+</tr>
+<tr>
+<td>Output Layer</td>
+<td><code>Output</code></td>
+<td>[vector]</td>
+<td>Simplified vector layer.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="outputs">Outputs</h2>
+<table>
+<thead>
+<tr>
+<th>Label</th>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Output Layer</td>
+<td><code>Output</code></td>
+<td>[vector]</td>
+<td>Simplified vector layer.</td>
+</tr>
+</tbody>
+</table>
+<p>Output file does not store information about used <strong>CRS</strong>!</p>
 <h2 id="tool-screenshot">Tool screenshot</h2>
-<p><a data-featherlight="../../images/gui_tool_interactive_simplifier.png" href="#"><img alt="Interactive Simplifier" src="../../images/gui_tool_interactive_simplifier.png" /></a></p>
-<h2 id="tool-use-case">Tool Use Case</h2>
-<p><a data-featherlight="../../images/use_case.gif" href="#"><img alt="" src="../../images/use_case.gif" />  </a></p></div>
+<p><a data-featherlight="../../images/tool_simplify_lines.png" href="#"><img alt="Simplify Polygon Lines" src="../../images/tool_simplify_lines.png" /></a></p></div>
             </div>
         </div>
 

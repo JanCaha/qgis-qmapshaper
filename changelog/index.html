@@ -59,6 +59,10 @@
 </li>
                                     
 <li>
+    <a href="../tools/tool_simplify_lines/" class="dropdown-item">Simplify Polygon Lines</a>
+</li>
+                                    
+<li>
     <a href="../tools/tool_to_topojson/" class="dropdown-item">Convert to TopoJSON</a>
 </li>
                                 </ul>
@@ -95,6 +99,10 @@
             
             <li class="nav-item" data-level="1"><a href="#changelog" class="nav-link">Changelog</a>
               <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#version-07" class="nav-link">version 0.7</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-level="2"><a href="#version-051" class="nav-link">version 0.5.1</a>
               <ul class="nav flex-column">
               </ul>
@@ -119,6 +127,27 @@
                     <div class="col-md-9" role="main">
 
 <h1 id="changelog">Changelog</h1>
+<h2 id="version-07">version 0.7</h2>
+<ul>
+<li>
+<p>allow partial generalization of layer based on selection for GUI tool and based on attribute value for processing tool</p>
+</li>
+<li>
+<p>add parameter to clean data in simplify tools (both processing and gui based ones)</p>
+</li>
+<li>
+<p>add tool to simplify inner or outer lines of polygon layers</p>
+</li>
+<li>
+<p>reworked the way how <strong>mapshaper</strong> folder is guessed - should do better job now</p>
+</li>
+<li>
+<p>added option to specify command name to be runned in the Options - processing -&gt; Providers</p>
+</li>
+<li>
+<p>on Windows the temp data created by interactive tool are not deleted immediately but the deletion should be handle by QGIS upon closing</p>
+</li>
+</ul>
 <h2 id="version-051">version 0.5.1</h2>
 <ul>
 <li>fix wrong import in utils.py causing an error</li>
