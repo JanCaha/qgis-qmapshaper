@@ -120,6 +120,12 @@ class InteractiveProcess(QObject):
 
         fields_to_delete.append(index)
 
+        index = self._processed_data_layer_memory.fields().lookupField(
+            TextConstants.GENERALIZATION_FIELD_NAME)
+
+        if 0 < index:
+            fields_to_delete.append(index)
+
         self._processed_data_layer_memory.startEditing()
         self._processed_data_layer_memory.deleteAttributes(fields_to_delete)
         self._processed_data_layer_memory.commitChanges()
