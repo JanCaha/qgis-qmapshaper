@@ -1,5 +1,11 @@
 # Changelog
 
+## version 0.8
+
+- added Console tools - processing and also interactive
+
+- fix issue in folders guessing, that cause the plugin not to load some times
+
 ## version 0.7
 
 - allow partial generalization of layer based on selection for GUI tool and based on attribute value for processing tool
