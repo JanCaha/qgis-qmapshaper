@@ -80,9 +80,16 @@ def test_outputs():
     assert isinstance(alg.outputDefinitions()[0], QgsProcessingOutputVectorLayer)
 
 
-@pytest.mark.parametrize("params", [{"Console": "-clean -simplify dp 1% -clean"}])
-# @pytest.mark.parametrize("params", [{"Console": "-clean -simplify dp 1% -clean"}])
-def test_parameter_combinations(data_layer, data_result_file, params):
+@pytest.mark.parametrize("params,featureCount", [
+    ({
+        "Console": "-clean -simplify dp 1% -clean"
+    }, 404),
+    ({
+        "Field": "generalized",
+        "Console": '-simplify dp variable percentage = "generalize ? 0.1 : 1"'
+    }, 404),
+])
+def test_parameter_combinations(data_layer, data_result_file, params, featureCount):
 
     params.update({"Input": data_layer})
 
@@ -112,4 +119,4 @@ def test_parameter_combinations(data_layer, data_result_file, params):
 
     assert isinstance(layer, QgsVectorLayer)
     assert Path(layer.source()).exists()
-    assert layer.featureCount() == 405
+    assert layer.featureCount() == featureCount
