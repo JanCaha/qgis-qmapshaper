@@ -9,6 +9,7 @@ from .classes.class_qmapshaper_paths import QMapshaperPaths
 from .processing.tool_simplify import SimplifyAlgorithm
 from .processing.tool_to_topojson import ConvertToTopoJSONAlgorithm
 from .processing.tool_simplify_lines import SimplifyPolygonLinesAlgorithm
+from .processing.tool_console import ConsoleAlgorithm
 from .text_constants import TextConstants
 
 
@@ -55,6 +56,7 @@ class QMapshaperProvider(QgsProcessingProvider):
         self.addAlgorithm(SimplifyAlgorithm())
         self.addAlgorithm(ConvertToTopoJSONAlgorithm())
         self.addAlgorithm(SimplifyPolygonLinesAlgorithm())
+        self.addAlgorithm(ConsoleAlgorithm())
 
     def id(self):
         return TextConstants.plugin_id
