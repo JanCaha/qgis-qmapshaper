@@ -10,6 +10,7 @@ from qgis.PyQt.QtWidgets import QAction
 from .qmapshaper_provider import QMapshaperProvider
 from .utils import get_icon_path, log
 from .gui.dialog_tool_interactive_simplifier import InteractiveSimplifierTool
+from .gui.dialog_tool_console import InteractiveConsoleTool
 from .text_constants import TextConstants
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
@@ -31,6 +32,9 @@ class QMapshaperPlugin():
         self.actions = []
         self.menu = TextConstants.plugin_name
 
+        self.toolbar = self.iface.addToolBar(TextConstants.plugin_name)
+        self.toolbar.setObjectName(TextConstants.plugin_id)
+
     def initProcessing(self):
         QgsApplication.processingRegistry().addProvider(self.provider)
 
@@ -40,7 +44,14 @@ class QMapshaperPlugin():
         self.add_action(icon_path=get_icon_path("qmapshaper.png"),
                         text=TextConstants.tool_name_interactive_simplifier,
                         callback=self.run_tool_interactive_simplifier,
-                        add_to_toolbar=True)
+                        add_to_toolbar=False,
+                        add_to_specific_toolbar=self.toolbar)
+
+        self.add_action(icon_path=get_icon_path("qmapshaper_console.svg"),
+                        text=TextConstants.tool_name_interactive_console,
+                        callback=self.run_tool_interactive_console,
+                        add_to_toolbar=False,
+                        add_to_specific_toolbar=self.toolbar)
 
     def unload(self):
         QgsApplication.processingRegistry().removeProvider(self.provider)
@@ -48,7 +59,10 @@ class QMapshaperPlugin():
         for action in self.actions:
             self.iface.removePluginMenu(TextConstants.plugin_name, action)
             self.iface.removePluginVectorMenu(TextConstants.plugin_name, action)
-            self.iface.removeToolBarIcon(action)
+
+            self.toolbar.removeAction(action)
+
+        del self.toolbar
 
     def add_action(self,
                    icon_path,
@@ -91,6 +105,18 @@ class QMapshaperPlugin():
     def run_tool_interactive_simplifier(self):
 
         dlg = InteractiveSimplifierTool(parent=self.iface.mainWindow(), iface=self.iface)
+
+        result = dlg.exec_()
+
+        if result == 1:
+
+            QgsProject.instance().addMapLayer(dlg.get_layer_for_project())
+
+        dlg = None
+
+    def run_tool_interactive_console(self):
+
+        dlg = InteractiveConsoleTool(parent=self.iface.mainWindow(), iface=self.iface)
 
         result = dlg.exec_()
 
