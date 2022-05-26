@@ -32,7 +32,7 @@ class QMapshaperProvider(QgsProcessingProvider):
             Setting(self.name(),
                     TextConstants.MAPSHAPER_FOLDER,
                     self.tr('Mapshaper folder'),
-                    QMapshaperPaths.mapshaper_folder(),
+                    QMapshaperPaths.guess_mapshaper_folder(),
                     valuetype=Setting.FOLDER))
 
         ProcessingConfig.addSetting(
