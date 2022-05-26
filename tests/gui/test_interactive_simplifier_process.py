@@ -2,7 +2,7 @@ from pathlib import Path
 
 from qgis.core import (QgsVectorLayer)
 
-from qmapshaper.gui.interactive_simplifier_process import InteractiveSimplifierProcess
+from qmapshaper.gui.processes.interactive_simplifier_process import InteractiveSimplifierProcess
 
 
 def test_steps(data_layer, qtbot):

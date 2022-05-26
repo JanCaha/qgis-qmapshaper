@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 132.29166 132.29167"
+   height="132.29167mm"
+   width="132.29167mm"
+   sodipodi:docname="qmapshaper_console.svg"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
+   inkscape:export-filename="/home/cahik/Codes/PyQGIS/Plugins/qgis-mapshaper/qmapshaper/icons/qmapshaper.png"
+   inkscape:export-xdpi="100"
+   inkscape:export-ydpi="100">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     id="namedview914"
+     showgrid="false"
+     inkscape:zoom="1.3350176"
+     inkscape:cx="275.2161"
+     inkscape:cy="244.93321"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="flowRoot1459" />
+  <defs
+     id="defs2" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(0,-164.70832)"
+     id="layer1">
+    <g
+       id="text825"
+       style="font-style:normal;font-weight:normal;font-size:88.22976685px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.2646893"
+       aria-label="QM">
+      <g
+         aria-label="QM"
+         transform="matrix(0.25891945,0,0,0.25891945,190.86966,203.06128)"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:300px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+         id="flowRoot1459">
+        <rect
+           style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect829"
+           width="510.9375"
+           height="510.9375"
+           x="-737.17773"
+           y="-148.12697" />
+        <path
+           d="m -616.95449,320.69804 h -4.30665 q -52.97167,0 -82.40039,-29.28515 -29.4287,-29.28515 -29.4287,-81.53907 0,-52.11034 29.28515,-81.6826 29.42872,-29.572279 80.96485,-29.572279 52.11034,0 81.1084,29.285159 29.1416,29.28516 29.1416,81.96972 0,36.17579 -15.50391,62.30274 -15.36035,26.12696 -44.3584,39.33398 l 43.20996,48.23438 h -52.68457 z m -5.88574,-182.02734 q -25.26562,0 -39.19043,18.66211 -13.92481,18.66211 -13.92481,52.54101 0,34.45313 13.63769,52.82813 13.6377,18.23145 39.47755,18.23145 25.40918,0 39.33398,-18.66211 13.92481,-18.66211 13.92481,-52.39747 0,-33.8789 -13.92481,-52.54101 -13.9248,-18.66211 -39.33398,-18.66211 z"
+           id="path1467"
+           inkscape:connector-curvature="0"
+           style="fill:#ffffff;stroke-width:0.25939551" />
+        <path
+           d="m -470.81582,102.49492 h 70.3418 l 48.80859,114.7002 49.09571,-114.7002 h 70.19824 v 214.32715 h -52.25391 V 160.06035 l -49.38281,115.56153 h -35.02735 l -49.3828,-115.56153 v 156.76172 h -52.39747 z"
+           id="path1469"
+           inkscape:connector-curvature="0"
+           style="fill:#ffffff;stroke-width:0.25939551" />
+        <g
+           aria-label="&gt;_
+"
+           transform="matrix(1.021875,0,0,1.021875,-816.77572,-242.8121)"
+           style="font-style:normal;font-weight:normal;font-size:266.66665649px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none"
+           id="flowRoot819">
+          <path
+             d="m 82.401041,141.94075 v -28.48307 l 146.061199,52.75065 v 26.88802 L 82.401041,245.847 V 217.36392 L 192.3457,179.76627 Z"
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:233.33332825px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#ffffff"
+             id="path886"
+             inkscape:connector-curvature="0" />
+          <path
+             d="m 369.85221,286.17903 v 21.64713 H 253.18555 v -21.64713 z"
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:233.33332825px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#ffffff"
+             id="path888"
+             inkscape:connector-curvature="0" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -8,10 +8,7 @@ from ..processing.tool_simplify import SimplifyAlgorithm
 from ..utils import log
 from ..text_constants import TextConstants
 from ..classes.classes_workers import WaitWorker
-from .interactive_simplifier_process import InteractiveSimplifierProcess
-
-TEXT_MODIFY_PART_OF_DATA = "Modify only part of data based on selection"
-TEXT_NO_SELECTION = "No selection on the layer"
+from .processes.interactive_simplifier_process import InteractiveSimplifierProcess
 
 
 class InteractiveSimplifierTool(QDialog):
@@ -42,7 +39,7 @@ class InteractiveSimplifierTool(QDialog):
 
         self.process = InteractiveSimplifierProcess(parent=self)
 
-        self.process.generalized_layer_prepared.connect(self.load_generalized_data)
+        self.process.processed_layer_prepared.connect(self.load_generalized_data)
 
         self.iface = iface
 
@@ -142,35 +139,35 @@ class InteractiveSimplifierTool(QDialog):
 
             if self.layer_selection.currentLayer().selectedFeatureIds():
                 self.modify_only_part.setEnabled(True)
-                self.modify_only_part.setText(TEXT_MODIFY_PART_OF_DATA)
+                self.modify_only_part.setText(TextConstants.TEXT_MODIFY_PART_OF_DATA)
             else:
                 self.modify_only_part.setEnabled(False)
-                self.modify_only_part.setText(TEXT_NO_SELECTION)
+                self.modify_only_part.setText(TextConstants.TEXT_NO_SELECTION)
 
             self.generalize_layer()
 
     def generalize_layer(self) -> None:
 
-        self.process.generalize_layer(simplify_percent=self.percent_spin_box.value(),
-                                      simplify_method=SimplifyAlgorithm.get_method(
-                                          self.methods.currentIndex()))
+        self.process.process_layer(simplify_percent=self.percent_spin_box.value(),
+                                   simplify_method=SimplifyAlgorithm.get_method(
+                                       self.methods.currentIndex()))
 
         self.data_generalized.emit()
 
     def load_generalized_data(self) -> None:
 
-        if self.process.generalized_data_only_geometry:
+        if self.process.processed_data_only_geometry:
 
             self.process.apply_selection_to_generalized_data()
 
-            self.canvas.setLayers([self.process.generalized_data_only_geometry])
+            self.canvas.setLayers([self.process.processed_data_only_geometry])
             self.canvas.redrawAllLayers()
 
         self.map_updated.emit()
 
     def get_layer_for_project(self) -> QgsVectorLayer:
 
-        return self.process.generalized_data_with_attributes
+        return self.process.processed_data_with_attributes
 
     def slider_value_change(self):
 
@@ -202,14 +199,14 @@ class InteractiveSimplifierTool(QDialog):
 
         self.modify_selection.setEnabled(self.modify_only_part.isChecked())
 
-        self.process.generalize_select = self.modify_only_part.isChecked()
+        self.process.process_selection = self.modify_only_part.isChecked()
 
         self.set_input_data()
         self.generalize_layer()
 
     def set_generalization_type(self):
 
-        self.process.generalize_select_features = self.modify_selection.currentData()
+        self.process.process_selected_features = self.modify_selection.currentData()
 
         self.set_input_data()
         self.generalize_layer()
