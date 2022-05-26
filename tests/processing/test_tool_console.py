@@ -2,8 +2,9 @@ import pytest
 from pathlib import Path
 
 from qgis.core import (QgsProcessingParameterVectorLayer, QgsProcessingParameterString,
-                       QgsProcessingParameterVectorDestination, QgsProcessingOutputVectorLayer,
-                       QgsProcessingFeedback, QgsProcessingContext, QgsVectorLayer)
+                       QgsProcessingParameterVectorDestination, QgsProcessingParameterField,
+                       QgsProcessingOutputVectorLayer, QgsProcessingFeedback, QgsProcessingContext,
+                       QgsVectorLayer)
 
 from qmapshaper.processing.tool_console import ConsoleAlgorithm
 
@@ -54,15 +55,19 @@ def test_parameters():
 
     alg.initAlgorithm()
 
-    assert alg.countVisibleParameters() == 3
+    assert alg.countVisibleParameters() == 4
 
     parameter = alg.parameterDefinition("Input")
 
     assert isinstance(parameter, QgsProcessingParameterVectorLayer)
 
-    parameter = alg.parameterDefinition("CONSOLE")
+    parameter = alg.parameterDefinition("Console")
 
     assert isinstance(parameter, QgsProcessingParameterString)
+
+    parameter = alg.parameterDefinition("Field")
+
+    assert isinstance(parameter, QgsProcessingParameterField)
 
     parameter = alg.parameterDefinition("Output")
 

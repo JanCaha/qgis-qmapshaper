@@ -62,7 +62,7 @@ def test_usage(data_layer: QgsVectorLayer, qgis_iface: QgisInterface, qgis_paren
 
     assert isinstance(dialog.layer_selection.currentLayer(), QgsVectorLayer)
 
-    dialog.process.export_for_generalization()
+    dialog.process.export_for_processing()
 
     def test_1():
         assert Path(dialog.process.input_data_filename).exists()
