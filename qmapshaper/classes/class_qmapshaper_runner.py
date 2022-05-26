@@ -1,17 +1,9 @@
 from pathlib import Path
-from sys import flags
 from typing import Union, Optional
 
 from qgis.PyQt.QtCore import QProcess
 
 from .class_qmapshaper_paths import QMapshaperPaths
-
-GLOBAL_FLAG = '-g'
-FLAGS = ['', GLOBAL_FLAG]
-
-
-def isGlobalFlag(flag: str) -> bool:
-    return (flag == GLOBAL_FLAG)
 
 
 class MapshaperProcess(QProcess):
@@ -62,8 +54,6 @@ class MapshaperProcessChecker(QProcess):
 
     path: str
 
-    global_flag = False
-
     def __init__(self, path: Optional[Union[str, Path]] = None) -> None:
 
         super().__init__()
@@ -84,21 +74,16 @@ class MapshaperProcessChecker(QProcess):
 
         self.setProgram(self.path)
 
-        for flag in FLAGS:
+        self.start()
 
-            self.start()
+        self.waitForStarted()
 
-            self.setArguments([flag])
+        self.waitForFinished()
 
-            self.waitForStarted()
+        self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
 
-            self.waitForFinished()
-
-            self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
-
-            if "Error: No commands to run" in self.output_lines:
-                self.found = True
-                self.global_flag = isGlobalFlag(flag)
+        if "Error: No commands to run" in self.output_lines:
+            self.found = True
 
 
 class NpmPackageLocationCheckerProcess(QProcess):
@@ -121,21 +106,16 @@ class NpmPackageLocationCheckerProcess(QProcess):
 
         self.setProgram("npm")
 
-        for flag in FLAGS:
+        self.start()
 
-            self.setArguments([flag])
+        self.waitForStarted()
 
-            self.start()
+        self.waitForFinished()
 
-            self.waitForStarted()
+        self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
 
-            self.waitForFinished()
-
-            self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
-
-            if "Usage: npm <command>" in self.output_lines:
-                self.global_flag = isGlobalFlag(flag)
-                return True
+        if "Usage: npm <command>" in self.output_lines:
+            return True
 
         return False
 
