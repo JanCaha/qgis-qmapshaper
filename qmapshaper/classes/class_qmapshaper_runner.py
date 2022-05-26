@@ -86,7 +86,7 @@ class MapshaperProcessChecker(QProcess):
             self.found = True
 
 
-class NpmPackageLocationCheckerProcess(QProcess):
+class NpmPackageLocationCheckerProcess:
 
     output_lines: str
 
@@ -96,54 +96,47 @@ class NpmPackageLocationCheckerProcess(QProcess):
 
     _mapshaper_location: str = None
 
-    global_flag = False
-
     def __init__(self) -> None:
 
         super().__init__()
 
     def npm_exist(self) -> bool:
 
-        self.setProgram("npm")
+        p = QProcess()
 
-        self.start()
+        p.setProgram("npm")
 
-        self.waitForStarted()
+        p.start()
 
-        self.waitForFinished()
+        p.waitForStarted()
 
-        self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
+        p.waitForFinished()
 
-        if "Usage: npm <command>" in self.output_lines:
+        output_lines = bytes(p.readAllStandardOutput()).decode("utf8")
+
+        if "Usage: npm <command>" in output_lines:
             return True
 
         return False
 
-    def _addGlobalFlagToArguments(self) -> None:
-
-        if self.global_flag:
-            args = self.arguments()
-            args.append(GLOBAL_FLAG)
-            self.setArguments(args)
-
     def npm_package_locations(self) -> bool:
 
-        self.setProgram("npm")
-        self.setArguments(["root"])
+        p = QProcess()
 
-        self._addGlobalFlagToArguments()
+        p.setProgram("npm")
+        p.setArguments(["root"])
 
-        self.start()
+        p.start()
 
-        self.waitForStarted()
+        p.waitForStarted()
 
-        self.waitForFinished()
+        p.waitForFinished()
 
-        self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
+        output_lines = bytes(p.readAllStandardOutput()).decode("utf8")
 
-        if 0 < len(self.output_lines):
+        if 0 < len(output_lines):
 
-            self.packages_location = self.output_lines.strip()
+            self.packages_location = output_lines.strip()
 
             return True
 
@@ -151,20 +144,20 @@ class NpmPackageLocationCheckerProcess(QProcess):
 
     def mapshaper_exists(self) -> bool:
 
-        self.setProgram("npm")
-        self.setArguments(["list"])
+        p = QProcess()
 
-        self._addGlobalFlagToArguments()
+        p.setProgram("npm")
+        p.setArguments(["list"])
 
-        self.start()
+        p.start()
 
-        self.waitForStarted()
+        p.waitForStarted()
 
-        self.waitForFinished()
+        p.waitForFinished()
 
-        self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
+        output_lines = bytes(p.readAllStandardOutput()).decode("utf8")
 
-        if "mapshaper" in self.output_lines:
+        if "mapshaper" in output_lines:
 
             self.mapshaper_present = True
 
