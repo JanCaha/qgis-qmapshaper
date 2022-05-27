@@ -1,8 +1,11 @@
 .PHONY: zip
 
-prepare: clean
+prepare: clean delete
 
-zip: clean zipfiles
+zip: prepare zipfiles
+
+delete:
+	find . | grep -E "(__pycache__|\.pyc|\.pyo)" | xargs rm -rf
 
 clean:
 	py3clean .
