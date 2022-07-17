@@ -5,7 +5,7 @@ from qgis.PyQt.QtCore import (QRunnable, QObject, pyqtSignal, pyqtSlot, QThread)
 
 class WaitWorker(QRunnable):
 
-    def __init__(self, percent: int):
+    def __init__(self, percent: int, wait_time: int = 200):
 
         super(WaitWorker, self).__init__()
 
@@ -13,10 +13,12 @@ class WaitWorker(QRunnable):
 
         self.percent = percent
 
+        self.wait_time = wait_time
+
     @pyqtSlot()
     def run(self):
 
-        QThread.msleep(200)
+        QThread.msleep(self.wait_time)
 
         self.signals.percent.emit(self.percent)
 
