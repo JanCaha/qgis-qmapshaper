@@ -1,34 +1,18 @@
 from qgis.core import (QgsVectorLayer, QgsMapLayerProxyModel)
 from qgis.gui import (QgsMapCanvas, QgsMapLayerComboBox, QgisInterface)
-from qgis.PyQt.QtWidgets import (QDialog, QLabel, QVBoxLayout, QHBoxLayout, QSlider, QComboBox,
-                                 QSpinBox, QDialogButtonBox, QCheckBox)
-from qgis.PyQt.QtCore import (Qt, QThreadPool, pyqtSignal)
+from qgis.PyQt.QtWidgets import (QDialog, QLabel, QVBoxLayout, QComboBox, QDialogButtonBox,
+                                 QCheckBox)
+from qgis.PyQt.QtCore import (QThreadPool, pyqtSignal)
 
 from ..processing.tool_simplify import SimplifyAlgorithm
 from ..utils import log
 from ..text_constants import TextConstants
 from ..classes.classes_workers import WaitWorker
 from .processes.interactive_simplifier_process import InteractiveSimplifierProcess
+from .percentsliderspinbox import PercentSliderSpinBox
 
 
 class InteractiveSimplifierTool(QDialog):
-
-    percent_slider: QSlider
-    percent_spin_box: QSpinBox
-    canvas: QgsMapCanvas
-    layer_selection: QgsMapLayerComboBox
-    methods: QComboBox
-    button_box: QDialogButtonBox
-
-    threadpool: QThreadPool
-
-    wait_worker: WaitWorker
-    """
-    Worker that waits for small amount of time (current 0.2 second). Helps avoid calling MapshaperProcess to often.
-    Generally, the value of percent_spin_box needs to be stable while this run to trigger the data generalization.
-    """
-
-    process: InteractiveSimplifierProcess
 
     map_updated = pyqtSignal()
     data_generalized = pyqtSignal()
@@ -49,27 +33,23 @@ class InteractiveSimplifierTool(QDialog):
         self.setFixedHeight(800)
 
         self.threadpool = QThreadPool()
+        self.wait_worker: WaitWorker = None
+
+        self.set_up_ui()
+
+        self.setup_canvas()
+
+        self.set_input_data()
+
+    def set_up_ui(self) -> None:
 
         self.layer_selection = QgsMapLayerComboBox(self)
         self.layer_selection.setFilters(QgsMapLayerProxyModel.VectorLayer)
 
         self.layer_selection.layerChanged.connect(self.set_input_data)
 
-        self.percent_slider = QSlider(Qt.Horizontal)
-        self.percent_slider.setMinimum(1)
-        self.percent_slider.setMaximum(99)
-        self.percent_slider.setValue(50)
-        self.percent_slider.sliderReleased.connect(self.slider_value_change)
-        self.percent_slider.valueChanged.connect(self.slider_value_change)
-
-        self.percent_spin_box = QSpinBox()
-        self.percent_spin_box.setSuffix("%")
-        self.percent_spin_box.setMinimum(1)
-        self.percent_spin_box.setMaximum(99)
-        self.percent_spin_box.setValue(50)
-        self.percent_spin_box.setReadOnly(True)
-
-        self.percent_spin_box.valueChanged.connect(self.spinner_value_change)
+        self.percent_widget = PercentSliderSpinBox(parent=self)
+        self.percent_widget.valueChangedInteractionStopped.connect(self.generalize_layer)
 
         self.methods = QComboBox(self)
         self.methods.addItems(SimplifyAlgorithm.methods().keys())
@@ -96,31 +76,24 @@ class InteractiveSimplifierTool(QDialog):
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
 
-        self.hlayout = QHBoxLayout()
-        self.hlayout.addWidget(self.percent_slider)
-        self.hlayout.addWidget(self.percent_spin_box)
+        layout = QVBoxLayout()
+        self.setLayout(layout)
 
-        self.vlayout = QVBoxLayout()
-        self.vlayout.addWidget(QLabel("Layer"))
-        self.vlayout.addWidget(self.layer_selection)
-        self.vlayout.addWidget(QLabel("Simplify to %"))
-        self.vlayout.addLayout(self.hlayout)
-        self.vlayout.addWidget(QLabel("Method"))
-        self.vlayout.addWidget(self.methods)
-        self.vlayout.addWidget(QLabel("Generalize part of layer"))
-        self.vlayout.addWidget(self.modify_only_part)
-        self.vlayout.addWidget(QLabel("Selection"))
-        self.vlayout.addWidget(self.modify_selection)
-        self.vlayout.addWidget(QLabel("Topologically clean data"))
-        self.vlayout.addWidget(self.clean_data)
-        self.vlayout.addWidget(QLabel("Map"))
-        self.vlayout.addWidget(self.canvas)
-        self.vlayout.addWidget(self.button_box)
-        self.setLayout(self.vlayout)
-
-        self.setup_canvas()
-
-        self.set_input_data()
+        layout.addWidget(QLabel("Layer"))
+        layout.addWidget(self.layer_selection)
+        layout.addWidget(QLabel("Simplify to %"))
+        layout.addWidget(self.percent_widget)
+        layout.addWidget(QLabel("Method"))
+        layout.addWidget(self.methods)
+        layout.addWidget(QLabel("Generalize part of layer"))
+        layout.addWidget(self.modify_only_part)
+        layout.addWidget(QLabel("Selection"))
+        layout.addWidget(self.modify_selection)
+        layout.addWidget(QLabel("Topologically clean data"))
+        layout.addWidget(self.clean_data)
+        layout.addWidget(QLabel("Map"))
+        layout.addWidget(self.canvas)
+        layout.addWidget(self.button_box)
 
     def setup_canvas(self):
         self.canvas.setDestinationCrs(self.iface.mapCanvas().project().crs())
@@ -148,7 +121,7 @@ class InteractiveSimplifierTool(QDialog):
 
     def generalize_layer(self) -> None:
 
-        self.process.process_layer(simplify_percent=self.percent_spin_box.value(),
+        self.process.process_layer(simplify_percent=self.percent_widget.value(),
                                    simplify_method=SimplifyAlgorithm.get_method(
                                        self.methods.currentIndex()))
 
@@ -169,31 +142,9 @@ class InteractiveSimplifierTool(QDialog):
 
         return self.process.processed_data_with_attributes
 
-    def slider_value_change(self):
-
-        self.percent_spin_box.setValue(self.percent_slider.value())
-
-    def spinner_value_change(self):
-
-        self.create_wait_worker()
-
-    def run_update(self, percent: int):
-
-        log(f"Prev: {percent} - curr: {self.percent_spin_box.value()}")
-
-        if percent == self.percent_spin_box.value():
-            self.trigger_input_parameters_change()
-
     def trigger_input_parameters_change(self) -> None:
 
         self.generalize_layer()
-
-    def create_wait_worker(self) -> None:
-
-        wait_worker = WaitWorker(self.percent_spin_box.value())
-        wait_worker.signals.percent.connect(self.run_update)
-
-        self.threadpool.start(wait_worker)
 
     def set_selection(self):
 
