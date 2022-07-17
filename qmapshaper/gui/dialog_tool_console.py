@@ -12,15 +12,6 @@ from .processes.interactive_console_process import InteractiveConsoleProcess
 
 class InteractiveConsoleTool(QDialog):
 
-    canvas: QgsMapCanvas
-    layer_selection: QgsMapLayerComboBox
-    console_command: QLineEdit
-    field: QgsFieldComboBox
-
-    threadpool: QThreadPool
-
-    wait_worker: WaitWorkerCommand
-
     map_updated = pyqtSignal()
     data_processed = pyqtSignal()
 
@@ -40,6 +31,7 @@ class InteractiveConsoleTool(QDialog):
         self.setFixedHeight(800)
 
         self.threadpool = QThreadPool()
+        self.wait_worker: WaitWorkerCommand = None
 
         self.layer_selection = QgsMapLayerComboBox(self)
         self.layer_selection.setFilters(QgsMapLayerProxyModel.VectorLayer)
