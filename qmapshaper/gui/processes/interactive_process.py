@@ -17,36 +17,34 @@ from ...utils import log
 
 class InteractiveProcess(QObject):
 
-    memory_layer: QgsVectorLayer = None
-    stored_ids: List[int] = []
-
-    process_selection: bool = False
-    process_selected_features: bool = True
-
-    clean_data: bool = False
-
-    input_data_filename: str = ""
-
-    field: str = None
-
-    processed_data_filename: str = None
-    _processed_data_layer: QgsVectorLayer = None
-
-    _processed_data_layer_memory: QgsVectorLayer = None
-
     input_layer_changed = pyqtSignal()
     processed_layer_changed = pyqtSignal()
     processed_layer_prepared = pyqtSignal()
-
-    parent_gui: QDialog
-
-    result_layer_name: str = ""
 
     def __init__(self, parent: QDialog = None) -> None:
 
         super().__init__()
 
         self.parent_gui = parent
+
+        self.result_layer_name: str = ""
+
+        self.memory_layer: QgsVectorLayer = None
+        self.stored_ids: List[int] = []
+
+        self.process_selection: bool = False
+        self.process_selected_features: bool = True
+
+        self.clean_data: bool = False
+
+        self.input_data_filename: str = ""
+
+        self.field: str = None
+
+        self.processed_data_filename: str = None
+        self._processed_data_layer: QgsVectorLayer = None
+
+        self._processed_data_layer_memory: QgsVectorLayer = None
 
         self.input_layer_changed.connect(self.export_for_processing)
         self.processed_layer_changed.connect(self.load_processed_layer)
