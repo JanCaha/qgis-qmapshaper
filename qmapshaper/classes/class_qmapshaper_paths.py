@@ -1,4 +1,5 @@
 from pathlib import Path
+import platform
 
 from processing.core.ProcessingConfig import ProcessingConfig
 
@@ -78,7 +79,10 @@ class QMapshaperPaths:
 
     @staticmethod
     def guess_mapshaper_command_name() -> str:
-        return "mapshaper-xl"
+        if platform.system() == "Windows":
+            return "mapshaper-xl.cmd"
+        else:
+            return "mapshaper-xl"
 
     @staticmethod
     def mapshaper_command_call() -> str:
