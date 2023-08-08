@@ -12,15 +12,17 @@
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/font-awesome.min.css" rel="stylesheet">
         <link href="css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/color-brewer.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/color-brewer.min.css">
         <link href="css/additions.css" rel="stylesheet">
         <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/v.1.7.14/featherlight.min.css" rel="stylesheet">
-
-        <script src="js/jquery-1.10.2.min.js" defer></script>
-        <script src="js/bootstrap.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-        <script>hljs.initHighlightingOnLoad();</script> 
-    </head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+     <link href="assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+        html.glightbox-open { overflow: initial; height: 100%; }
+        .gslide-title { margin-top: 0px; user-select: text; }
+        .gslide-desc { color: #666; user-select: text; }
+        .gslide-image img { background: white; }
+        </style> <script src="assets/javascripts/glightbox.min.js"></script></head>
 
     <body class="homepage">
         <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
@@ -136,7 +138,7 @@
 
 <h1 id="qmapshaper">QMapshaper</h1>
 <p>QGIS plugin to that allows running <a href="https://github.com/mbloch/mapshaper">mapshaper</a> directly from QGIS as a processing tool or an interactive tool.</p>
-<p><a href="https://github.com/JanCaha/qgis-qmapshaper/actions/workflows/test_plugin.yaml"><a data-featherlight="https://github.com/JanCaha/qgis-qmapshaper/actions/workflows/test_plugin.yaml/badge.svg" href="#"><img alt="Tests for Plugin QMapshaper" src="https://github.com/JanCaha/qgis-qmapshaper/actions/workflows/test_plugin.yaml/badge.svg" /></a></a></p>
+<p><a href="https://github.com/JanCaha/qgis-qmapshaper/actions/workflows/test_plugin.yaml"><img alt="Tests for Plugin QMapshaper" src="https://github.com/JanCaha/qgis-qmapshaper/actions/workflows/test_plugin.yaml/badge.svg" /></a></p>
 <h2 id="link-to-qgis-plugin-repository">Link to QGIS Plugin repository</h2>
 <p>Plugin is available here: <a href="https://plugins.qgis.org/plugins/qmapshaper/">https://plugins.qgis.org/plugins/qmapshaper/</a>.</p>
 <h2 id="installation">Installation</h2>
@@ -160,11 +162,12 @@ npm install mapshaper
 <p>So far there is processing tool <strong>Simplify vector</strong> usable in complex workflows. There is also <strong>Interactive Simplifier</strong> which is GUI tool that allows playing around interactively with the simplification parameters.</p>
 <h2 id="examples">Examples</h2>
 <h3 id="plugin-settings">Plugin Settings</h3>
-<p><a data-featherlight="images/plugin_settings.gif" href="#"><img alt="" src="images/plugin_settings.gif" /></a></p>
+<p>The settings requires <code>Mapshaper folder</code> and <code>Mapshaper tool name</code>. The tool name for Linux and Windows wary, but the plugin does it's best to set it up correctly. For Linux and MacOS it should be <code>mapshaper-xl</code> while on Windows <code>mapshaper-xl.cmd</code> should be the correct programme.</p>
+<p><a class="glightbox" href="images/plugin_settings.png" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="Plugin Settings" src="images/plugin_settings.png" /></a></p>
 <h3 id="interactive-tool">Interactive Tool</h3>
-<p><a data-featherlight="images/interactive_tool.gif" href="#"><img alt="" src="images/interactive_tool.gif" /></a></p>
+<p><a class="glightbox" href="images/interactive_tool.gif" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="" src="images/interactive_tool.gif" /></a></p>
 <h3 id="use-case">Use Case</h3>
-<p><a data-featherlight="images/use_case.gif" href="#"><img alt="" src="images/use_case.gif" /></a></p></div>
+<p><a class="glightbox" href="images/use_case.gif" data-type="image" data-width="100%" data-height="auto" data-desc-position="bottom"><img alt="" src="images/use_case.gif" /></a></p></div>
             </div>
         </div>
 
@@ -173,14 +176,16 @@ npm install mapshaper
                 <p>Copyright &copy; 2022 <a href="https://twitter.com/cahik13">Jan Caha</a>.</p>
             <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
         </footer>
+        <script src="js/jquery-3.6.0.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
         <script>
             var base_url = ".",
                 shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
         </script>
-        <script src="js/base.js" defer></script>
-        <script src="//code.jquery.com/jquery-3.6.0.min.js" defer></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/v.1.7.14/featherlight.min.js" defer></script>
-        <script src="search/main.js" defer></script>
+        <script src="js/base.js"></script>
+        <script src="//code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/v.1.7.14/featherlight.min.js"></script>
+        <script src="search/main.js"></script>
 
         <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -243,10 +248,10 @@ npm install mapshaper
     </div>
 </div>
 
-    </body>
+    <script>const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});</script></body>
 </html>
 
 <!--
-MkDocs version : 1.3.0
-Build Date UTC : 2022-05-27 07:53:49.669277+00:00
+MkDocs version : 1.5.2
+Build Date UTC : 2023-08-08 18:00:51.070675+00:00
 -->

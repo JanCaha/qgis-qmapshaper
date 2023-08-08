@@ -12,15 +12,17 @@
         <link href="../css/bootstrap.min.css" rel="stylesheet">
         <link href="../css/font-awesome.min.css" rel="stylesheet">
         <link href="../css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/color-brewer.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/color-brewer.min.css">
         <link href="../css/additions.css" rel="stylesheet">
         <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/v.1.7.14/featherlight.min.css" rel="stylesheet">
-
-        <script src="../js/jquery-1.10.2.min.js" defer></script>
-        <script src="../js/bootstrap.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-        <script>hljs.initHighlightingOnLoad();</script> 
-    </head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+     <link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+        html.glightbox-open { overflow: initial; height: 100%; }
+        .gslide-title { margin-top: 0px; user-select: text; }
+        .gslide-desc { color: #666; user-select: text; }
+        .gslide-image img { background: white; }
+        </style> <script src="../assets/javascripts/glightbox.min.js"></script></head>
 
     <body>
         <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
@@ -107,6 +109,10 @@
             
             <li class="nav-item" data-level="1"><a href="#changelog" class="nav-link">Changelog</a>
               <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#version-082" class="nav-link">version 0.8.2</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-level="2"><a href="#version-08" class="nav-link">version 0.8</a>
               <ul class="nav flex-column">
               </ul>
@@ -139,6 +145,10 @@
                     <div class="col-md-9" role="main">
 
 <h1 id="changelog">Changelog</h1>
+<h2 id="version-082">version 0.8.2</h2>
+<ul>
+<li>fixes in npm and mapshaper finding and running</li>
+</ul>
 <h2 id="version-08">version 0.8</h2>
 <ul>
 <li>
@@ -215,14 +225,16 @@
                 <p>Copyright &copy; 2022 <a href="https://twitter.com/cahik13">Jan Caha</a>.</p>
             <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
         </footer>
+        <script src="../js/jquery-3.6.0.min.js"></script>
+        <script src="../js/bootstrap.min.js"></script>
         <script>
             var base_url = "..",
                 shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
         </script>
-        <script src="../js/base.js" defer></script>
-        <script src="//code.jquery.com/jquery-3.6.0.min.js" defer></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/v.1.7.14/featherlight.min.js" defer></script>
-        <script src="../search/main.js" defer></script>
+        <script src="../js/base.js"></script>
+        <script src="//code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/v.1.7.14/featherlight.min.js"></script>
+        <script src="../search/main.js"></script>
 
         <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -285,5 +297,5 @@
     </div>
 </div>
 
-    </body>
+    <script>const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});</script></body>
 </html>

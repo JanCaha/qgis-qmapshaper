@@ -2,42 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://jancaha.github.io/qgis-qmapshaper/</loc>
-         <lastmod>2022-05-27</lastmod>
+         <lastmod>2023-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://jancaha.github.io/qgis-qmapshaper/changelog/</loc>
-         <lastmod>2022-05-27</lastmod>
+         <lastmod>2023-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://jancaha.github.io/qgis-qmapshaper/GUI%20Tools/tool_interactive_console/</loc>
-         <lastmod>2022-05-27</lastmod>
+         <lastmod>2023-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://jancaha.github.io/qgis-qmapshaper/GUI%20Tools/tool_interactive_simplifier/</loc>
-         <lastmod>2022-05-27</lastmod>
+         <lastmod>2023-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://jancaha.github.io/qgis-qmapshaper/tools/tool_console/</loc>
-         <lastmod>2022-05-27</lastmod>
+         <lastmod>2023-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://jancaha.github.io/qgis-qmapshaper/tools/tool_simplify/</loc>
-         <lastmod>2022-05-27</lastmod>
+         <lastmod>2023-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://jancaha.github.io/qgis-qmapshaper/tools/tool_simplify_lines/</loc>
-         <lastmod>2022-05-27</lastmod>
+         <lastmod>2023-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://jancaha.github.io/qgis-qmapshaper/tools/tool_to_topojson/</loc>
-         <lastmod>2022-05-27</lastmod>
+         <lastmod>2023-08-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
