@@ -33,7 +33,7 @@ jobs:
         python3 -m pip install MarkdownHighlight
         python3 -m pip install https://codeload.github.com/mkdocs/mkdocs-bootstrap/zip/master
         python3 -m pip install git+https://github.com/mkdocs/mkdocs-bootswatch
-        python3 -m pip install git+https://github.com/it-novum/mkdocs-featherlight.git
+        python3 -m pip install git+https://github.com/Blueswen/mkdocs-glightbox.git
 
     - name: Build
       run: |

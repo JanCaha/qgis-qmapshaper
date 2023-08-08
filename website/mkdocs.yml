@@ -27,4 +27,4 @@ plugins:
     - search
 
 markdown_extensions:
-    - featherlight
+    - glightbox
