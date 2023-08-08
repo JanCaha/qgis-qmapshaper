@@ -1,12 +1,13 @@
-from qmapshaper.classes.class_qmapshaper_runner import MapshaperProcessChecker, NpmPackageLocationCheckerProcess
+from qmapshaper.classes.class_qmapshaper_runner import (
+    MapshaperProcessChecker,
+    NpmPackageLocationCheckerProcess,
+)
 
 
 def test_MapshaperProcessChecker():
-
     ms = MapshaperProcessChecker()
 
-    assert "Error: No commands to run" in ms.output_lines
-    assert "Run mapshaper -h to view help" in ms.output_lines
+    assert "Usage:  mapshaper -<command>" in ms.output_lines
 
     assert ms.found
 
@@ -18,7 +19,6 @@ def test_MapshaperProcessChecker():
 
 
 def test_NpmPackageLocationCheckerProcess():
-
     npm = NpmPackageLocationCheckerProcess()
 
     assert npm.npm_exist()
