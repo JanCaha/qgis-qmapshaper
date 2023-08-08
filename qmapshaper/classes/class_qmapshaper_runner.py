@@ -63,6 +63,7 @@ class MapshaperProcessChecker(QProcess):
             self.path = "mapshaper"
 
         self.setProgram(self.path)
+        self.setArguments(["--help"])
 
         self.start()
 
@@ -72,7 +73,7 @@ class MapshaperProcessChecker(QProcess):
 
         self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
 
-        if "Error: No commands to run" in self.output_lines:
+        if "Usage:  mapshaper -<command>" in self.output_lines:
             self.found = True
 
 
@@ -101,7 +102,7 @@ class NpmPackageLocationCheckerProcess:
 
         output_lines = bytes(p.readAllStandardOutput()).decode("utf8")
 
-        if "Usage: npm <command>" in output_lines:
+        if "npm <command>" in output_lines:
             return True
 
         return False
@@ -110,7 +111,7 @@ class NpmPackageLocationCheckerProcess:
         p = QProcess()
 
         p.setProgram("npm")
-        p.setArguments(["root"])
+        p.setArguments(["root", "-g"])
 
         p.start()
 
