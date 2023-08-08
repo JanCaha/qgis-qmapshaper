@@ -1,17 +1,17 @@
+import inspect
 import os
 import sys
-import inspect
 
-from qgis.core import (QgsApplication, QgsProject)
-from qgis.gui import (QgisInterface)
+from qgis.core import QgsApplication, QgsProject
+from qgis.gui import QgisInterface
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
-from .qmapshaper_provider import QMapshaperProvider
-from .utils import get_icon_path, log
-from .gui.dialog_tool_interactive_simplifier import InteractiveSimplifierTool
 from .gui.dialog_tool_console import InteractiveConsoleTool
+from .gui.dialog_tool_interactive_simplifier import InteractiveSimplifierTool
+from .qmapshaper_provider import QMapshaperProvider
 from .text_constants import TextConstants
+from .utils import get_icon_path
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 
@@ -19,10 +19,8 @@ if cmd_folder not in sys.path:
     sys.path.insert(0, cmd_folder)
 
 
-class QMapshaperPlugin():
-
+class QMapshaperPlugin:
     def __init__(self, iface):
-
         self.iface: QgisInterface = iface
 
         self.provider = QMapshaperProvider()
@@ -41,17 +39,21 @@ class QMapshaperPlugin():
     def initGui(self):
         self.initProcessing()
 
-        self.add_action(icon_path=get_icon_path("qmapshaper.png"),
-                        text=TextConstants.tool_name_interactive_simplifier,
-                        callback=self.run_tool_interactive_simplifier,
-                        add_to_toolbar=False,
-                        add_to_specific_toolbar=self.toolbar)
+        self.add_action(
+            icon_path=get_icon_path("qmapshaper.png"),
+            text=TextConstants.tool_name_interactive_simplifier,
+            callback=self.run_tool_interactive_simplifier,
+            add_to_toolbar=False,
+            add_to_specific_toolbar=self.toolbar,
+        )
 
-        self.add_action(icon_path=get_icon_path("qmapshaper_console.svg"),
-                        text=TextConstants.tool_name_interactive_console,
-                        callback=self.run_tool_interactive_console,
-                        add_to_toolbar=False,
-                        add_to_specific_toolbar=self.toolbar)
+        self.add_action(
+            icon_path=get_icon_path("qmapshaper_console.svg"),
+            text=TextConstants.tool_name_interactive_console,
+            callback=self.run_tool_interactive_console,
+            add_to_toolbar=False,
+            add_to_specific_toolbar=self.toolbar,
+        )
 
     def unload(self):
         QgsApplication.processingRegistry().removeProvider(self.provider)
@@ -64,18 +66,19 @@ class QMapshaperPlugin():
 
         del self.toolbar
 
-    def add_action(self,
-                   icon_path,
-                   text,
-                   callback,
-                   enabled_flag=True,
-                   add_to_menu=True,
-                   add_to_toolbar=True,
-                   status_tip=None,
-                   whats_this=None,
-                   parent=None,
-                   add_to_specific_toolbar=None):
-
+    def add_action(
+        self,
+        icon_path,
+        text,
+        callback,
+        enabled_flag=True,
+        add_to_menu=True,
+        add_to_toolbar=True,
+        status_tip=None,
+        whats_this=None,
+        parent=None,
+        add_to_specific_toolbar=None,
+    ):
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
         action.triggered.connect(callback)
@@ -103,25 +106,21 @@ class QMapshaperPlugin():
         return action
 
     def run_tool_interactive_simplifier(self):
-
         dlg = InteractiveSimplifierTool(parent=self.iface.mainWindow(), iface=self.iface)
 
         result = dlg.exec_()
 
         if result == 1:
-
             QgsProject.instance().addMapLayer(dlg.get_layer_for_project())
 
         dlg = None
 
     def run_tool_interactive_console(self):
-
         dlg = InteractiveConsoleTool(parent=self.iface.mainWindow(), iface=self.iface)
 
         result = dlg.exec_()
 
         if result == 1:
-
             QgsProject.instance().addMapLayer(dlg.get_layer_for_project())
 
         dlg = None

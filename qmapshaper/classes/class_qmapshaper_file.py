@@ -4,10 +4,8 @@ from qgis.core import QgsProcessingUtils
 
 
 class QMapshaperFile:
-
     @staticmethod
     def get_format(file_name: str) -> str:
-
         file_types = [QMapshaperFile, QMapshaperGeojsonFile, QMapshaperTopoJsonFile]
 
         for file_type in file_types:
@@ -18,7 +16,6 @@ class QMapshaperFile:
 
     @staticmethod
     def random_temp_filename() -> str:
-
         filename = "{}.{}".format(uuid4(), QMapshaperFile.extension())
 
         return QgsProcessingUtils.generateTempFilename(filename)
@@ -37,10 +34,8 @@ class QMapshaperFile:
 
 
 class QMapshaperGeojsonFile:
-
     @staticmethod
     def random_temp_filename() -> str:
-
         filename = "{}.{}".format(uuid4(), QMapshaperGeojsonFile.extension())
 
         return QgsProcessingUtils.generateTempFilename(filename)
@@ -59,10 +54,8 @@ class QMapshaperGeojsonFile:
 
 
 class QMapshaperTopoJsonFile:
-
     @staticmethod
     def random_temp_filename() -> str:
-
         filename = "{}.{}".format(uuid4(), QMapshaperTopoJsonFile.extension())
 
         return QgsProcessingUtils.generateTempFilename(filename)

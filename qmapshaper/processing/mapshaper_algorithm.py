@@ -1,19 +1,22 @@
 import abc
 from pathlib import Path
-from typing import List, Dict
+from typing import Dict, List
 
+from qgis.core import (
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProcessingFeedback,
+    QgsVectorLayer,
+)
 from qgis.PyQt.QtGui import QIcon
-from qgis.core import (QgsProcessingAlgorithm, QgsVectorLayer, QgsProcessingFeedback,
-                       QgsProcessingException)
 
-from ..classes.class_qmapshaper_runner import MapshaperProcess
 from ..classes.class_qmapshaper_command_builder import QMapshaperCommandBuilder
 from ..classes.class_qmapshaper_data_preparer import QMapshaperDataPreparer
 from ..classes.class_qmapshaper_file import QMapshaperFile
+from ..classes.class_qmapshaper_runner import MapshaperProcess
 
 
 class MapshaperAlgorithm(QgsProcessingAlgorithm):
-
     __metaclass__ = abc.ABCMeta
 
     input_layer_memory: QgsVectorLayer
@@ -64,8 +67,7 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
         return None
 
     @abc.abstractmethod
-    def process_field(self, parameter_name, parameters, context,
-                      feedback: QgsProcessingFeedback) -> None:
+    def process_field(self, parameter_name, parameters, context, feedback: QgsProcessingFeedback) -> None:
         return None
 
     @staticmethod
@@ -81,9 +83,7 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
     def prepare_arguments() -> List[str]:
         return None
 
-    def get_console_commands(self, parameters, context,
-                             feedback: QgsProcessingFeedback) -> List[str]:
-
+    def get_console_commands(self, parameters, context, feedback: QgsProcessingFeedback) -> List[str]:
         arguments = self.get_arguments(parameters, context, feedback)
 
         commands = QMapshaperCommandBuilder.prepare_console_commands(
@@ -92,12 +92,12 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
             command=self.name(),
             arguments=arguments,
             clean_before=self.clean_data_before,
-            clean_after=self.clean_data_after)
+            clean_after=self.clean_data_after,
+        )
 
         return commands
 
     def processAlgorithm(self, parameters, context, feedback: QgsProcessingFeedback):
-
         self.prepare_data(parameters, context, feedback)
 
         commands = self.get_console_commands(parameters, context, feedback)
@@ -135,9 +135,7 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
             return self.simplify_field[0:10]
         return None
 
-    def process_input_layer(self, parameter_name, parameters, context,
-                            feedback: QgsProcessingFeedback) -> None:
-
+    def process_input_layer(self, parameter_name, parameters, context, feedback: QgsProcessingFeedback) -> None:
         layer = self.parameterAsVectorLayer(parameters, parameter_name, context)
 
         if not layer:
@@ -155,33 +153,31 @@ class MapshaperAlgorithm(QgsProcessingAlgorithm):
             index = self.input_layer_memory.fields().lookupField(self.simplified_field_full_name)
             fields.append(index)
 
-        QMapshaperDataPreparer.write_layer_with_minimal_attributes(layer=self.input_layer_memory,
-                                                                   file=self.mapshaper_input,
-                                                                   col_index=fields)
+        QMapshaperDataPreparer.write_layer_with_minimal_attributes(
+            layer=self.input_layer_memory, file=self.mapshaper_input, col_index=fields
+        )
 
         if self.needs_join:
-
             QMapshaperDataPreparer.write_layer_with_minimal_attributes(
-                layer=self.input_layer_memory, file=self.mapshaper_join, col_index=fields)
+                layer=self.input_layer_memory, file=self.mapshaper_join, col_index=fields
+            )
 
     def process_output_layer(self, feedback: QgsProcessingFeedback):
-
         layer_generalized = QgsVectorLayer(self.mapshaper_output, "data", "ogr")
 
         memory_layer = QMapshaperDataPreparer.copy_to_memory_layer(layer_generalized)
 
         memory_layer.setCrs(self.input_layer_memory.crs())
 
-        QMapshaperDataPreparer.join_fields_back(memory_layer,
-                                                self.input_layer_memory,
-                                                join_fids_back=self.join_fid_field_back)
+        QMapshaperDataPreparer.join_fields_back(
+            memory_layer, self.input_layer_memory, join_fids_back=self.join_fid_field_back
+        )
 
-        QMapshaperDataPreparer.write_output_file(layer=memory_layer,
-                                                 file=self.result_layer_location,
-                                                 layer_name=self.input_layer_memory.name())
+        QMapshaperDataPreparer.write_output_file(
+            layer=memory_layer, file=self.result_layer_location, layer_name=self.input_layer_memory.name()
+        )
 
     def icon(self):
-
         location = Path(__file__).parent.parent / "icons" / "main_icon.png"
 
         return QIcon(location.absolute().as_posix())

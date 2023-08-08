@@ -1,49 +1,49 @@
-from typing import List, Union, Dict
 import re
+from typing import Dict, List, Union
 
-from qgis.core import (QgsProcessingParameterVectorLayer, QgsProcessingFeedback,
-                       QgsProcessingParameterVectorDestination, QgsProcessingParameterString,
-                       QgsProcessingParameterField)
+from qgis.core import (
+    QgsProcessingFeedback,
+    QgsProcessingParameterField,
+    QgsProcessingParameterString,
+    QgsProcessingParameterVectorDestination,
+    QgsProcessingParameterVectorLayer,
+)
 
-from .mapshaper_algorithm import MapshaperAlgorithm
 from ..classes.class_qmapshaper_command_builder import QMapshaperCommandBuilder
+from .mapshaper_algorithm import MapshaperAlgorithm
 
 
 class ConsoleAlgorithm(MapshaperAlgorithm):
-
     INPUT_LAYER = "Input"
     CONSOLE = "Console"
     OUTPUT_LAYER = "Output"
     FIELD = "Field"
 
     def initAlgorithm(self, config=None):
-
         self.addParameter(QgsProcessingParameterVectorLayer(self.INPUT_LAYER, "Input layer"))
 
         self.addParameter(QgsProcessingParameterString(self.CONSOLE, "Console Command"))
 
         self.addParameter(
-            QgsProcessingParameterField(self.FIELD,
-                                        "Select field that is needed for command",
-                                        parentLayerParameterName=self.INPUT_LAYER,
-                                        optional=True,
-                                        allowMultiple=False))
+            QgsProcessingParameterField(
+                self.FIELD,
+                "Select field that is needed for command",
+                parentLayerParameterName=self.INPUT_LAYER,
+                optional=True,
+                allowMultiple=False,
+            )
+        )
 
-        self.addParameter(
-            QgsProcessingParameterVectorDestination(self.OUTPUT_LAYER, "Output Layer"))
+        self.addParameter(QgsProcessingParameterVectorDestination(self.OUTPUT_LAYER, "Output Layer"))
 
     def prepare_data(self, parameters, context, feedback: QgsProcessingFeedback) -> None:
-
         self.process_field(self.FIELD, parameters, context, feedback)
 
         self.process_input_layer(self.INPUT_LAYER, parameters, context, feedback)
 
-        self.result_layer_location = self.parameterAsOutputLayer(parameters, self.OUTPUT_LAYER,
-                                                                 context)
+        self.result_layer_location = self.parameterAsOutputLayer(parameters, self.OUTPUT_LAYER, context)
 
-    def process_field(self, field_name: str, parameters, context,
-                      feedback: QgsProcessingFeedback) -> None:
-
+    def process_field(self, field_name: str, parameters, context, feedback: QgsProcessingFeedback) -> None:
         field = self.parameterAsFields(parameters, field_name, context)
 
         if field:
@@ -51,9 +51,7 @@ class ConsoleAlgorithm(MapshaperAlgorithm):
 
         self.simplify_field = field
 
-    def get_console_commands(self, parameters, context,
-                             feedback: QgsProcessingFeedback) -> List[str]:
-
+    def get_console_commands(self, parameters, context, feedback: QgsProcessingFeedback) -> List[str]:
         console_command = self.parameterAsString(parameters, self.CONSOLE, context)
 
         list_of_commands = self.split_text_into_parts(console_command)
@@ -64,7 +62,8 @@ class ConsoleAlgorithm(MapshaperAlgorithm):
             command=list_of_commands[0],
             arguments=list_of_commands[1:],
             clean_before=self.clean_data_before,
-            clean_after=self.clean_data_after)
+            clean_after=self.clean_data_after,
+        )
 
         return commands
 
@@ -81,25 +80,20 @@ class ConsoleAlgorithm(MapshaperAlgorithm):
         return ConsoleAlgorithm()
 
     @staticmethod
-    def prepare_arguments(simplify_percent: Union[int, float, str] = 50,
-                          method: str = "dp",
-                          planar: bool = False,
-                          field: str = None) -> List[str]:
-
+    def prepare_arguments(
+        simplify_percent: Union[int, float, str] = 50, method: str = "dp", planar: bool = False, field: str = None
+    ) -> List[str]:
         arguments = [method]
 
         if field:
-
-            arguments.extend([
-                "variable", "percentage", "=", "{} ? {} : 1".format(field,
-                                                                    float(simplify_percent) / 100)
-            ])
+            arguments.extend(
+                ["variable", "percentage", "=", "{} ? {} : 1".format(field, float(simplify_percent) / 100)]
+            )
 
         else:
+            arguments.append("{}%".format(simplify_percent))
 
-            arguments.append('{}%'.format(simplify_percent))
-
-        arguments.append('keep-shapes')
+        arguments.append("keep-shapes")
 
         if planar:
             arguments.append("planar")
@@ -112,7 +106,6 @@ class ConsoleAlgorithm(MapshaperAlgorithm):
 
     @staticmethod
     def split_text_into_parts(text: str) -> List[str]:
-
         replace_constant = "---"
 
         quoted_regex = ConsoleAlgorithm.regex_quoted()
@@ -121,30 +114,24 @@ class ConsoleAlgorithm(MapshaperAlgorithm):
 
         text_replaced = ConsoleAlgorithm.replace_parts(quoted_regex, text, replace_constant)
 
-        return ConsoleAlgorithm.replace_parts_back(text_replaced,
-                                                   quoted_parts,
-                                                   replacement=replace_constant)
+        return ConsoleAlgorithm.replace_parts_back(text_replaced, quoted_parts, replacement=replace_constant)
 
     @staticmethod
     def extract_parts(quoted_regex: re.Pattern, text: str) -> List[str]:
-
         quoted_parts = quoted_regex.findall(text)
 
         return quoted_parts
 
     @staticmethod
     def replace_parts(quoted_regex: re.Pattern, text: str, replacement: str = "---") -> List[str]:
-
         text_replaced = quoted_regex.sub(replacement, text)
 
         return text_replaced
 
     @staticmethod
-    def replace_parts_back(base_text: str,
-                           replacements: List[str],
-                           split_by: str = " ",
-                           replacement: str = "---") -> List[str]:
-
+    def replace_parts_back(
+        base_text: str, replacements: List[str], split_by: str = " ", replacement: str = "---"
+    ) -> List[str]:
         text_splitted = base_text.split(" ")
 
         for quoted_part in replacements:

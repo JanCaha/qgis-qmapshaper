@@ -1,22 +1,23 @@
-from typing import Union, Optional
+from typing import Optional, Union
 
-from qgis.PyQt.QtWidgets import (QWidget, QSlider, QSpinBox, QHBoxLayout)
-from qgis.PyQt.QtCore import (Qt, pyqtSignal, QThreadPool)
+from qgis.PyQt.QtCore import Qt, QThreadPool, pyqtSignal
+from qgis.PyQt.QtWidgets import QHBoxLayout, QSlider, QSpinBox, QWidget
 
 from ..classes.classes_workers import WaitWorker
 
 
 class PercentSliderSpinBox(QWidget):
-
     valueChanged = pyqtSignal()
     valueChangedInteractionStopped = pyqtSignal()
 
-    def __init__(self,
-                 defaultValue: int = 50,
-                 minimum: int = 1,
-                 maximum: int = 99,
-                 parent: Optional['QWidget'] = None,
-                 flags: Union[Qt.WindowFlags, Qt.WindowType] = Qt.WindowType.Widget) -> None:
+    def __init__(
+        self,
+        defaultValue: int = 50,
+        minimum: int = 1,
+        maximum: int = 99,
+        parent: Optional["QWidget"] = None,
+        flags: Union[Qt.WindowFlags, Qt.WindowType] = Qt.WindowType.Widget,
+    ) -> None:
         super().__init__(parent, flags)
 
         layout = QHBoxLayout()
@@ -67,12 +68,10 @@ class PercentSliderSpinBox(QWidget):
         self._set_value(self.slider, self.spin_box.value())
 
     def run_update(self, percent: int):
-
         if percent == self.spin_box.value():
             self.valueChangedInteractionStopped.emit()
 
     def create_wait_worker(self) -> None:
-
         wait_worker = WaitWorker(self.spin_box.value())
         wait_worker.signals.percent.connect(self.run_update)
 

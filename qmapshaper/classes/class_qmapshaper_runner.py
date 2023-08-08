@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Union, Optional
+from typing import Optional, Union
 
 from qgis.PyQt.QtCore import QProcess
 
@@ -7,7 +7,6 @@ from .class_qmapshaper_paths import QMapshaperPaths
 
 
 class MapshaperProcess(QProcess):
-
     output_lines: str = ""
 
     error_lines: str = ""
@@ -15,7 +14,6 @@ class MapshaperProcess(QProcess):
     finished_correctly = False
 
     def __init__(self) -> None:
-
         super().__init__()
 
         self.setProcessChannelMode(QProcess.MergedChannels)
@@ -30,7 +28,6 @@ class MapshaperProcess(QProcess):
         return " ".join(commands)
 
     def run(self):
-
         self.start()
 
         self.waitForStarted()
@@ -38,7 +35,6 @@ class MapshaperProcess(QProcess):
         self.waitForFinished()
 
     def read_output(self):
-
         self.output_lines = bytes(self.readAllStandardOutput()).decode("utf8")
         self.error_lines = bytes(self.readAllStandardError()).decode("utf8")
 
@@ -47,15 +43,11 @@ class MapshaperProcess(QProcess):
 
 
 class MapshaperProcessChecker(QProcess):
-
     output_lines: str
 
     found = False
 
-    path: str
-
     def __init__(self, path: Optional[Union[str, Path]] = None) -> None:
-
         super().__init__()
 
         self.path = path
@@ -63,13 +55,11 @@ class MapshaperProcessChecker(QProcess):
         self.setProcessChannelMode(QProcess.MergedChannels)
 
         if self.path:
-
             path_ms = Path(self.path) / "mapshaper"
 
             self.path = path_ms.absolute().as_posix()
 
         else:
-
             self.path = "mapshaper"
 
         self.setProgram(self.path)
@@ -87,7 +77,6 @@ class MapshaperProcessChecker(QProcess):
 
 
 class NpmPackageLocationCheckerProcess:
-
     output_lines: str
 
     packages_location: str = None
@@ -97,11 +86,9 @@ class NpmPackageLocationCheckerProcess:
     _mapshaper_location: str = None
 
     def __init__(self) -> None:
-
         super().__init__()
 
     def npm_exist(self) -> bool:
-
         p = QProcess()
 
         p.setProgram("npm")
@@ -120,7 +107,6 @@ class NpmPackageLocationCheckerProcess:
         return False
 
     def npm_package_locations(self) -> bool:
-
         p = QProcess()
 
         p.setProgram("npm")
@@ -135,7 +121,6 @@ class NpmPackageLocationCheckerProcess:
         output_lines = bytes(p.readAllStandardOutput()).decode("utf8")
 
         if 0 < len(output_lines):
-
             self.packages_location = output_lines.strip()
 
             return True
@@ -143,7 +128,6 @@ class NpmPackageLocationCheckerProcess:
         return False
 
     def mapshaper_exists(self) -> bool:
-
         p = QProcess()
 
         p.setProgram("npm")
@@ -158,7 +142,6 @@ class NpmPackageLocationCheckerProcess:
         output_lines = bytes(p.readAllStandardOutput()).decode("utf8")
 
         if "mapshaper" in output_lines:
-
             self.mapshaper_present = True
 
             path = Path(self.packages_location) / "mapshaper"
@@ -170,13 +153,9 @@ class NpmPackageLocationCheckerProcess:
         return False
 
     def mapshaper_path(self) -> Optional[str]:
-
         if self.npm_exist():
-
             if self.npm_package_locations():
-
                 if self.mapshaper_exists():
-
                     return self._mapshaper_location
 
         return None

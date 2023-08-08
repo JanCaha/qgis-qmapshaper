@@ -1,8 +1,8 @@
 import os
-from typing import Any
 from pathlib import Path
+from typing import Any
 
-from qgis.core import (QgsMessageLog, QgsVectorLayer, Qgis)
+from qgis.core import Qgis, QgsMessageLog, QgsVectorLayer
 
 from .text_constants import TextConstants
 
@@ -18,7 +18,6 @@ def get_icons_folder() -> Path:
 
 
 def get_icon_path(file_name: str) -> str:
-
     file: Path = get_icons_folder() / file_name
 
     return file.absolute().as_posix()
@@ -30,7 +29,6 @@ def log(text: Any) -> None:
 
 
 def features_count_with_non_empty_geoms(layer: QgsVectorLayer) -> int:
-
     count = 0
 
     for feature in layer.getFeatures():

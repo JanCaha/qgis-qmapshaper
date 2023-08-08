@@ -1,16 +1,20 @@
-from typing import List, Union, Dict
+from typing import Dict, List, Union
 
-from qgis.core import (QgsProcessingParameterVectorLayer, QgsProcessingParameterNumber,
-                       QgsProcessingParameterEnum, QgsProcessingFeedback,
-                       QgsProcessingParameterVectorDestination, QgsProcessingParameterField,
-                       QgsProcessingParameterBoolean, QgsProcessing)
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingFeedback,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterNumber,
+    QgsProcessingParameterVectorDestination,
+    QgsProcessingParameterVectorLayer,
+)
 
-from .mapshaper_algorithm import MapshaperAlgorithm
 from ..text_constants import TextConstants
+from .mapshaper_algorithm import MapshaperAlgorithm
 
 
 class SimplifyPolygonLinesAlgorithm(MapshaperAlgorithm):
-
     INPUT_LAYER = "Input"
     SIMPLIFY = "Simplify"
     METHOD = "Method"
@@ -25,47 +29,43 @@ class SimplifyPolygonLinesAlgorithm(MapshaperAlgorithm):
         self.join_fid_field_back = False
 
     def initAlgorithm(self, config=None):
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(self.INPUT_LAYER, "Input layer", [QgsProcessing.TypeVectorPolygon])
+        )
 
         self.addParameter(
-            QgsProcessingParameterVectorLayer(self.INPUT_LAYER, "Input layer",
-                                              [QgsProcessing.TypeVectorPolygon]))
+            QgsProcessingParameterNumber(
+                self.SIMPLIFY,
+                "Simplify %",
+                type=QgsProcessingParameterNumber.Integer,
+                defaultValue=50,
+                minValue=1,
+                maxValue=99,
+            )
+        )
 
         self.addParameter(
-            QgsProcessingParameterNumber(self.SIMPLIFY,
-                                         "Simplify %",
-                                         type=QgsProcessingParameterNumber.Integer,
-                                         defaultValue=50,
-                                         minValue=1,
-                                         maxValue=99))
+            QgsProcessingParameterEnum(
+                self.METHOD, "Simplification method", options=list(self.methods().keys()), defaultValue=0
+            )
+        )
 
         self.addParameter(
-            QgsProcessingParameterEnum(self.METHOD,
-                                       "Simplification method",
-                                       options=list(self.methods().keys()),
-                                       defaultValue=0))
+            QgsProcessingParameterEnum(
+                self.LINES, "Generalize polygon's lines", options=list(self.lines().keys()), defaultValue=0
+            )
+        )
 
-        self.addParameter(
-            QgsProcessingParameterEnum(self.LINES,
-                                       "Generalize polygon's lines",
-                                       options=list(self.lines().keys()),
-                                       defaultValue=0))
+        self.addParameter(QgsProcessingParameterBoolean(self.CLEAN_DATA, "Clean data prior and after simplification"))
 
-        self.addParameter(
-            QgsProcessingParameterBoolean(self.CLEAN_DATA,
-                                          "Clean data prior and after simplification"))
-
-        self.addParameter(
-            QgsProcessingParameterVectorDestination(self.OUTPUT_LAYER, "Output Layer"))
+        self.addParameter(QgsProcessingParameterVectorDestination(self.OUTPUT_LAYER, "Output Layer"))
 
     def prepare_data(self, parameters, context, feedback: QgsProcessingFeedback) -> None:
-
         self.process_input_layer(self.INPUT_LAYER, parameters, context, feedback)
 
-        self.result_layer_location = self.parameterAsOutputLayer(parameters, self.OUTPUT_LAYER,
-                                                                 context)
+        self.result_layer_location = self.parameterAsOutputLayer(parameters, self.OUTPUT_LAYER, context)
 
     def get_arguments(self, parameters, context, feedback: QgsProcessingFeedback):
-
         clean_data = self.parameterAsBool(parameters, self.CLEAN_DATA, context)
 
         self.clean_data_before = clean_data
@@ -83,11 +83,13 @@ class SimplifyPolygonLinesAlgorithm(MapshaperAlgorithm):
 
         planar = not self.input_layer_memory.crs().isGeographic()
 
-        arguments = self.prepare_arguments(simplify_percent=simplify_percent,
-                                           method=method,
-                                           lines=lines_type,
-                                           planar=planar,
-                                           join_file=self.mapshaper_join)
+        arguments = self.prepare_arguments(
+            simplify_percent=simplify_percent,
+            method=method,
+            lines=lines_type,
+            planar=planar,
+            join_file=self.mapshaper_join,
+        )
 
         return arguments
 
@@ -108,35 +110,35 @@ class SimplifyPolygonLinesAlgorithm(MapshaperAlgorithm):
         return SimplifyPolygonLinesAlgorithm()
 
     @staticmethod
-    def prepare_arguments(simplify_percent: Union[int, float, str] = 50,
-                          lines: str = "inner",
-                          method: str = "dp",
-                          planar: bool = False,
-                          join_file: str = None) -> List[str]:
-
+    def prepare_arguments(
+        simplify_percent: Union[int, float, str] = 50,
+        lines: str = "inner",
+        method: str = "dp",
+        planar: bool = False,
+        join_file: str = None,
+    ) -> List[str]:
         arguments = [
-            '-simplify',
+            "-simplify",
             method,
-            'variable',
-            'percentage',
-            '=',
-            'TYPE == "{}" ? {} : 1'.format(lines,
-                                           float(simplify_percent) / 100),
+            "variable",
+            "percentage",
+            "=",
+            'TYPE == "{}" ? {} : 1'.format(lines, float(simplify_percent) / 100),
         ]
 
-        arguments.append('keep-shapes')
+        arguments.append("keep-shapes")
 
         if planar:
-            arguments.append('planar')
+            arguments.append("planar")
 
-        arguments.append('-polygons')
+        arguments.append("-polygons")
 
         if join_file:
-            arguments.extend(['-join', 'largest-overlap', join_file])
+            arguments.extend(["-join", "largest-overlap", join_file])
 
-        arguments.extend(['-filter-fields', TextConstants.JOIN_FIELD_NAME])
+        arguments.extend(["-filter-fields", TextConstants.JOIN_FIELD_NAME])
 
-        arguments.extend(['-dissolve2', TextConstants.JOIN_FIELD_NAME])
+        arguments.extend(["-dissolve2", TextConstants.JOIN_FIELD_NAME])
 
         return arguments
 

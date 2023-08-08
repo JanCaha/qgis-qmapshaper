@@ -1,12 +1,8 @@
-from typing import List
-
-from qgis.PyQt.QtCore import (QRunnable, QObject, pyqtSignal, pyqtSlot, QThread)
+from qgis.PyQt.QtCore import QObject, QRunnable, QThread, pyqtSignal, pyqtSlot
 
 
 class WaitWorker(QRunnable):
-
     def __init__(self, percent: int, wait_time: int = 200):
-
         super(WaitWorker, self).__init__()
 
         self.signals = WorkerSignals()
@@ -17,16 +13,13 @@ class WaitWorker(QRunnable):
 
     @pyqtSlot()
     def run(self):
-
         QThread.msleep(self.wait_time)
 
         self.signals.percent.emit(self.percent)
 
 
 class WaitWorkerCommand(QRunnable):
-
     def __init__(self, command: str):
-
         super(WaitWorkerCommand, self).__init__()
 
         self.signals = WorkerSignals()
@@ -35,7 +28,6 @@ class WaitWorkerCommand(QRunnable):
 
     @pyqtSlot()
     def run(self):
-
         QThread.msleep(750)
 
         self.signals.command.emit(self.command)

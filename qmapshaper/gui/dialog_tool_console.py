@@ -1,22 +1,26 @@
-from qgis.core import (QgsVectorLayer, QgsMapLayerProxyModel)
-from qgis.gui import (QgsMapCanvas, QgsMapLayerComboBox, QgisInterface, QgsFieldComboBox)
-from qgis.PyQt.QtWidgets import (QDialog, QLabel, QVBoxLayout, QDialogButtonBox, QLineEdit)
+from qgis.core import QgsMapLayerProxyModel, QgsVectorLayer
+from qgis.gui import QgisInterface, QgsFieldComboBox, QgsMapCanvas, QgsMapLayerComboBox
+from qgis.PyQt.QtCore import Qt, QThreadPool, pyqtSignal
 from qgis.PyQt.QtGui import QPalette
-from qgis.PyQt.QtCore import (Qt, QThreadPool, pyqtSignal)
+from qgis.PyQt.QtWidgets import (
+    QDialog,
+    QDialogButtonBox,
+    QLabel,
+    QLineEdit,
+    QVBoxLayout,
+)
 
-from ..utils import log
-from ..text_constants import TextConstants
 from ..classes.classes_workers import WaitWorkerCommand
+from ..text_constants import TextConstants
+from ..utils import log
 from .processes.interactive_console_process import InteractiveConsoleProcess
 
 
 class InteractiveConsoleTool(QDialog):
-
     map_updated = pyqtSignal()
     data_processed = pyqtSignal()
 
     def __init__(self, parent=None, iface: QgisInterface = None):
-
         super().__init__(parent)
 
         self.process = InteractiveConsoleProcess(self)
@@ -79,13 +83,10 @@ class InteractiveConsoleTool(QDialog):
         self.canvas.setLayers([self.layer_selection.currentLayer()])
 
     def set_required_field(self):
-
         self.process.field = self.field.currentField()
 
     def set_input_data(self):
-
         if self.layer_selection.currentLayer():
-
             self.field.setLayer(self.layer_selection.currentLayer())
 
             self.process.set_input_data(self.layer_selection.currentLayer())
@@ -93,33 +94,27 @@ class InteractiveConsoleTool(QDialog):
             self.process_layer()
 
     def process_layer(self) -> None:
-
         self.process.process_layer(self.console_command.text())
 
         self.data_processed.emit()
 
     def load_processed_data(self) -> None:
-
         if self.process.processed_data_only_geometry:
-
             self.canvas.setLayers([self.process.processed_data_only_geometry])
             self.canvas.redrawAllLayers()
 
         self.map_updated.emit()
 
     def get_layer_for_project(self) -> QgsVectorLayer:
-
         return self.process.processed_data_with_attributes
 
     def create_wait_worker(self) -> None:
-
         wait_worker = WaitWorkerCommand(self.console_command.text())
         wait_worker.signals.command.connect(self.run_update)
 
         self.threadpool.start(wait_worker)
 
     def run_update(self, command: str):
-
         log(f"Prev: {command} - curr: {self.console_command.text()}")
 
         if command == self.console_command.text():

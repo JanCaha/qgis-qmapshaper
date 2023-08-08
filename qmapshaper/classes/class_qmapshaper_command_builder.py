@@ -6,15 +6,15 @@ CLEAN_COMMAND = "-clean"
 
 
 class QMapshaperCommandBuilder:
-
     @staticmethod
-    def prepare_console_commands(input_data_path: str,
-                                 output_data_path: str,
-                                 command: str,
-                                 arguments: List[str],
-                                 clean_before: bool = False,
-                                 clean_after: bool = False) -> List[str]:
-
+    def prepare_console_commands(
+        input_data_path: str,
+        output_data_path: str,
+        command: str,
+        arguments: List[str],
+        clean_before: bool = False,
+        clean_after: bool = False,
+    ) -> List[str]:
         commands = []
 
         commands.append(input_data_path)
@@ -38,9 +38,8 @@ class QMapshaperCommandBuilder:
 
     @staticmethod
     def prepare_console_output_data(output_data_path: str) -> List[str]:
-
         command = ["-o"]
-        command.append('format={}'.format(QMapshaperFile.get_format(output_data_path)))
+        command.append("format={}".format(QMapshaperFile.get_format(output_data_path)))
         command.append(output_data_path)
 
         return command

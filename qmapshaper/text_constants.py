@@ -1,5 +1,4 @@
 class TextConstants:
-
     plugin_id = "qmapshaper"
 
     plugin_name = "QMapshaper"

@@ -1,47 +1,51 @@
-from pathlib import Path
 import configparser
+from pathlib import Path
 
-from qgis.PyQt.QtGui import QIcon
-from qgis.core import QgsProcessingProvider
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
+from qgis.core import QgsProcessingProvider
+from qgis.PyQt.QtGui import QIcon
 
 from .classes.class_qmapshaper_paths import QMapshaperPaths
-from .processing.tool_simplify import SimplifyAlgorithm
-from .processing.tool_to_topojson import ConvertToTopoJSONAlgorithm
-from .processing.tool_simplify_lines import SimplifyPolygonLinesAlgorithm
 from .processing.tool_console import ConsoleAlgorithm
+from .processing.tool_simplify import SimplifyAlgorithm
+from .processing.tool_simplify_lines import SimplifyPolygonLinesAlgorithm
+from .processing.tool_to_topojson import ConvertToTopoJSONAlgorithm
 from .text_constants import TextConstants
 
 
 class QMapshaperProvider(QgsProcessingProvider):
-
     def __init__(self):
         super().__init__()
 
-        path = Path(__file__).parent / 'metadata.txt'
+        path = Path(__file__).parent / "metadata.txt"
 
         config = configparser.ConfigParser()
         config.read(path)
 
-        self.version = config['general']['version']
+        self.version = config["general"]["version"]
 
     def load(self) -> bool:
-
         ProcessingConfig.settingIcons[self.name()] = self.icon()
 
         ProcessingConfig.addSetting(
-            Setting(self.name(),
-                    TextConstants.MAPSHAPER_FOLDER,
-                    self.tr('Mapshaper folder'),
-                    QMapshaperPaths.guess_mapshaper_folder(),
-                    valuetype=Setting.FOLDER))
+            Setting(
+                self.name(),
+                TextConstants.MAPSHAPER_FOLDER,
+                self.tr("Mapshaper folder"),
+                QMapshaperPaths.guess_mapshaper_folder(),
+                valuetype=Setting.FOLDER,
+            )
+        )
 
         ProcessingConfig.addSetting(
-            Setting(self.name(),
-                    TextConstants.MAPSHAPER_TOOL_NAME,
-                    self.tr('Mapshaper tool name'),
-                    QMapshaperPaths.guess_mapshaper_command_name(),
-                    valuetype=Setting.STRING))
+            Setting(
+                self.name(),
+                TextConstants.MAPSHAPER_TOOL_NAME,
+                self.tr("Mapshaper tool name"),
+                QMapshaperPaths.guess_mapshaper_command_name(),
+                valuetype=Setting.STRING,
+            )
+        )
 
         ProcessingConfig.readSettings()
 

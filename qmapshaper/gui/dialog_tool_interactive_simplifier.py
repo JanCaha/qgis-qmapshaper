@@ -1,24 +1,28 @@
-from qgis.core import (QgsVectorLayer, QgsMapLayerProxyModel)
-from qgis.gui import (QgsMapCanvas, QgsMapLayerComboBox, QgisInterface)
-from qgis.PyQt.QtWidgets import (QDialog, QLabel, QVBoxLayout, QComboBox, QDialogButtonBox,
-                                 QCheckBox)
-from qgis.PyQt.QtCore import (QThreadPool, pyqtSignal)
+from qgis.core import QgsMapLayerProxyModel, QgsVectorLayer
+from qgis.gui import QgisInterface, QgsMapCanvas, QgsMapLayerComboBox
+from qgis.PyQt.QtCore import QThreadPool, pyqtSignal
+from qgis.PyQt.QtWidgets import (
+    QCheckBox,
+    QComboBox,
+    QDialog,
+    QDialogButtonBox,
+    QLabel,
+    QVBoxLayout,
+)
 
-from ..processing.tool_simplify import SimplifyAlgorithm
-from ..utils import log
-from ..text_constants import TextConstants
 from ..classes.classes_workers import WaitWorker
-from .processes.interactive_simplifier_process import InteractiveSimplifierProcess
+from ..processing.tool_simplify import SimplifyAlgorithm
+from ..text_constants import TextConstants
+from ..utils import log
 from .percentsliderspinbox import PercentSliderSpinBox
+from .processes.interactive_simplifier_process import InteractiveSimplifierProcess
 
 
 class InteractiveSimplifierTool(QDialog):
-
     map_updated = pyqtSignal()
     data_generalized = pyqtSignal()
 
     def __init__(self, parent=None, iface: QgisInterface = None):
-
         super().__init__(parent)
 
         self.process = InteractiveSimplifierProcess(parent=self)
@@ -42,7 +46,6 @@ class InteractiveSimplifierTool(QDialog):
         self.set_input_data()
 
     def set_up_ui(self) -> None:
-
         self.layer_selection = QgsMapLayerComboBox(self)
         self.layer_selection.setFilters(QgsMapLayerProxyModel.VectorLayer)
 
@@ -60,8 +63,7 @@ class InteractiveSimplifierTool(QDialog):
 
         self.button_box = QDialogButtonBox(QDialogButtonBox.Cancel | QDialogButtonBox.Ok, self)
 
-        self.modify_only_part = QCheckBox("Generalize only part of layer (based on selection)",
-                                          self)
+        self.modify_only_part = QCheckBox("Generalize only part of layer (based on selection)", self)
         self.modify_only_part.stateChanged.connect(self.set_selection)
 
         self.modify_selection = QComboBox(self)
@@ -101,11 +103,9 @@ class InteractiveSimplifierTool(QDialog):
         self.canvas.setLayers([self.layer_selection.currentLayer()])
 
     def set_input_data(self):
-
         log(f"Modify only part: {self.modify_only_part.isChecked()}")
 
         if self.layer_selection.currentLayer():
-
             self.process.generalize_select = self.modify_only_part.isChecked()
 
             self.process.set_input_data(self.layer_selection.currentLayer())
@@ -120,17 +120,15 @@ class InteractiveSimplifierTool(QDialog):
             self.generalize_layer()
 
     def generalize_layer(self) -> None:
-
-        self.process.process_layer(simplify_percent=self.percent_widget.value(),
-                                   simplify_method=SimplifyAlgorithm.get_method(
-                                       self.methods.currentIndex()))
+        self.process.process_layer(
+            simplify_percent=self.percent_widget.value(),
+            simplify_method=SimplifyAlgorithm.get_method(self.methods.currentIndex()),
+        )
 
         self.data_generalized.emit()
 
     def load_generalized_data(self) -> None:
-
         if self.process.processed_data_only_geometry:
-
             self.process.apply_selection_to_generalized_data()
 
             self.canvas.setLayers([self.process.processed_data_only_geometry])
@@ -139,15 +137,12 @@ class InteractiveSimplifierTool(QDialog):
         self.map_updated.emit()
 
     def get_layer_for_project(self) -> QgsVectorLayer:
-
         return self.process.processed_data_with_attributes
 
     def trigger_input_parameters_change(self) -> None:
-
         self.generalize_layer()
 
     def set_selection(self):
-
         self.modify_selection.setEnabled(self.modify_only_part.isChecked())
 
         self.process.process_selection = self.modify_only_part.isChecked()
@@ -156,14 +151,12 @@ class InteractiveSimplifierTool(QDialog):
         self.generalize_layer()
 
     def set_generalization_type(self):
-
         self.process.process_selected_features = self.modify_selection.currentData()
 
         self.set_input_data()
         self.generalize_layer()
 
     def set_clean_data(self):
-
         self.process.clean_data = self.clean_data.isChecked()
 
         self.generalize_layer()
