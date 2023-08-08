@@ -29,14 +29,12 @@
         "--no-pretty",
         "--no-strict-optional"
     ],
-    "python.formatting.provider": "yapf",
-    "python.formatting.yapfArgs": [
-        "--style",
-        "{based_on_style: google, indent_width: 4, column_limit=99}"
-    ],
     "python.testing.pytestArgs": [
         "tests",
         "-rP"
     ],
     "python.testing.pytestEnabled": true,
+    "cSpell.words": [
+        "mapshaper"
+    ],
 }
