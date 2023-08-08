@@ -7,6 +7,8 @@ on:
     paths:
     - "website/**"
     - "qmapshaper/metadata.txt"
+    - ".github/workflows/mkdocs_build_deploy.yaml"
+
 
 jobs:
 
