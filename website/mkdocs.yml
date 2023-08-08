@@ -25,6 +25,4 @@ site_dir: docs
     
 plugins:
     - search
-
-markdown_extensions:
     - glightbox
