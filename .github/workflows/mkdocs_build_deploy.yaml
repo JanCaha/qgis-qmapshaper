@@ -16,6 +16,12 @@ jobs:
     
     steps:
     
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.9'
+        architecture: 'x64'
+
     - uses: actions/checkout@v3
 
     - name: Install dependencies
