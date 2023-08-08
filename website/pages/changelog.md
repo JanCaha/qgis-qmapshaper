@@ -1,5 +1,9 @@
 # Changelog
 
+## version 0.8.2
+
+- fixes in npm and mapshaper finding and running
+
 ## version 0.8
 
 - added Console tools - processing and also interactive
