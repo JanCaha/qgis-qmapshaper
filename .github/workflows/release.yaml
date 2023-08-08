@@ -11,6 +11,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
 
       - name: Install pb_tool
@@ -18,7 +24,7 @@ jobs:
           pip install pb_tool
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Get Version
         id: version
@@ -36,6 +42,5 @@ jobs:
           tag_name: ${{ steps.version.outputs.VERSION }}
           files: |
             qmapshaper/zip_build/qmapshaper.zip
-          name: ver. ${{ steps.version.outputs.VERSION }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GT_TOKEN }}
+          name: v${{ steps.version.outputs.VERSION }}
+
