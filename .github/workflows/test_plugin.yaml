@@ -13,12 +13,29 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    container: cahik/vscode-ubuntu-qgis-testing:mapshaper
-
     steps:
 
+      - name: Install QGIS
+        run: |
+          sudo wget -qO /etc/apt/keyrings/qgis-archive-keyring.gpg https://download.qgis.org/downloads/qgis-archive-keyring.gpg
+          sudo sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/qgis-archive-keyring.gpg] https://qgis.org/ubuntu `lsb_release -c -s` main" > /etc/apt/sources.list.d/qgis.list'
+          sudo apt-get update
+          sudo apt-get install -y qgis
+      
+      - name: Install NodeJS
+        run: |
+          sudo apt-get install -y nodejs npm
+      
+      - name: Install mapshaper
+        run: |
+          npm install mapshaper
+
+      - name: Set PYTHONPATH
+        run: |
+          echo "PYTHONPATH=/usr/share/qgis/python/plugins:/usr/share/qgis/python:." >> $GITHUB_ENV
+
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Print Python Path
         run: echo $PYTHONPATH
