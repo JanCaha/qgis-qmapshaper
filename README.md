@@ -42,7 +42,9 @@ So far there is processing tool **Simplify vector** usable in complex workflows.
 
 ### Plugin Settings
 
-![](website/pages/images/plugin_settings.gif)
+The settings requires `Mapshaper folder` and `Mapshaper tool name`. The tool name for Linux and Windows wary, but the plugin does it's best to set it up correctly. For Linux and MacOS it should be `mapshaper-xl` while on Windows `mapshaper-xl.cmd` should be the correct programme.
+
+![](website/pages/images/plugin_settings.png)
 
 ### Interactive Tool
 
