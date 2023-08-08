@@ -9,7 +9,6 @@ on:
     - "qmapshaper/metadata.txt"
     - ".github/workflows/mkdocs_build_deploy.yaml"
 
-
 jobs:
 
   build-deploy:
@@ -21,7 +20,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
-        python-version: '3.7'
+        python-version: '3.9'
         architecture: 'x64'
 
     - uses: actions/checkout@v3
