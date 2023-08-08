@@ -29,10 +29,7 @@ jobs:
       - name: Install mapshaper
         run: |
           npm install -g mapshaper
-      
-      - name: Test NPM
-        run: npm
-      
+            
       - name: Install Python packages
         run: pip install pytest pytest-qgis pytest-cov pytest-qt pillow pb_tool 
 
