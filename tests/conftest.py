@@ -1,8 +1,6 @@
 import pytest
 from pathlib import Path
 
-from pytest_qgis import clean_qgis_layer
-
 from qgis.core import QgsProject, QgsLayout, QgsVectorLayer
 from processing.core.ProcessingConfig import ProcessingConfig
 
@@ -30,7 +28,6 @@ def data_layer_path() -> str:
 
 
 @pytest.fixture
-@clean_qgis_layer
 def data_layer(data_layer_path) -> QgsVectorLayer:
 
     return QgsVectorLayer(data_layer_path, "layer", "ogr")
