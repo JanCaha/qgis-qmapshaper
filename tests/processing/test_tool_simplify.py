@@ -104,3 +104,4 @@ def test_parameter_combinations(data_layer, data_result_file, params):
     assert isinstance(layer, QgsVectorLayer)
     assert Path(layer.source()).exists()
     assert layer.featureCount() == 404
+    assert layer.crs().isValid()
