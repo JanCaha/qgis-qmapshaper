@@ -11,24 +11,6 @@
         "/usr/share/qgis/python/plugins",
         "/usr/share/qgis/python"
     ],
-    "python.linting.pycodestyleEnabled": true,
-    "python.linting.pycodestyleArgs": [
-        "--max-line-length=160",
-        "--ignore=W293,W504"
-    ],
-    "python.linting.flake8Enabled": true,
-    "python.linting.flake8Args": [
-        "--max-line-length=160",
-        "--ignore=W293,W504"
-    ],
-    "python.linting.mypyEnabled": true,
-    "python.linting.mypyArgs": [
-        "--follow-imports=silent",
-        "--ignore-missing-imports",
-        "--show-column-numbers",
-        "--no-pretty",
-        "--no-strict-optional"
-    ],
     "python.testing.pytestArgs": [
         "tests",
         "-rP"
